@@ -9,6 +9,7 @@ llm:
     think: false
     first_token_timeout_s: 20
     total_timeout_s: 60
+    max_bad_outputs: 2             # schema failures before falling back to Groq (6.1)
   desktop:                         # backup tier; skipped when off, unreachable or gaming
     provider: ollama
     model: qwen3:14b
@@ -18,7 +19,10 @@ llm:
   fallback:
     provider: groq
     model: openai/gpt-oss-120b
+    base_url: https://api.groq.com/openai/v1
     reasoning_effort: low          # fast for live requests; judges use medium
+    timeout_s: 30
+    max_retries: 2                 # SDK retries for rate limits and network blips
   escalate_risk_threshold: 0.7
 
 # Set as Windows environment variables for Ollama (task 0.4); kept here as the record.

@@ -32,6 +32,7 @@ class PrimaryLLM(Strict):
     think: bool
     first_token_timeout_s: float = Field(gt=0)
     total_timeout_s: float = Field(gt=0)
+    max_bad_outputs: int = Field(ge=1)
 
 
 class DesktopLLM(Strict):
@@ -49,7 +50,10 @@ class FallbackLLM(Strict):
 
     provider: Literal["groq"]
     model: str
+    base_url: str
     reasoning_effort: Literal["low", "medium", "high"]
+    timeout_s: float = Field(gt=0)
+    max_retries: int = Field(ge=0)
 
 
 class LLMConfig(Strict):
