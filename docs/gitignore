@@ -1,0 +1,29 @@
+# Same base as the Practo repo
+.venv/
+__pycache__/
+*.py[cod]
+.vscode/
+logs/
+
+# Secrets
+.env
+
+# Leo's personal data (database, calendar, backups)
+leo_data/
+*.db
+*.db-wal
+*.db-shm
+
+# ML data and model weights (model cards in models/ are still tracked)
+datasets/
+models/*.joblib
+models/*.onnx
+
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Web app
+node_modules/
+web/dist/
