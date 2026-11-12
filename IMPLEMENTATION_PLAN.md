@@ -28,7 +28,7 @@ The order follows the architecture roadmap (§19): **Phase 0 → M1 → M2 → M
 |---|---|---|
 | 0.1 | Create a public repo `leo` under `manishjsr14-cloud` on GitHub, with no README or .gitignore (same as Practo). Clone it to `D:\Projects\Leo` (not inside OneDrive). | `git remote -v` shows the new repo |
 | 0.2 | Add `AGENTS.md`, `.gitignore`, `IMPLEMENTATION_PLAN.md`, and both spec files under `docs/`. Do not create `CLAUDE.md`. Commit and push to `main`. | Files visible on GitHub |
-| 0.3 | Python 3.11 virtual environment in `.venv`. Create `requirements.txt` with **all MVP dependencies pinned** (list below) and check they install together. | `pip install -r requirements.txt` finishes with no conflicts |
+| 0.3 | Python 3.12 virtual environment in `.venv`. Create `requirements.txt` with **all MVP dependencies pinned** (list below) and check they install together. | `pip install -r requirements.txt` finishes with no conflicts |
 | 0.4 | Install Ollama, pull `qwen3:4b`, set the four `OLLAMA_*` variables (§6.2). | `ollama ps` shows `100% GPU` after one test prompt |
 | 0.5 | Create free accounts and put keys in `.env` (never committed): Groq, Langfuse Cloud. Add `.env.example` with empty values. | `.env.example` committed; `.env` ignored by git |
 | 0.6 | Create the folder skeleton from §18, but only the MVP folders: `leo/{graph,agents,tools,llm,memory,language,reminders,routines,news,guardrails,ops,api}`, `tests/`, `evals/scenarios/`, `prompts/`, `config/`, `deploy/windows/`. Add `config.yaml` (from §6.4) and `leo/config.py` (Pydantic-validated). | `pytest` runs (0 tests) and `ruff check .` passes |
@@ -42,7 +42,7 @@ git clone https://github.com/manishjsr14-cloud/leo.git Leo
 cd Leo
 mkdir docs
 # copy AGENTS.md, .gitignore, IMPLEMENTATION_PLAN.md here; the two spec files into docs\
-py -3.11 -m venv .venv
+py -3.12 -m venv .venv
 .venv\Scripts\Activate.ps1
 git add .
 git commit -m "Add project specs, plan and agent instructions"
@@ -60,7 +60,7 @@ Read: §4, §6, §9 (tool table), §15.
 
 | Task | What to build | Main files | Done when |
 |---|---|---|---|
-| M1.1 | **LLM gateway.** One OpenAI-compatible client for Ollama and Groq. Fallback triggers from §6.1 (connection error, timeouts, bad tool call twice, user override). Token and latency logging. Desktop tier left as a config stub. | `leo/llm/gateway.py` | Tests with a fake client show each trigger falls back to Groq; a real prompt answers from `qwen3:4b` |
+| M1.1 | **LLM gateway.** One OpenAI-compatible client for Ollama and Groq. Fallback triggers from §6.1 (connection error, timeouts, bad tool call twice, user override). Token and latency logging. Desktop tier left as a config stub. | `leo/llm/gateway.py` | Tests with a fake client show each trigger falls back to Groq; a real prompt answers from `leo-qwen3` |
 | M1.2 | **State and graph skeleton.** `LeoState` (§4.1), nodes `supervisor` and `responder` only, supervisor structured output `{next, task}`, max 8 hops. CLI chat loop. | `leo/graph/state.py`, `supervisor.py`, `builder.py`, `cli.py` | `python -m leo.cli` holds a chat; hop limit test passes |
 | M1.3 | **Tool layer with real and mock versions.** Tools are plain functions with Pydantic argument schemas and a tier (🟢/🟡/🔴). Mock versions record every call. | `leo/tools/real/`, `leo/tools/mock/`, `leo/tools/registry.py` | Mock tools return fixed data and a call log |
 | M1.4 | **Productivity agent:** tasks, notes, timer, calculator (sympy). Data in SQLite tables `tasks`, `notes`. | `leo/agents/productivity.py`, `leo/memory/schema.sql` | "add milk to my tasks", "what is 18% of 2450" work in the CLI; calculator never uses the LLM for math |
@@ -70,6 +70,8 @@ Read: §4, §6, §9 (tool table), §15.
 | M1.8 | **Hinglish prompts and language mirroring.** Prompts in `prompts/*.yaml` with a version field; few-shot Hinglish examples per agent; simple token-ratio language tag (the trained detector is Phase 6). | `prompts/`, `leo/language/normalize.py` | Hinglish in → Hinglish reply; English in → English reply, on 10 fixed examples |
 | M1.9 | **Tracing.** One Langfuse trace per request with spans per node, LLM call and tool call; prompt and model version tags. | `leo/ops/tracing.py` | A CLI request shows as one trace in Langfuse |
 | M1.10 | **First eval set.** 12 scenarios in `evals/scenarios/` (routing + tool name + key args), run on mock tools. Commit scenarios before running. | `evals/run_eval.py` | Report file written to `evals/reports/`; numbers reported as they are |
+
+**Note for M1.1 (from Phase 0 setup):** `qwen3:4b` runs in thinking mode by default, which is slow. The gateway must send `think=false` on every request to the local model and strip any leftover `<think>...</think>` text from replies. Add one test for each: (1) every request built for Ollama carries `think=false`; (2) a reply containing `<think>...</think>` comes back without it.
 
 **M1 exit check:** the cross-agent example in §4.5 (weather → calendar) runs end to end in the CLI on mock calendar, on the local model.
 

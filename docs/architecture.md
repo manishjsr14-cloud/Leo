@@ -251,6 +251,8 @@ If Groq also fails (rate limit or no internet), Leo returns the local result if 
 
 **Check:** `ollama ps` must show `100% GPU`. On Windows, turn off browser hardware acceleration and close other GPU apps; the Windows desktop alone can hold 0.5–1 GB of VRAM. `q4_0` KV cache is a last resort (more savings, more quality loss).
 
+**Modelfile:** plain `qwen3:4b` spilled 28 % to the CPU on this laptop. `deploy/ollama/Modelfile` (`num_gpu 99`, `num_ctx 8192`) builds it as `leo-qwen3`, measured at 100 % GPU, 3145 MiB of 4096 MiB.
+
 **Heat:** `OLLAMA_KEEP_ALIVE=30m` unloads the model after 30 idle minutes so the GPU cools down; GPU temperature is logged and an alert fires above 85 °C.
 
 ### 6.3 Other model uses
@@ -267,7 +269,7 @@ If Groq also fails (rate limit or no internet), Leo returns the local result if 
 llm:
   primary:
     provider: ollama
-    model: qwen3:4b
+    model: leo-qwen3
     base_url: http://localhost:11434
     num_ctx: 8192
     think: false
