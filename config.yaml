@@ -1,0 +1,34 @@
+# Leo settings (architecture §6.4). Secrets go in .env, never here.
+
+llm:
+  primary:
+    provider: ollama
+    model: leo-qwen3               # qwen3:4b built from deploy/ollama/Modelfile
+    base_url: http://localhost:11434
+    num_ctx: 8192
+    think: false
+    first_token_timeout_s: 20
+    total_timeout_s: 60
+  desktop:                         # backup tier; skipped when off, unreachable or gaming
+    provider: ollama
+    model: qwen3:14b
+    base_url: http://leo-desktop:11434   # Tailscale name
+    num_ctx: 16384
+    think: false
+  fallback:
+    provider: groq
+    model: openai/gpt-oss-120b
+    reasoning_effort: low          # fast for live requests; judges use medium
+  escalate_risk_threshold: 0.7
+
+# Set as Windows environment variables for Ollama (task 0.4); kept here as the record.
+ollama_env:
+  OLLAMA_FLASH_ATTENTION: "1"
+  OLLAMA_KV_CACHE_TYPE: q8_0
+  OLLAMA_MAX_LOADED_MODELS: "1"
+  OLLAMA_KEEP_ALIVE: 30m
+
+server:
+  host: tailscale                  # bind to the Tailscale interface only
+  port: 8000
+  auth: device_tokens

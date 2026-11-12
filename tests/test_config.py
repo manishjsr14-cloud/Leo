@@ -1,0 +1,33 @@
+"""Tests for leo/config.py, using config.yaml and temporary copies of it."""
+
+from pathlib import Path
+
+import pytest
+import yaml
+from pydantic import ValidationError
+
+from leo.config import CONFIG_PATH, load_config
+
+
+# The real config.yaml in the repo loads without errors.
+def test_real_config_loads():
+    config = load_config()
+    assert config.server.port == 8000
+
+
+# The primary model is the GPU-only build, with thinking turned off.
+def test_primary_model_is_leo_qwen3_without_thinking():
+    primary = load_config().llm.primary
+    assert primary.model == "leo-qwen3"
+    assert primary.think is False
+
+
+# A config missing the primary model name is rejected.
+def test_missing_primary_model_is_rejected(tmp_path: Path):
+    data = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
+    del data["llm"]["primary"]["model"]
+    broken = tmp_path / "config.yaml"
+    broken.write_text(yaml.safe_dump(data), encoding="utf-8")
+
+    with pytest.raises(ValidationError):
+        load_config(broken)
