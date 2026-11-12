@@ -29,7 +29,7 @@ The order follows the architecture roadmap (§19): **Phase 0 → M1 → M2 → M
 | 0.1 | Create a public repo `leo` under `manishjsr14-cloud` on GitHub, with no README or .gitignore (same as Practo). Clone it to `D:\Projects\Leo` (not inside OneDrive). | `git remote -v` shows the new repo |
 | 0.2 | Add `AGENTS.md`, `.gitignore`, `IMPLEMENTATION_PLAN.md`, and both spec files under `docs/`. Do not create `CLAUDE.md`. Commit and push to `main`. | Files visible on GitHub |
 | 0.3 | Python 3.12 virtual environment in `.venv`. Create `requirements.txt` with **all MVP dependencies pinned** (list below) and check they install together. | `pip install -r requirements.txt` finishes with no conflicts |
-| 0.4 | Install Ollama, pull `qwen3:4b`, set the four `OLLAMA_*` variables (§6.2). | `ollama ps` shows `100% GPU` after one test prompt |
+| 0.4 | Install Ollama, pull `qwen3:4b` and build `leo-qwen3` with: `ollama create leo-qwen3 -f deploy/ollama/Modelfile`, set the four `OLLAMA_*` variables (§6.2). | `ollama ps` shows `leo-qwen3` at `100% GPU` after one test prompt |
 | 0.5 | Create free accounts and put keys in `.env` (never committed): Groq, Langfuse Cloud. Add `.env.example` with empty values. | `.env.example` committed; `.env` ignored by git |
 | 0.6 | Create the folder skeleton from §18, but only the MVP folders: `leo/{graph,agents,tools,llm,memory,language,reminders,routines,news,guardrails,ops,api}`, `tests/`, `evals/scenarios/`, `prompts/`, `config/`, `deploy/windows/`. Add `config.yaml` (from §6.4) and `leo/config.py` (Pydantic-validated). | `pytest` runs (0 tests) and `ruff check .` passes |
 
