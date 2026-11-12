@@ -216,6 +216,8 @@ Target: under 3 s from end of speech to first spoken word for simple queries on 
 
 ## 6. LLM Gateway: Local First, Groq Fallback
 
+Wherever this document says qwen3:4b, it means the non-thinking instruct build (qwen3:4b-instruct-2507-q4_K_M) that leo-qwen3 is built from; see §6.2.
+
 | Order | Provider | Model | Runs on |
 |---|---|---|---|
 | **Primary** | Ollama (laptop) | `qwen3:4b-instruct-2507-q4_K_M` (Q4_K_M, ~2.5 GB), built as `leo-qwen3` | GTX 1650, 100 % GPU |
