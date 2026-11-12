@@ -29,7 +29,7 @@ Instructions for Claude Code (and any other coding agent) working in this reposi
 
 ## Fixed design decisions
 
-- Local first: Ollama `leo-qwen3` (qwen3:4b built from deploy/ollama/Modelfile) on the laptop GPU. Plain `qwen3:4b` spilled 28 % to the CPU; `leo-qwen3` measured 100 % GPU, 3145 MiB of 4096 MiB. Groq `openai/gpt-oss-120b` is the only cloud fallback. No other LLM provider.
+- Local first: Ollama `leo-qwen3` (`qwen3:4b-instruct-2507-q4_K_M` built from deploy/ollama/Modelfile) on the laptop GPU. The default `qwen3:4b` tag is thinking-only: thinking cannot be turned off, so it was replaced by the non-thinking instruct build (evals/reports/m1.1_think_probe_2026-11-12.md). Plain `qwen3:4b` spilled 28 % to the CPU; the instruct `leo-qwen3` measured 100 % GPU, 3145 MiB of 4096 MiB (evals/reports/m1.1_model_check_2026-11-12.md). Groq `openai/gpt-oss-120b` is the only cloud fallback. No other LLM provider.
 - The laptop has 8 GB RAM and a 4 GB GPU. The LLM must stay 100 % on the GPU; embeddings, guards and ML models run on the CPU. Never load a second model in Ollama.
 - One SQLite file with sqlite-vec in `leo_data/`. Only the server process writes to it.
 - Calendar is local (Radicale, CalDAV). No email, no Google account, no cloud calendar.

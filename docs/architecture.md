@@ -218,7 +218,7 @@ Target: under 3 s from end of speech to first spoken word for simple queries on 
 
 | Order | Provider | Model | Runs on |
 |---|---|---|---|
-| **Primary** | Ollama (laptop) | `qwen3:4b` (Q4_K_M, ~2.5 GB) | GTX 1650, 100 % GPU |
+| **Primary** | Ollama (laptop) | `qwen3:4b-instruct-2507-q4_K_M` (Q4_K_M, ~2.5 GB), built as `leo-qwen3` | GTX 1650, 100 % GPU |
 | **Desktop backup tier** | Ollama (gaming desktop, over Tailscale) | `qwen3:14b` (~9 GB) or `qwen3:8b` (~5 GB) | RTX 3060 12 GB — **only when no game is running** (§6.7) |
 | **Cloud fallback** | Groq | `openai/gpt-oss-120b` (`reasoning_effort: low`) | Cloud |
 
@@ -226,7 +226,7 @@ The **laptop is the main machine**: it runs all services and the default model f
 
 **Why `gpt-oss-120b` as fallback:** OpenAI's open-weight reasoning model with strong tool calling, served by Groq through the same OpenAI-compatible API. It is much stronger than the local 4B model, so escalations actually fix hard requests. `reasoning_effort: low` keeps live latency down; Groq's built-in browser search and code execution are not used, since Leo calls its own guarded tools.
 
-**Why `qwen3:4b`:** tool calling, Hindi + English, and ~2.5 GB fits in 4 GB VRAM with room for context. Larger 4B vision models (3.3–3.4 GB) spill layers to the CPU and slow down sharply. **Lighter option:** `qwen3.5:2b`. Thinking mode is turned off (`think: false`) for agents to keep replies fast.
+**Why Qwen3 4B instruct (`qwen3:4b-instruct-2507-q4_K_M`):** tool calling, Hindi + English, and ~2.5 GB fits in 4 GB VRAM with room for context. Larger 4B vision models (3.3–3.4 GB) spill layers to the CPU and slow down sharply. **Lighter option:** `qwen3.5:2b`. **Why not the default `qwen3:4b` tag:** it is the thinking-only build; its template always opens a `<think>` block, so `think: false`, `reasoning_effort: none`, `/no_think` and Ollama's native endpoint all failed to stop it (126–402 tokens for a one-sentence answer, sometimes with the reasoning inside the answer text; `evals/reports/m1.1_think_probe_2026-11-12.md`). The instruct build does not think, which keeps replies fast. The gateway still sends `think: false` and strips any `<think>` text as safety nets.
 
 ### 6.1 Fallback triggers
 | Trigger | Detection |
@@ -251,7 +251,7 @@ If Groq also fails (rate limit or no internet), Leo returns the local result if 
 
 **Check:** `ollama ps` must show `100% GPU`. On Windows, turn off browser hardware acceleration and close other GPU apps; the Windows desktop alone can hold 0.5–1 GB of VRAM. `q4_0` KV cache is a last resort (more savings, more quality loss).
 
-**Modelfile:** plain `qwen3:4b` spilled 28 % to the CPU on this laptop. `deploy/ollama/Modelfile` (`num_gpu 99`, `num_ctx 8192`) builds it as `leo-qwen3`, measured at 100 % GPU, 3145 MiB of 4096 MiB.
+**Modelfile:** plain `qwen3:4b` spilled 28 % to the CPU on this laptop. `deploy/ollama/Modelfile` (`FROM qwen3:4b-instruct-2507-q4_K_M`, `num_gpu 99`, `num_ctx 8192`) builds `leo-qwen3`, measured at 100 % GPU, 3145 MiB of 4096 MiB, cold first token 8.39 s, warm 2.16 s (`evals/reports/m1.1_model_check_2026-11-12.md`).
 
 **Heat:** `OLLAMA_KEEP_ALIVE=30m` unloads the model after 30 idle minutes so the GPU cools down; GPU temperature is logged and an alert fires above 85 °C.
 
