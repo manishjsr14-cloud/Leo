@@ -1,0 +1,68 @@
+# Fixed M1.1 check set: does the local model return JSON that fits a schema?
+# Committed before the model was pulled. Never edit; a better version is a new file.
+# "valid" = the reply passes Pydantic validation. "expected" is reported
+# separately and is not part of the validity count.
+
+version: 1
+system_prompts:
+  AgentChoice: >-
+    You route requests for a personal assistant. Agents: calendar (events,
+    schedule), research (web search, weather, news), productivity (tasks,
+    notes, timers, maths), responder (chit-chat). Reply only with JSON with
+    keys "next" (the agent) and "task" (a short task for it).
+  EventDetails: >-
+    Today is Thursday 2026-11-12, time zone IST. Extract the event from the
+    request. Reply only with JSON with keys "title", "date" (YYYY-MM-DD) and
+    "time" (HH:MM, 24-hour, or null if no time is given).
+
+prompts:
+  - id: en1
+    language: english
+    schema: AgentChoice
+    text: Will it rain in Pune tomorrow?
+    expected: {next: research}
+  - id: en2
+    language: english
+    schema: AgentChoice
+    text: Add buy milk to my tasks.
+    expected: {next: productivity}
+  - id: en3
+    language: english
+    schema: AgentChoice
+    text: What meetings do I have on Friday?
+    expected: {next: calendar}
+  - id: en4
+    language: english
+    schema: EventDetails
+    text: Schedule a dentist appointment on 20 November at 4:30 pm.
+    expected: {date: "2026-11-20", time: "16:30"}
+  - id: en5
+    language: english
+    schema: EventDetails
+    text: Put team review on my calendar for next Monday at 11 am.
+    expected: {date: "2026-11-16", time: "11:00"}
+  - id: hi1
+    language: hinglish
+    schema: AgentChoice
+    text: Kal Mumbai mein mausam kaisa rahega?
+    expected: {next: research}
+  - id: hi2
+    language: hinglish
+    schema: AgentChoice
+    text: Mere tasks mein doodh kharidna daal do.
+    expected: {next: productivity}
+  - id: hi3
+    language: hinglish
+    schema: AgentChoice
+    text: Parso mera schedule kya hai?
+    expected: {next: calendar}
+  - id: hi4
+    language: hinglish
+    schema: EventDetails
+    text: Kal subah 10 baje Rahul ke saath meeting daal do.
+    expected: {date: "2026-11-13", time: "10:00"}
+  - id: hi5
+    language: hinglish
+    schema: EventDetails
+    text: 25 November ko shaam 6 baje Priya ka birthday dinner hai, calendar mein daal do.
+    expected: {date: "2026-11-25", time: "18:00"}
