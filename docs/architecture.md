@@ -158,6 +158,8 @@ class LeoState(TypedDict):
 
 Each specialist is a LangGraph ReAct sub-graph (`create_react_agent`) with its own tools and prompt.
 
+**Decision (M1.4), replaces the line above:** each specialist is a small loop on the LLM gateway's schema-checked JSON actions (`{tool, args}` or `{done, summary}`, up to `agent.max_steps`) instead of `create_react_agent`, so every tool call uses Ollama's `format` (§6.6) and keeps the gateway's Groq fallback triggers (§6.1).
+
 ### 4.3 Edges
 
 - `START → input_guard → ml_classify → memory_recall` (or `input_guard → END` with a refusal if blocked)

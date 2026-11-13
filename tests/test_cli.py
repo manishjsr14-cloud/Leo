@@ -62,6 +62,25 @@ def test_split_cloud_prefix():
     assert cli.split_cloud_prefix("cloudy today?") == ("cloudy today?", False)
 
 
+# A timer started by start_timer prints its label when it runs out.
+def test_timer_ringer_prints_when_done():
+    started = []
+
+    # Stands in for threading.Timer: records the timer and fires it on start().
+    class FakeTimer:
+        def __init__(self, seconds, fn):
+            self.seconds, self.fn, self.daemon = seconds, fn, False
+
+        def start(self):
+            started.append(self)
+            self.fn()
+
+    printed = []
+    cli.timer_ringer(printed.append, make_timer=FakeTimer)(600, "chai")
+    assert started[0].seconds == 600 and started[0].daemon is True
+    assert printed == ["\n⏰ Timer 'chai' done"]
+
+
 # If no model can answer, the CLI says so and keeps running.
 def test_llm_unavailable_keeps_loop_running():
     def failing_chat(messages, output_model=None, force_cloud=False):

@@ -6,16 +6,24 @@
 A message starting with "use cloud" sends only that turn to Groq.
 Type "exit" or "quit" (or press Ctrl+C) to stop. The conversation lives in
 memory only; saving it across restarts comes with checkpointing in M2.4.
+The productivity agent keeps tasks and notes in leo_data/leo.db.
 """
 
 import argparse
 import logging
+import threading
 from collections.abc import Callable
 
 from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
 
+from leo.agents.productivity import productivity_agent
+from leo.config import load_config
 from leo.graph.builder import build_graph
+from leo.llm import gateway
 from leo.llm.gateway import LLMUnavailable
+from leo.memory.store import open_db
+from leo.tools.real.productivity import real_productivity_tools
+from leo.tools.registry import by_name
 
 CLOUD_PREFIX = "use cloud"
 EXIT_WORDS = {"exit", "quit"}
@@ -39,6 +47,27 @@ def run_turn(
     return out["messages"][-1], out["messages"]
 
 
+# Return a schedule(seconds, label) function for start_timer: it prints a line
+# when the timer is up. Timers live only while the CLI runs (saved ones: M2.7).
+def timer_ringer(output_fn: Callable[[str], None], make_timer=threading.Timer):
+    # Start a background timer that prints the label when it runs out.
+    def schedule(seconds: float, label: str) -> None:
+        timer = make_timer(seconds, lambda: output_fn(f"\n⏰ Timer '{label}' done"))
+        timer.daemon = True
+        timer.start()
+
+    return schedule
+
+
+# The real graph: the productivity agent with real tools on leo_data/leo.db.
+def default_graph(output_fn: Callable[[str], None]):
+    config = load_config()
+    conn = open_db(config.storage.resolved_db_path())
+    tools = by_name(real_productivity_tools(conn, schedule=timer_ringer(output_fn)))
+    agent = productivity_agent(gateway.chat, tools, config.agent.max_steps)
+    return build_graph(agents={"productivity": agent}, config=config)
+
+
 # Read --cloud from the command line.
 def parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(prog="python -m leo.cli", description="Chat with Leo.")
@@ -54,7 +83,7 @@ def main(
     graph=None,
 ) -> None:
     args = parse_args(argv)
-    graph = graph or build_graph()
+    graph = graph or default_graph(output_fn)
     history: list[AnyMessage] = []
     output_fn("Leo is ready. Type 'exit' to stop." + (" (cloud mode)" if args.cloud else ""))
     while True:
