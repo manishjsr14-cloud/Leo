@@ -71,6 +71,8 @@ Read: §4, §6, §9 (tool table), §15.
 | M1.9 | **Tracing.** One Langfuse trace per request with spans per node, LLM call and tool call; prompt and model version tags. | `leo/ops/tracing.py` | A CLI request shows as one trace in Langfuse |
 | M1.10 | **First eval set.** 12 scenarios in `evals/scenarios/` (routing + tool name + key args), run on mock tools. Commit scenarios before running. | `evals/run_eval.py` | Report file written to `evals/reports/`; numbers reported as they are |
 
+**Order change (2026-11-13):** M1.9 (tracing) is done right after M1.4 and before M1.5, on purpose, so every later task is traced from the start. The task numbers stay as they are.
+
 **Note for M1.1 (from Phase 0 setup):** `qwen3:4b` runs in thinking mode by default, which is slow. The gateway must send `think=false` on every request to the local model and strip any leftover `<think>...</think>` text from replies. Add one test for each: (1) every request built for Ollama carries `think=false`; (2) a reply containing `<think>...</think>` comes back without it.
 
 **M1 exit check:** the cross-agent example in §4.5 (weather → calendar) runs end to end in the CLI on mock calendar, on the local model.
