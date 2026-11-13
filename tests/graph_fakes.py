@@ -34,7 +34,8 @@ class FakeChat:
         reply = self.replies.pop(0) if len(self.replies) > 1 else self.replies[0]
         provider = "groq" if force_cloud else "ollama"
         if isinstance(reply, dict) and output_model is not None:
-            return llm_result(json.dumps(reply), output_model(**reply), provider=provider)
+            return llm_result(json.dumps(reply), output_model.model_validate(reply),
+                              provider=provider)
         if reply is None:
             return llm_result("not json", valid=False, provider=provider)
         return llm_result(str(reply), provider=provider)

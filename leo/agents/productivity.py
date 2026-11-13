@@ -4,6 +4,7 @@ A small loop on the gateway's schema-checked JSON actions (not create_react_agen
 see section 4.2). Each LLM reply is either
   {"tool": "<name>", "args": {...}}   -> run that tool, show the model the result
   {"done": true, "summary": "..."}    -> finished, hand back to the supervisor
+The first reply must be a tool call (the supervisor only sends work here).
 The loop stops after agent.max_steps LLM replies. Tool errors are shown to the
 model so it can try again; they never crash the graph. 🔴 tools are always
 refused here (call_tool without approved=True); approval arrives in M2.5.
@@ -11,10 +12,10 @@ refused here (call_tool without approved=True); approval arrives in M2.5.
 
 import json
 from collections.abc import Callable
-from typing import Any, Literal
+from typing import Any, Literal, Union
 
 from langchain_core.runnables import RunnableConfig
-from pydantic import BaseModel, ValidationError, create_model, model_validator
+from pydantic import BaseModel, RootModel, ValidationError, create_model
 
 from leo.graph.builder import cloud_requested
 from leo.graph.state import LeoState, chat_messages
@@ -36,27 +37,27 @@ SYSTEM_PROMPT = (
 )
 
 
-class AgentStep(BaseModel):
-    """One LLM reply in the loop: a tool call, or done with a summary."""
+class Done(BaseModel):
+    """The reply that ends the loop, with a short summary for the responder."""
 
-    tool: str | None = None
-    args: dict[str, Any] = {}
-    done: bool = False
-    summary: str = ""
-
-    # A reply must either name a tool or say it is done.
-    @model_validator(mode="after")
-    def tool_or_done(self):
-        if not self.done and self.tool is None:
-            raise ValueError("give a tool, or done: true")
-        return self
+    done: Literal[True]
+    summary: str
 
 
-# The step schema for these tools: `tool` may only be one of their names,
-# so Ollama's structured output cannot invent a tool.
-def step_model(tools: dict[str, Tool]) -> type[AgentStep]:
-    names = Literal[tuple(tools)]  # type: ignore[valid-type]
-    return create_model("AgentStep", __base__=AgentStep, tool=(names | None, None))
+# The step schema for these tools: one option per tool, each with that tool's
+# own required, typed arguments, plus Done when allow_done. Ollama's structured
+# output then cannot invent a tool or leave out its arguments (an open "args"
+# object let the model reply {"tool": "add_task"} with no args; see the first
+# M1.4 report). The first step leaves Done out: the model said "done" without
+# calling any tool, so the agent must act before it may finish.
+def step_model(tools: dict[str, Tool], allow_done: bool = True) -> type[RootModel]:
+    options = [
+        create_model(f"Call_{name}", tool=(Literal[name], ...), args=(tool.args_model, ...))
+        for name, tool in tools.items()
+    ]
+    if allow_done:
+        options.append(Done)
+    return RootModel[Union[tuple(options)]]  # noqa: UP007
 
 
 # One line per tool for the prompt: name, description and its arguments.
@@ -87,17 +88,19 @@ def run_agent(state: LeoState, chat: Callable, tools: dict[str, Tool],
     task = (state.get("plan") or [""])[-1]
     prompt = SYSTEM_PROMPT.format(tools=describe_tools(tools), task=task)
     messages = chat_messages(prompt, state)
-    schema = step_model(tools)
+    first_step, later_steps = step_model(tools, allow_done=False), step_model(tools)
     steps: list[dict] = []
-    for _ in range(max_steps):
+    for number in range(max_steps):
+        schema = first_step if number == 0 else later_steps
         result = chat(messages, schema, force_cloud)
         if not result.valid:
             return {"steps": steps, "summary": "", "stopped": "invalid_output"}
-        action = result.parsed
-        if action.done:
+        action = result.parsed.root
+        if isinstance(action, Done):
             return {"steps": steps, "summary": action.summary, "stopped": "done"}
-        output = run_tool(tools, action.tool, action.args)
-        steps.append({"tool": action.tool, "args": action.args, "result": output})
+        args = action.args.model_dump(mode="json")
+        output = run_tool(tools, action.tool, args)
+        steps.append({"tool": action.tool, "args": args, "result": output})
         messages += [
             {"role": "assistant", "content": result.text},
             {"role": "user", "content": f"Result of {action.tool}: {json.dumps(output)}"},

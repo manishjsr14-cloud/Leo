@@ -104,6 +104,7 @@ def main() -> None:
               ""]
     lines = run_turns(config.agent.max_steps)
     report.write_text("\n".join(header + lines) + "\n", encoding="utf-8")
+    sys.stdout.reconfigure(encoding="utf-8")  # replies may contain emoji
     print(report.read_text(encoding="utf-8"))
 
 

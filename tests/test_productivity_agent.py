@@ -1,8 +1,10 @@
 """Tests for leo/agents/productivity.py with a fake LLM and mock tools."""
 
+import json
+
 from langchain_core.messages import HumanMessage
 
-from leo.agents.productivity import AgentStep, productivity_agent, run_agent, step_model
+from leo.agents.productivity import productivity_agent, run_agent, run_tool, step_model
 from leo.graph.builder import build_graph
 from leo.graph.supervisor import SupervisorDecision
 from leo.tools.mock.productivity import mock_productivity_tools
@@ -65,12 +67,21 @@ def test_step_limit_stops_a_loop():
 def test_tool_errors_go_back_to_the_model():
     log, tools = fresh()
     chat = FakeChat({"tool": "complete_task", "args": {"task_id": 99}},
-                    {"tool": "add_task", "args": {"title": "x", "priority": 1}},
                     {"done": True, "summary": "Could not."})
     out = run_agent(state_for("complete task 99", "complete"), chat, tools, 4)
-    assert out["steps"][0]["result"] == {"error": "no task with id 99; use list_tasks for ids"}
-    assert "bad arguments" in out["steps"][1]["result"]["error"]
-    assert [c.tool for c in log] == ["complete_task"]  # the bad add_task never ran
+    error = {"error": "no task with id 99; use list_tasks for ids"}
+    assert out["steps"][0]["result"] == error
+    assert json.dumps(error) in chat.calls[1]["messages"][-1]["content"]
+    assert [c.tool for c in log] == ["complete_task"]
+
+
+# run_tool turns bad arguments and unknown tools into errors, never exceptions.
+def test_run_tool_returns_errors_instead_of_raising():
+    log, tools = fresh()
+    bad = run_tool(tools, "add_task", {"title": "x", "priority": 1})
+    assert bad["error"].startswith("bad arguments: priority")
+    assert "no tool named" in run_tool(tools, "delete_everything", {})["error"]
+    assert log == []
 
 
 def test_invalid_llm_output_stops_without_running_tools():
@@ -80,15 +91,26 @@ def test_invalid_llm_output_stops_without_running_tools():
     assert log == []
 
 
-# The schema only allows real tool names, and a reply needs a tool or done.
-def test_step_schema_limits_tool_names():
+# The schema allows only real tools, each with its own required arguments.
+def test_step_schema_requires_real_tools_and_their_args():
     _, tools = fresh()
     schema = step_model(tools)
-    assert issubclass(schema, AgentStep)
-    assert set(schema.model_json_schema()["properties"]["tool"]["anyOf"][0]["enum"]) == set(tools)
-    for bad in ['{"tool": "delete_everything"}', '{"args": {}}']:
-        assert not _valid(schema, bad)
+    for bad in ['{"tool": "delete_everything", "args": {}}',
+                '{"tool": "add_task"}',  # the first real run's failure: no args
+                '{"tool": "add_task", "args": {}}',
+                '{"tool": "add_task", "args": {"title": "milk", "approved": true}}',
+                '{"args": {}}']:
+        assert not _valid(schema, bad), bad
+    assert _valid(schema, '{"tool": "add_task", "args": {"title": "milk"}}')
     assert _valid(schema, '{"done": true, "summary": "ok"}')
+
+
+# The first step may not say done: the agent must call a tool before finishing.
+def test_first_step_schema_has_no_done():
+    _, tools = fresh()
+    first = step_model(tools, allow_done=False)
+    assert not _valid(first, '{"done": true, "summary": "Added milk."}')
+    assert _valid(first, '{"tool": "calculate", "args": {"expression": "2+2"}}')
 
 
 # True when `text` passes the schema.
