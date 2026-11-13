@@ -1,14 +1,18 @@
 """M1.4 real productivity check. Runs 4 fixed turns through the real graph with
-the real LLM gateway and the MOCK productivity tools, and writes a new report:
-tool calls, LLM calls (by node, with provider) and wall time per turn.
+the real LLM gateway and the REAL productivity tools on an empty temporary
+database (never leo_data/), and writes a new report: tool calls, LLM calls
+(by node, with provider), wall time per turn, and the full tasks table at the end.
 
   python -m evals.m1_4_cli_check evals/reports/m1.4_cli_check_<date>.md
 
-Mock tools only (AGENTS.md): no database, no leo_data/, no personal data.
-The mock task list always holds "Buy milk" (id 1) and "Pay electricity bill" (id 2).
+Reports run 1 and 2 used the mock tools; from run 3 the real tools on a
+throwaway database are used (as agreed for M1.4). No personal data is touched.
+Timers are not rung (no schedule function is passed).
 """
 
+import sqlite3
 import sys
+import tempfile
 import time
 from datetime import datetime
 from pathlib import Path
@@ -20,7 +24,9 @@ from leo.graph.builder import build_graph
 from leo.graph.supervisor import SupervisorDecision
 from leo.llm import gateway
 from leo.llm.gateway import LLMUnavailable
-from leo.tools.mock.productivity import mock_productivity_tools
+from leo.memory.store import open_db
+from leo.tools.base import Tool, ToolCall, ToolError
+from leo.tools.real.productivity import real_productivity_tools
 from leo.tools.registry import by_name
 
 # Fixed before the run: add a task, a percentage, a two-step task, Hinglish.
@@ -41,7 +47,7 @@ class CountingChat:
     # Call the real gateway and note "<node>:<provider>" for this call.
     def __call__(self, messages, output_model=None, force_cloud=False):
         result = gateway.chat(messages, output_model, force_cloud)
-        if output_model is SupervisorDecision:
+        if isinstance(output_model, type) and issubclass(output_model, SupervisorDecision):
             node = "supervisor"
         elif output_model is None:
             node = "responder"
@@ -52,10 +58,35 @@ class CountingChat:
         return result
 
 
-# Run the turns as one conversation and return the report lines.
-def run_turns(max_steps: int) -> list[str]:
+# Wrap a real tool so every call (and any ToolError) is added to `log`.
+def logged(tool: Tool, log: list[ToolCall]) -> Tool:
+    # Run the real function and record the call.
+    def run(args):
+        try:
+            result = tool.fn(args)
+        except ToolError as error:
+            result = {"error": str(error)}
+            log.append(ToolCall(tool=tool.name, args=args.model_dump(mode="json"), result=result))
+            raise
+        log.append(ToolCall(tool=tool.name, args=args.model_dump(mode="json"), result=result))
+        return result
+    return tool.model_copy(update={"fn": run})
+
+
+# The whole tasks table as markdown rows.
+def tasks_table(conn: sqlite3.Connection) -> list[str]:
+    rows = conn.execute("SELECT id, title, done, created_at, done_at FROM tasks ORDER BY id")
+    lines = ["| id | title | done | created_at | done_at |", "|---|---|---|---|---|"]
+    lines += [f"| {r['id']} | {r['title']} | {r['done']} | {r['created_at']} | {r['done_at']} |"
+              for r in rows]
+    return lines
+
+
+# Run the turns as one conversation on `conn` and return the report lines.
+def run_turns(max_steps: int, conn: sqlite3.Connection) -> list[str]:
     chat, log = CountingChat(), []
-    agent = productivity_agent(chat, by_name(mock_productivity_tools(log)), max_steps)
+    tools = by_name([logged(t, log) for t in real_productivity_tools(conn)])
+    agent = productivity_agent(chat, tools, max_steps)
     graph = build_graph(chat, agents={"productivity": agent})
     history: list = []
     rows, details = [], []
@@ -87,6 +118,10 @@ def run_turns(max_steps: int) -> list[str]:
         "## Details",
         "",
         *details,
+        "## Tasks table at the end",
+        "The database was empty before turn 1.",
+        "",
+        *tasks_table(conn),
     ]
 
 
@@ -100,9 +135,13 @@ def main() -> None:
     header = [f"# M1.4 productivity check — {stamp}",
               (f"Local model: {config.llm.primary.model}. "
                f"Fallback: {config.llm.fallback.model}. max_hops: {config.graph.max_hops}. "
-               f"agent.max_steps: {config.agent.max_steps}. Agent: productivity on mock tools."),
+               f"agent.max_steps: {config.agent.max_steps}. "
+               "Agent: productivity on real tools, empty temporary database."),
               ""]
-    lines = run_turns(config.agent.max_steps)
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as folder:
+        conn = open_db(Path(folder) / "leo.db")
+        lines = run_turns(config.agent.max_steps, conn)
+        conn.close()
     report.write_text("\n".join(header + lines) + "\n", encoding="utf-8")
     sys.stdout.reconfigure(encoding="utf-8")  # replies may contain emoji
     print(report.read_text(encoding="utf-8"))
