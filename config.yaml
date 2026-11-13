@@ -39,3 +39,9 @@ server:
 
 graph:
   max_hops: 8                      # supervisor -> agent loops before forcing a reply (4.3)
+
+storage:
+  db_path: leo_data/leo.db         # relative to the project folder; git-ignored (section 7)
+
+agent:
+  max_steps: 4                     # tool steps inside one specialist run before it hands back

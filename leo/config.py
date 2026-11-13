@@ -79,6 +79,22 @@ class GraphConfig(Strict):
     max_hops: int = Field(ge=1)
 
 
+class StorageConfig(Strict):
+    """Where Leo's SQLite file lives. A relative path is under the project folder."""
+
+    db_path: Path
+
+    # The database path as an absolute path (relative paths start at the project folder).
+    def resolved_db_path(self) -> Path:
+        return self.db_path if self.db_path.is_absolute() else PROJECT_ROOT / self.db_path
+
+
+class AgentConfig(Strict):
+    """Limits for one specialist agent run."""
+
+    max_steps: int = Field(ge=1)
+
+
 class LeoConfig(Strict):
     """The whole config.yaml file."""
 
@@ -86,6 +102,8 @@ class LeoConfig(Strict):
     ollama_env: dict[str, str]
     server: ServerConfig
     graph: GraphConfig
+    storage: StorageConfig
+    agent: AgentConfig
 
 
 class Secrets(BaseSettings):
