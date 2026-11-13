@@ -31,3 +31,15 @@ def test_missing_primary_model_is_rejected(tmp_path: Path):
 
     with pytest.raises(ValidationError):
         load_config(broken)
+
+
+# The supervisor hop limit comes from config.yaml and must be at least 1.
+def test_max_hops_is_loaded_and_checked(tmp_path: Path):
+    assert load_config().graph.max_hops == 8
+    data = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
+    data["graph"]["max_hops"] = 0
+    broken = tmp_path / "config.yaml"
+    broken.write_text(yaml.safe_dump(data), encoding="utf-8")
+
+    with pytest.raises(ValidationError):
+        load_config(broken)

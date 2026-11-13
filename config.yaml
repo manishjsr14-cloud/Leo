@@ -36,3 +36,6 @@ server:
   host: tailscale                  # bind to the Tailscale interface only
   port: 8000
   auth: device_tokens
+
+graph:
+  max_hops: 8                      # supervisor -> agent loops before forcing a reply (4.3)

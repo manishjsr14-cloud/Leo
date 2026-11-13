@@ -73,12 +73,19 @@ class ServerConfig(Strict):
     auth: Literal["device_tokens"]
 
 
+class GraphConfig(Strict):
+    """Limits for the LangGraph agent loop."""
+
+    max_hops: int = Field(ge=1)
+
+
 class LeoConfig(Strict):
     """The whole config.yaml file."""
 
     llm: LLMConfig
     ollama_env: dict[str, str]
     server: ServerConfig
+    graph: GraphConfig
 
 
 class Secrets(BaseSettings):
