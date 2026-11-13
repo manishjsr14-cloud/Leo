@@ -38,11 +38,12 @@ def split_cloud_prefix(text: str) -> tuple[str, bool]:
 
 
 # Run one user message through the graph. Returns the reply and the new history.
+# Per-request fields (hops, plan, agent results, completed agents) start empty.
 def run_turn(
     graph, history: list[AnyMessage], text: str, force_cloud: bool
 ) -> tuple[AIMessage, list[AnyMessage]]:
     state = {"messages": [*history, HumanMessage(text)], "hops": 0, "plan": [],
-             "agent_results": {}}
+             "agent_results": {}, "completed_agents": []}
     out = graph.invoke(state, {"configurable": {"force_cloud": force_cloud}})
     return out["messages"][-1], out["messages"]
 

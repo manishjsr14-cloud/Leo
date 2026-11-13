@@ -4,6 +4,7 @@ import json
 
 from langchain_core.messages import HumanMessage
 
+from leo import cli
 from leo.agents.productivity import productivity_agent, run_agent, run_tool, step_model
 from leo.graph.builder import build_graph
 from leo.graph.supervisor import SupervisorDecision
@@ -105,12 +106,27 @@ def test_step_schema_requires_real_tools_and_their_args():
     assert _valid(schema, '{"done": true, "summary": "ok"}')
 
 
-# The first step may not say done: the agent must call a tool before finishing.
-def test_first_step_schema_has_no_done():
+# The first step may not say done (act or decline); later steps may not say cannot.
+def test_first_step_offers_cannot_instead_of_done():
     _, tools = fresh()
-    first = step_model(tools, allow_done=False)
+    first, later = step_model(tools, first_step=True), step_model(tools)
     assert not _valid(first, '{"done": true, "summary": "Added milk."}')
+    assert _valid(first, '{"cannot": true, "reason": "not my job"}')
     assert _valid(first, '{"tool": "calculate", "args": {"expression": "2+2"}}')
+    assert not _valid(later, '{"cannot": true, "reason": "not my job"}')
+
+
+# A misrouted request is declined: cannot comes back and no tool runs.
+def test_weather_request_returns_cannot_and_runs_no_tool():
+    log, tools = fresh()
+    chat = FakeChat({"cannot": True, "reason": "Weather is not a productivity task."})
+    node = productivity_agent(chat, tools, max_steps=4)
+    update = node(state_for("will it rain tomorrow", "check the weather"), {})
+    outcome = update["agent_results"]["productivity"]
+    assert outcome == {"steps": [], "summary": "Weather is not a productivity task.",
+                       "stopped": "cannot"}
+    assert update["completed_agents"] == ["productivity"]
+    assert log == [] and len(chat.calls) == 1
 
 
 # True when `text` passes the schema.
@@ -122,8 +138,9 @@ def _valid(schema, text: str) -> bool:
         return False
 
 
-# Whole graph: one supervisor call routes, the agent runs two tools, the next
-# supervisor call finishes, and the responder sees the agent's results.
+# Whole graph: one supervisor call routes, the agent runs two tools and says
+# done, the supervisor then finishes with no LLM call (no agent is left), and
+# the responder sees the agent's results.
 def test_graph_two_step_needs_no_extra_supervisor_call():
     log, tools = fresh()
     chat = FakeChat(
@@ -131,15 +148,40 @@ def test_graph_two_step_needs_no_extra_supervisor_call():
         {"tool": "list_tasks", "args": {}},
         {"tool": "complete_task", "args": {"task_id": 1}},
         {"done": True, "summary": "Marked Buy milk as done."},
-        {"next": "FINISH", "task": ""},
         "Done, Buy milk is ticked off.",
     )
     agent = productivity_agent(chat, tools, max_steps=4)
     out = build_graph(chat, agents={"productivity": agent}).invoke(
         {"messages": [HumanMessage("complete my milk task")], "hops": 0, "plan": []})
-    supervisor_calls = [c for c in chat.calls if c["output_model"] is SupervisorDecision]
-    assert len(supervisor_calls) == 2 and out["hops"] == 1
+    supervisor_calls = [c for c in chat.calls if _is_supervisor(c)]
+    assert len(supervisor_calls) == 1 and out["hops"] == 1
+    assert out["completed_agents"] == ["productivity"]
     assert [c.tool for c in log] == ["list_tasks", "complete_task"]
     responder_sees = " ".join(m["content"] for m in chat.calls[-1]["messages"])
     assert "Marked Buy milk as done." in responder_sees
     assert out["messages"][-1].content == "Done, Buy milk is ticked off."
+
+
+# True when a recorded fake LLM call came from the supervisor.
+def _is_supervisor(call) -> bool:
+    model = call["output_model"]
+    return isinstance(model, type) and issubclass(model, SupervisorDecision)
+
+
+# Two requests through the CLI's run_turn: each runs the tool exactly once,
+# and completed_agents starts empty again for the second request.
+def test_tools_run_once_per_request_across_turns():
+    log, tools = fresh()
+    route = {"next": "productivity", "task": "add the task"}
+    chat = FakeChat(
+        route, {"tool": "add_task", "args": {"title": "milk"}},
+        {"done": True, "summary": "Added milk."}, "Added milk.",
+        route, {"tool": "add_task", "args": {"title": "eggs"}},
+        {"done": True, "summary": "Added eggs."}, "Added eggs.",
+    )
+    graph = build_graph(chat, agents={"productivity": productivity_agent(chat, tools, 4)})
+    _, history = cli.run_turn(graph, [], "add milk to my tasks", False)
+    reply, _ = cli.run_turn(graph, history, "add eggs to my tasks", False)
+    assert [(c.tool, c.args["title"]) for c in log] == [("add_task", "milk"), ("add_task", "eggs")]
+    assert sum(_is_supervisor(c) for c in chat.calls) == 2
+    assert reply.content == "Added eggs."

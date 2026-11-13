@@ -1,9 +1,16 @@
 """Tests for the supervisor and responder nodes, using a fake LLM."""
 
+import pytest
 from langchain_core.messages import AIMessage, HumanMessage
+from pydantic import ValidationError
 
 from leo.graph.responder import responder_node
-from leo.graph.supervisor import FINISH, SupervisorDecision, supervisor_node
+from leo.graph.supervisor import (
+    FINISH,
+    SupervisorDecision,
+    decision_model,
+    supervisor_node,
+)
 from tests.graph_fakes import FakeChat
 
 STATE = {"messages": [HumanMessage("what is the weather?")], "hops": 0, "plan": []}
@@ -22,7 +29,7 @@ def test_request_uses_schema_and_lists_agents():
     chat = FakeChat({"next": FINISH, "task": ""})
     supervisor_node(STATE, chat, AGENTS, max_hops=8)
     call = chat.calls[0]
-    assert call["output_model"] is SupervisorDecision
+    assert issubclass(call["output_model"], SupervisorDecision)
     assert "research" in call["messages"][0]["content"]
     assert call["messages"][-1] == {"role": "user", "content": "what is the weather?"}
 
@@ -33,10 +40,32 @@ def test_finish_choice():
     assert supervisor_node(STATE, chat, AGENTS, max_hops=8) == {"next_agent": FINISH}
 
 
-# An agent name that does not exist finishes instead of routing anywhere.
-def test_unknown_agent_finishes():
-    chat = FakeChat({"next": "astrology", "task": "read stars"})
-    assert supervisor_node(STATE, chat, AGENTS, max_hops=8) == {"next_agent": FINISH}
+# The schema offers only the given agents and FINISH, so an unknown name is invalid.
+def test_schema_offers_only_given_agents_and_finish():
+    schema = decision_model(["research", "productivity"])
+    assert schema.model_validate({"next": "research", "task": "x"}).next == "research"
+    assert schema.model_validate({"next": FINISH, "task": ""}).next == FINISH
+    with pytest.raises(ValidationError):
+        schema.model_validate({"next": "astrology", "task": "read stars"})
+
+
+# An agent that finished this request is left out of the schema and the prompt.
+def test_completed_agent_is_not_offered_again():
+    chat = FakeChat({"next": "research", "task": "x"})
+    state = {**STATE, "completed_agents": ["productivity"]}
+    supervisor_node(state, chat, ["productivity", "research"], max_hops=8)
+    schema = chat.calls[0]["output_model"]
+    with pytest.raises(ValidationError):
+        schema.model_validate({"next": "productivity", "task": "again"})
+    assert "productivity" not in chat.calls[0]["messages"][0]["content"]
+
+
+# When every agent has finished this request, FINISH comes with no LLM call.
+def test_all_agents_completed_finishes_without_llm_call():
+    chat = FakeChat({"next": "research", "task": "again"})
+    state = {**STATE, "completed_agents": ["research"]}
+    assert supervisor_node(state, chat, AGENTS, max_hops=8) == {"next_agent": FINISH}
+    assert chat.calls == []
 
 
 # A reply that fails the schema finishes.

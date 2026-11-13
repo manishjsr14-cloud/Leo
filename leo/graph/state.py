@@ -18,6 +18,7 @@ class LeoState(TypedDict, total=False):
     plan: list[str]  # one task per supervisor hop, in order
     agent_results: dict[str, Any]  # what each agent found, by agent name
     hops: int  # supervisor -> agent hops so far in this request
+    completed_agents: list[str]  # agents that finished this request; never re-chosen
 
 
 # Turn the state into the plain message list the LLM gateway expects:
