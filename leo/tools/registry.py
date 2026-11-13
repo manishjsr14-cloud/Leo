@@ -5,11 +5,13 @@ the tool's schema, and refuses a 🔴 tool unless Leo's own code passes
 approved=True. The approval never comes from the model's tool-call arguments:
 those are checked against a schema that forbids unknown keys like "approved".
 The full action rails (rate limits, taint tracking) move to
-leo/guardrails/action_rails.py in a later task.
+leo/guardrails/action_rails.py in a later task. Every call is traced as a
+"tool" span: name and tier always; arguments and result only with include_text.
 """
 
 from typing import Any
 
+from leo.ops import tracing
 from leo.tools.base import Tier, Tool, ToolCall
 from leo.tools.mock.calendar import mock_calendar_tools
 from leo.tools.mock.productivity import mock_productivity_tools
@@ -45,9 +47,14 @@ def call_tool(
     tools: dict[str, Tool], name: str, args: dict[str, Any], *, approved: bool = False
 ) -> Any:
     tool = tools.get(name)
-    if tool is None:
-        raise UnknownToolError(f"no tool named {name!r}")
-    checked = tool.args_model.model_validate(args)
-    if tool.tier is Tier.CONFIRM and approved is not True:
-        raise ApprovalRequiredError(f"{name} needs human approval")
-    return tool.fn(checked)
+    tier = tool.tier.value if tool is not None else None
+    with tracing.span(f"tool:{name}", "tool", input=tracing.text(args),
+                      metadata={"tool": name, "tier": tier}) as span:
+        if tool is None:
+            raise UnknownToolError(f"no tool named {name!r}")
+        checked = tool.args_model.model_validate(args)
+        if tool.tier is Tier.CONFIRM and approved is not True:
+            raise ApprovalRequiredError(f"{name} needs human approval")
+        result = tool.fn(checked)
+        span.update(output=tracing.text(result))
+        return result

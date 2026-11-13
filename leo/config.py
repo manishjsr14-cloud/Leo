@@ -95,6 +95,13 @@ class AgentConfig(Strict):
     max_steps: int = Field(ge=1)
 
 
+class TracingConfig(Strict):
+    """Langfuse tracing. Without include_text, traces hold no message text."""
+
+    include_text: bool = False
+    timeout_s: int = Field(default=5, ge=1)
+
+
 class LeoConfig(Strict):
     """The whole config.yaml file."""
 
@@ -104,6 +111,7 @@ class LeoConfig(Strict):
     graph: GraphConfig
     storage: StorageConfig
     agent: AgentConfig
+    tracing: TracingConfig
 
 
 class Secrets(BaseSettings):

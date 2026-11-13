@@ -18,3 +18,15 @@ def leo_data_is_not_created():
     yield
     if not existed_before:
         assert not LEO_DATA.exists(), "the test run created leo_data/"
+
+
+# Every test starts and ends with tracing off (the do-nothing tracer).
+@pytest.fixture(autouse=True)
+def tracing_off():
+    from leo.ops import tracing
+
+    tracing.set_tracer(tracing.NullTracer())
+    tracing.reset_warning()
+    yield
+    tracing.set_tracer(tracing.NullTracer())
+    tracing.reset_warning()

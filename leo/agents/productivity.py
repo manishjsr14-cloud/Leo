@@ -22,6 +22,7 @@ from pydantic import BaseModel, RootModel, ValidationError, create_model
 
 from leo.graph.builder import cloud_requested
 from leo.graph.state import LeoState, chat_messages
+from leo.ops import tracing
 from leo.tools.base import Tool, ToolError, plain
 from leo.tools.registry import ApprovalRequiredError, UnknownToolError, call_tool
 
@@ -40,6 +41,9 @@ SYSTEM_PROMPT = (
     "copied exactly; never work out numbers yourself. Never repeat a tool call that "
     "already succeeded.\nYour task: {task}"
 )
+
+
+VERSION = tracing.prompt_version(SYSTEM_PROMPT)  # tags this agent's spans
 
 
 class Done(BaseModel):
@@ -96,17 +100,23 @@ def run_agent(state: LeoState, chat: Callable, tools: dict[str, Tool],
     messages = chat_messages(prompt, state)
     first_step, later_steps = step_model(tools, first_step=True), step_model(tools)
     steps: list[dict] = []
-    for number in range(max_steps):
-        schema = first_step if number == 0 else later_steps
-        result = chat(messages, schema, force_cloud)
-        if not result.valid:
-            return {"steps": steps, "summary": "", "stopped": "invalid_output"}
-        action = result.parsed.root
-        if isinstance(action, Done):
-            return {"steps": steps, "summary": action.summary, "stopped": "done"}
-        # Unset optional arguments (None) are left out, e.g. title when task_id is given.
-        args = plain(action.args)
-        output = run_tool(tools, action.tool, args)
+    # Each step is one span: its LLM call and tool call are nested inside it.
+    for number in range(1, max_steps + 1):
+        tags = {"step": number, "prompt_version": VERSION}
+        with tracing.span(f"step {number}", "span", metadata=tags) as span:
+            result = chat(messages, first_step if number == 1 else later_steps, force_cloud)
+            if not result.valid:
+                span.update(metadata={**tags, "action": "invalid_output"})
+                return {"steps": steps, "summary": "", "stopped": "invalid_output"}
+            action = result.parsed.root
+            if isinstance(action, Done):
+                span.update(metadata={**tags, "action": "done"})
+                return {"steps": steps, "summary": action.summary, "stopped": "done"}
+            # Unset optional arguments (None) are left out, e.g. title when task_id is given.
+            args = plain(action.args)
+            output = run_tool(tools, action.tool, args)
+            failed = isinstance(output, dict) and "error" in output
+            span.update(metadata={**tags, "action": action.tool, "tool_ok": not failed})
         steps.append({"tool": action.tool, "args": args, "result": output})
         messages += [
             {"role": "assistant", "content": result.text},

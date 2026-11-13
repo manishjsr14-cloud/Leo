@@ -45,3 +45,7 @@ storage:
 
 agent:
   max_steps: 4                     # tool steps inside one specialist run before it hands back
+
+tracing:                           # Langfuse Cloud (section 13.2); keys and host in .env
+  include_text: false              # false: no message text, tool args or replies in traces
+  timeout_s: 5                     # startup check and send timeout; tracing turns off if Langfuse is down

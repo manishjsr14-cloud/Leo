@@ -7,21 +7,27 @@ A message starting with "use cloud" sends only that turn to Groq.
 Type "exit" or "quit" (or press Ctrl+C) to stop. The conversation lives in
 memory only; saving it across restarts comes with checkpointing in M2.4.
 The productivity agent keeps tasks and notes in leo_data/leo.db.
+Each message is one trace in Langfuse when the keys are set (section 13.2);
+the tracer is flushed on exit so the last request is not lost.
 """
 
 import argparse
 import logging
 import threading
+import uuid
 from collections.abc import Callable
 
 from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
 
 from leo.agents.productivity import productivity_agent
-from leo.config import load_config
+from leo.config import load_config, load_secrets
 from leo.graph.builder import build_graph
 from leo.llm import gateway
 from leo.llm.gateway import LLMUnavailable
 from leo.memory.store import open_db
+from leo.ops import tracing
+from leo.ops.trace_tags import request_tags
+from leo.ops.tracing_setup import setup_tracing
 from leo.tools.real.productivity import real_productivity_tools
 from leo.tools.registry import by_name
 
@@ -37,14 +43,17 @@ def split_cloud_prefix(text: str) -> tuple[str, bool]:
     return text[len(CLOUD_PREFIX):].lstrip(" :,-"), True
 
 
-# Run one user message through the graph. Returns the reply and the new history.
-# Per-request fields (hops, plan, agent results, completed agents) start empty.
+# Run one user message through the graph as one trace. Returns the reply and
+# the new history. Per-request fields (hops, plan, agent results, completed
+# agents) start empty.
 def run_turn(
-    graph, history: list[AnyMessage], text: str, force_cloud: bool
+    graph, history: list[AnyMessage], text: str, force_cloud: bool, session_id: str = ""
 ) -> tuple[AIMessage, list[AnyMessage]]:
     state = {"messages": [*history, HumanMessage(text)], "hops": 0, "plan": [],
              "agent_results": {}, "completed_agents": []}
-    out = graph.invoke(state, {"configurable": {"force_cloud": force_cloud}})
+    tags, metadata = request_tags()
+    with tracing.request_trace(session_id, tags, metadata):
+        out = graph.invoke(state, {"configurable": {"force_cloud": force_cloud}})
     return out["messages"][-1], out["messages"]
 
 
@@ -76,7 +85,8 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
-# The chat loop. input_fn, output_fn and graph can be swapped in tests.
+# The chat loop. input_fn, output_fn and graph can be swapped in tests;
+# with a test graph, tracing is left as the test set it up.
 def main(
     argv: list[str] | None = None,
     input_fn: Callable[[str], str] = input,
@@ -84,9 +94,19 @@ def main(
     graph=None,
 ) -> None:
     args = parse_args(argv)
-    graph = graph or default_graph(output_fn)
+    if graph is None:
+        setup_tracing(load_config(), load_secrets())
+        graph = default_graph(output_fn)
+    try:
+        chat_loop(graph, args.cloud, uuid.uuid4().hex, input_fn, output_fn)
+    finally:
+        tracing.flush()  # send the last request's spans before exiting
+
+
+# Read lines and answer them until exit, end of input or Ctrl+C.
+def chat_loop(graph, cloud: bool, session_id: str, input_fn, output_fn) -> None:
     history: list[AnyMessage] = []
-    output_fn("Leo is ready. Type 'exit' to stop." + (" (cloud mode)" if args.cloud else ""))
+    output_fn("Leo is ready. Type 'exit' to stop." + (" (cloud mode)" if cloud else ""))
     while True:
         try:
             line = input_fn("You: ").strip()
@@ -98,7 +118,7 @@ def main(
         if not text:
             continue
         try:
-            reply, history = run_turn(graph, history, text, args.cloud or cloud_turn)
+            reply, history = run_turn(graph, history, text, cloud or cloud_turn, session_id)
         except LLMUnavailable as error:
             output_fn(f"Leo: sorry, no model could answer ({error}).")
             continue

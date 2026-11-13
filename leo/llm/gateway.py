@@ -3,7 +3,7 @@
 Fallback triggers (section 6.1): connection error, model not found, timeouts,
 out of memory or other server errors, a reply that fails the schema twice,
 and the user asking for the cloud. The desktop tier exists only in config.yaml
-for now; this gateway never calls it.
+for now; this gateway never calls it. Every attempt is traced (llm_trace.py).
 """
 
 import logging
@@ -15,6 +15,7 @@ from pydantic import BaseModel, ValidationError
 from leo.config import LeoConfig, load_config, load_secrets
 from leo.llm import clients
 from leo.llm.clients import LLMTimeout, StreamResult
+from leo.llm.llm_trace import llm_span, record_error, record_result
 
 log = logging.getLogger("leo.llm")
 
@@ -80,13 +81,16 @@ def _to_result(
 def _ask_local(config: LeoConfig, client: Any, messages: list[dict], output_model):
     cfg = config.llm.primary
     result = None
-    for _ in range(cfg.max_bad_outputs):
-        try:
-            request = clients.ollama_request(cfg, messages, output_model)
-            stream = clients.run_stream(client, request, cfg.total_timeout_s)
-        except (openai.APIError, LLMTimeout) as error:
-            return result, fallback_reason(error)
-        result = _to_result(stream, "ollama", cfg.model, output_model)
+    for attempt in range(1, cfg.max_bad_outputs + 1):
+        with llm_span("ollama", cfg.model, messages, output_model, attempt) as (span, started):
+            try:
+                request = clients.ollama_request(cfg, messages, output_model)
+                stream = clients.run_stream(client, request, cfg.total_timeout_s)
+            except (openai.APIError, LLMTimeout) as error:
+                record_error(span, fallback_reason(error))
+                return result, fallback_reason(error)
+            result = _to_result(stream, "ollama", cfg.model, output_model)
+            record_result(span, started, result)
         if result.valid:
             return result, None
     return result, "bad_output"
@@ -101,12 +105,15 @@ def _ask_groq(config: LeoConfig, client: Any, messages: list[dict], output_model
         if not key:
             raise LLMUnavailable("GROQ_API_KEY is not set in .env")
         client = clients.groq_client(cfg, key)
-    try:
-        request = clients.groq_request(cfg, messages, output_model)
-        stream = clients.run_stream(client, request, cfg.timeout_s)
-    except (openai.APIError, LLMTimeout) as error:
-        raise LLMUnavailable(f"Groq failed: {fallback_reason(error)}") from error
-    result = _to_result(stream, "groq", cfg.model, output_model)
+    with llm_span("groq", cfg.model, messages, output_model, 1) as (span, started):
+        try:
+            request = clients.groq_request(cfg, messages, output_model)
+            stream = clients.run_stream(client, request, cfg.timeout_s)
+        except (openai.APIError, LLMTimeout) as error:
+            record_error(span, fallback_reason(error))
+            raise LLMUnavailable(f"Groq failed: {fallback_reason(error)}") from error
+        result = _to_result(stream, "groq", cfg.model, output_model)
+        record_result(span, started, result)
     if not result.valid:
         raise LLMUnavailable("Groq reply did not match the schema")
     return result
