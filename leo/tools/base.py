@@ -55,3 +55,9 @@ class ToolCall(BaseModel):
     tool: str
     args: dict[str, Any]
     result: Any
+
+
+# Checked arguments as plain JSON values, leaving out unset optional ones (None),
+# e.g. complete_task by id gives {"task_id": 1}, not {"task_id": 1, "title": None}.
+def plain(args: ToolArgs) -> dict[str, Any]:
+    return args.model_dump(mode="json", exclude_none=True)

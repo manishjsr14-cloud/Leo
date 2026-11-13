@@ -21,7 +21,7 @@ from leo.tools.productivity_args import (
     ListTasksArgs,
     StartTimerArgs,
 )
-from leo.tools.productivity_tools import make_tools
+from leo.tools.productivity_tools import make_tools, pick_task_by_title
 
 
 # The current time with the laptop's time zone (IST on Leo's laptop).
@@ -54,17 +54,24 @@ def real_productivity_tools(
         rows = conn.execute(f"SELECT id, title, done FROM tasks {where} ORDER BY id")
         return [_task(r) for r in rows]
 
-    # Mark one task done. Raises ToolError if the id does not exist.
+    # Mark one open task done, chosen by id or by title. Raises ToolError for an
+    # unknown id, an already-done task, or a title with no or several open matches.
     def complete_task(args: CompleteTaskArgs) -> dict:
-        row = conn.execute("SELECT id, title, done FROM tasks WHERE id = ?",
-                           (args.task_id,)).fetchone()
-        if row is None:
-            raise ToolError(f"no task with id {args.task_id}; use list_tasks for ids")
-        if not row["done"]:
-            conn.execute("UPDATE tasks SET done = 1, done_at = ? WHERE id = ?",
-                         (now().isoformat(), args.task_id))
-            conn.commit()
-        return {"id": row["id"], "title": row["title"], "done": True}
+        if args.task_id is not None:
+            row = conn.execute("SELECT id, title, done FROM tasks WHERE id = ?",
+                               (args.task_id,)).fetchone()
+            if row is None:
+                raise ToolError(f"no task with id {args.task_id}; use list_tasks for ids")
+            task = _task(row)
+            if task["done"]:
+                raise ToolError(f"task {task['id']} ({task['title']!r}) is already done")
+        else:
+            rows = conn.execute("SELECT id, title, done FROM tasks ORDER BY id")
+            task = pick_task_by_title([_task(r) for r in rows], args.title)
+        conn.execute("UPDATE tasks SET done = 1, done_at = ? WHERE id = ?",
+                     (now().isoformat(), task["id"]))
+        conn.commit()
+        return {**task, "done": True}
 
     # Save a note and return it.
     def add_note(args: AddNoteArgs) -> dict:

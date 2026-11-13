@@ -4,7 +4,7 @@ Shared by the real SQLite tools and the mock tools. Unknown keys are refused
 (ToolArgs uses extra="forbid").
 """
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from leo.tools.base import ToolArgs
 
@@ -22,9 +22,17 @@ class ListTasksArgs(ToolArgs):
 
 
 class CompleteTaskArgs(ToolArgs):
-    """Arguments for complete_task: the id from list_tasks."""
+    """Arguments for complete_task: exactly one of task_id or title."""
 
-    task_id: int = Field(ge=1)
+    task_id: int | None = Field(default=None, ge=1)
+    title: str | None = Field(default=None, min_length=1, max_length=200)
+
+    # Reject both or neither: the task is chosen by id or by title, never both.
+    @model_validator(mode="after")
+    def exactly_one(self):
+        if (self.task_id is None) == (self.title is None):
+            raise ValueError("give exactly one of task_id or title")
+        return self
 
 
 class AddNoteArgs(ToolArgs):

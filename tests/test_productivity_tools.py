@@ -110,3 +110,61 @@ def test_mocks_return_fixed_data_and_log_calls_and_errors():
         call_tool(tools, "complete_task", {"task_id": 99})
     assert [c.tool for c in log] == ["list_tasks", "complete_task", "complete_task"]
     assert log[2].result == {"error": "no task with id 99; use list_tasks for ids"}
+
+
+# Add one task per title, in order (ids 1, 2, 3, ...).
+def add_all(tools, *titles):
+    for title in titles:
+        call_tool(tools, "add_task", {"title": title})
+
+
+# The whole tasks table as (id, title, done) rows.
+def table(conn):
+    return [tuple(r) for r in conn.execute("SELECT id, title, done FROM tasks ORDER BY id")]
+
+
+def test_complete_by_title_one_match_marks_it_done(real):
+    tools, conn, _ = real
+    add_all(tools, "Buy Milk", "eggs")
+    assert call_tool(tools, "complete_task", {"title": "milk"}) == {
+        "id": 1, "title": "Buy Milk", "done": True}
+    assert table(conn) == [(1, "Buy Milk", 1), (2, "eggs", 0)]
+
+
+def test_complete_by_title_two_matches_lists_both_and_changes_nothing(real):
+    tools, conn, _ = real
+    add_all(tools, "milk", "eggs", "Milk for chai")
+    with pytest.raises(ToolError) as error:
+        call_tool(tools, "complete_task", {"title": "milk"})
+    message = str(error.value)
+    assert "2 open tasks match 'milk'" in message
+    assert "'id': 1" in message and "'id': 3" in message and "'id': 2" not in message
+    assert table(conn) == [(1, "milk", 0), (2, "eggs", 0), (3, "Milk for chai", 0)]
+
+
+def test_complete_by_title_no_match_changes_nothing(real):
+    tools, conn, _ = real
+    add_all(tools, "eggs")
+    with pytest.raises(ToolError, match="no open task matches 'milk'"):
+        call_tool(tools, "complete_task", {"title": "milk"})
+    assert table(conn) == [(1, "eggs", 0)]
+
+
+@pytest.mark.parametrize("args", [{"task_id": 1, "title": "milk"}, {}])
+def test_complete_needs_exactly_one_of_id_or_title(real, args):
+    tools, conn, _ = real
+    add_all(tools, "milk")
+    with pytest.raises(ValidationError, match="exactly one of task_id or title"):
+        call_tool(tools, "complete_task", args)
+    assert table(conn) == [(1, "milk", 0)]
+
+
+@pytest.mark.parametrize("args", [{"task_id": 1}, {"title": "milk"}])
+def test_completing_an_already_done_task_is_an_error(real, args):
+    tools, conn, _ = real
+    add_all(tools, "milk")
+    call_tool(tools, "complete_task", {"task_id": 1})
+    done_at = conn.execute("SELECT done_at FROM tasks WHERE id = 1").fetchone()[0]
+    with pytest.raises(ToolError, match="already done"):
+        call_tool(tools, "complete_task", args)
+    assert conn.execute("SELECT done_at FROM tasks WHERE id = 1").fetchone()[0] == done_at

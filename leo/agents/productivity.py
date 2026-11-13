@@ -22,7 +22,7 @@ from pydantic import BaseModel, RootModel, ValidationError, create_model
 
 from leo.graph.builder import cloud_requested
 from leo.graph.state import LeoState, chat_messages
-from leo.tools.base import Tool, ToolError
+from leo.tools.base import Tool, ToolError, plain
 from leo.tools.registry import ApprovalRequiredError, UnknownToolError, call_tool
 
 NAME = "productivity"
@@ -35,8 +35,8 @@ SYSTEM_PROMPT = (
     'tool, or {{"done": true, "summary": "<what you did and the results>"}} when '
     "finished.\n"
     'Rules: a task title is just the item, e.g. "milk" for "add milk to my tasks". '
-    "To complete a task named by the user, always call list_tasks first to find its "
-    "id, then complete_task. For any arithmetic call calculate with the user's expression "
+    'To complete a task by name, pass its title, e.g. complete_task(title="milk"). '
+    "For any arithmetic call calculate with the user's expression "
     "copied exactly; never work out numbers yourself. Never repeat a tool call that "
     "already succeeded.\nYour task: {task}"
 )
@@ -104,7 +104,8 @@ def run_agent(state: LeoState, chat: Callable, tools: dict[str, Tool],
         action = result.parsed.root
         if isinstance(action, Done):
             return {"steps": steps, "summary": action.summary, "stopped": "done"}
-        args = action.args.model_dump(mode="json")
+        # Unset optional arguments (None) are left out, e.g. title when task_id is given.
+        args = plain(action.args)
         output = run_tool(tools, action.tool, args)
         steps.append({"tool": action.tool, "args": args, "result": output})
         messages += [

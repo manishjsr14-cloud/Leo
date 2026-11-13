@@ -7,9 +7,9 @@ calculate uses the real calculator, because it is pure and has no side effects.
 import copy
 from datetime import datetime, timedelta
 
-from leo.tools.base import Tool, ToolArgs, ToolCall, ToolError
+from leo.tools.base import Tool, ToolArgs, ToolCall, ToolError, plain
 from leo.tools.calculator import CalculatorError, calculate
-from leo.tools.productivity_tools import make_tools
+from leo.tools.productivity_tools import make_tools, pick_task_by_title
 
 # Two fixed open tasks. list_tasks always returns these.
 FIXED_TASKS = [
@@ -31,15 +31,18 @@ def mock_productivity_tools(log: list[ToolCall]) -> list[Tool]:
             try:
                 result = fn(args)
             except ToolError as error:
-                log.append(ToolCall(tool=name, args=args.model_dump(mode="json"),
+                log.append(ToolCall(tool=name, args=plain(args),
                                     result={"error": str(error)}))
                 raise
-            log.append(ToolCall(tool=name, args=args.model_dump(mode="json"), result=result))
+            log.append(ToolCall(tool=name, args=plain(args), result=result))
             return result
         return run
 
-    # Mark a fixed task done, or fail like the real tool for an unknown id.
+    # Mark a fixed task done by id or title, failing like the real tool.
+    # Nothing is stored, so the fixed tasks are always open.
     def complete_task(args) -> dict:
+        if args.title is not None:
+            return {**pick_task_by_title(FIXED_TASKS, args.title), "done": True}
         for task in FIXED_TASKS:
             if task["id"] == args.task_id:
                 return {**task, "done": True}
