@@ -1,7 +1,8 @@
 """M1.4 real productivity check. Runs 4 fixed turns through the real graph with
 the real LLM gateway and the REAL productivity tools on an empty temporary
-database (never leo_data/), and writes a new report: tool calls, LLM calls
-(by node, with provider), wall time per turn, and the full tasks table at the end.
+database (never leo_data/), and writes a new report. Per turn: each agent
+step's reply, the stop reason, tool calls and results, LLM calls and time.
+It ends with the full tasks table and a PASS/FAIL verdict.
 
   python -m evals.m1_4_cli_check evals/reports/m1.4_cli_check_<date>.md
 
@@ -10,22 +11,26 @@ throwaway database are used (as agreed for M1.4). No personal data is touched.
 Timers are not rung (no schedule function is passed).
 """
 
-import sqlite3
 import sys
 import tempfile
 import time
 from datetime import datetime
 from pathlib import Path
 
+from evals.m1_4_check_helpers import (
+    CountingChat,
+    call_label,
+    logged,
+    recorded,
+    task_rows,
+    tasks_table,
+)
 from leo import cli
-from leo.agents.productivity import productivity_agent
+from leo.agents.productivity import NAME, productivity_agent
 from leo.config import load_config
 from leo.graph.builder import build_graph
-from leo.graph.supervisor import SupervisorDecision
-from leo.llm import gateway
 from leo.llm.gateway import LLMUnavailable
 from leo.memory.store import open_db
-from leo.tools.base import Tool, ToolCall, ToolError
 from leo.tools.real.productivity import real_productivity_tools
 from leo.tools.registry import by_name
 
@@ -37,61 +42,39 @@ TURNS = [
     "Chai ke liye 10 minute ka timer laga do",
 ]
 
-
-class CountingChat:
-    """Wraps gateway.chat and records which node called it and who answered."""
-
-    def __init__(self):
-        self.calls: list[str] = []
-
-    # Call the real gateway and note "<node>:<provider>" for this call.
-    def __call__(self, messages, output_model=None, force_cloud=False):
-        result = gateway.chat(messages, output_model, force_cloud)
-        if isinstance(output_model, type) and issubclass(output_model, SupervisorDecision):
-            node = "supervisor"
-        elif output_model is None:
-            node = "responder"
-        else:
-            node = "agent"
-        reason = f" ({result.fallback_reason})" if result.fallback_reason else ""
-        self.calls.append(f"{node}:{result.provider}{reason}")
-        return result
+# Pass rule, fixed before the run (report 4): the tools that succeed in each
+# turn must be exactly these, in this order; and at the end the tasks table
+# must hold exactly one task with "milk" in its title, with done = 1.
+EXPECTED_TOOLS = [["add_task"], ["calculate"], ["list_tasks", "complete_task"], ["start_timer"]]
 
 
-# Wrap a real tool so every call (and any ToolError) is added to `log`.
-def logged(tool: Tool, log: list[ToolCall]) -> Tool:
-    # Run the real function and record the call.
-    def run(args):
-        try:
-            result = tool.fn(args)
-        except ToolError as error:
-            result = {"error": str(error)}
-            log.append(ToolCall(tool=tool.name, args=args.model_dump(mode="json"), result=result))
-            raise
-        log.append(ToolCall(tool=tool.name, args=args.model_dump(mode="json"), result=result))
-        return result
-    return tool.model_copy(update={"fn": run})
+# True when a logged tool call succeeded (its result is not an {"error": ...} dict).
+def succeeded(call) -> bool:
+    return not (isinstance(call.result, dict) and "error" in call.result)
 
 
-# The whole tasks table as markdown rows.
-def tasks_table(conn: sqlite3.Connection) -> list[str]:
-    rows = conn.execute("SELECT id, title, done, created_at, done_at FROM tasks ORDER BY id")
-    lines = ["| id | title | done | created_at | done_at |", "|---|---|---|---|---|"]
-    lines += [f"| {r['id']} | {r['title']} | {r['done']} | {r['created_at']} | {r['done_at']} |"
-              for r in rows]
-    return lines
+# Report lines for one turn's details.
+def turn_details(number, line, text, calls, stops, tools_run, expected, good, ok) -> list[str]:
+    lines = [f"### Turn {number}", "", f"**You:** {line}", "", f"**Leo:** {text}", "",
+             "LLM calls, in order: " + ", ".join(call_label(c) for c in calls), "",
+             "Agent step replies:"]
+    lines += [f"- `{c['text']}`" for c in calls if c["node"] == "agent"] or ["- none"]
+    lines += ["", f"Stop reason: {', '.join(stops) or 'agent not run'}", "", "Tool calls:"]
+    lines += [f"- `{c.tool}({c.args})` -> `{c.result}`" for c in tools_run] or ["- none"]
+    verdict = "PASS" if ok else "FAIL"
+    return lines + ["", f"Expected successful tools: {expected}; got: {good} -> {verdict}", ""]
 
 
-# Run the turns as one conversation on `conn` and return the report lines.
-def run_turns(max_steps: int, conn: sqlite3.Connection) -> list[str]:
-    chat, log = CountingChat(), []
+# Run the turns as one conversation on `conn`. Returns report lines and turn verdicts.
+def run_turns(max_steps: int, conn) -> tuple[list[str], list[bool]]:
+    chat, log, outcomes = CountingChat(), [], []
     tools = by_name([logged(t, log) for t in real_productivity_tools(conn)])
-    agent = productivity_agent(chat, tools, max_steps)
-    graph = build_graph(chat, agents={"productivity": agent})
+    agent = recorded(productivity_agent(chat, tools, max_steps), NAME, outcomes)
+    graph = build_graph(chat, agents={NAME: agent})
     history: list = []
-    rows, details = [], []
-    for number, line in enumerate(TURNS, start=1):
-        calls_before, log_before = len(chat.calls), len(log)
+    rows, details, verdicts = [], [], []
+    for number, (line, expected) in enumerate(zip(TURNS, EXPECTED_TOOLS), start=1):
+        calls_before, log_before, runs_before = len(chat.calls), len(log), len(outcomes)
         start = time.perf_counter()
         try:
             reply, history = cli.run_turn(graph, history, line, False)
@@ -99,30 +82,27 @@ def run_turns(max_steps: int, conn: sqlite3.Connection) -> list[str]:
         except LLMUnavailable as error:  # both models failed: report it
             text = f"FAILED: {error!r}"
         wall = time.perf_counter() - start
-        calls = chat.calls[calls_before:]
-        tools = log[log_before:]
-        rows.append(f"| {number} | {len(calls)} | {len(tools)} | {wall:.2f} |")
-        details += [f"### Turn {number}", "", f"**You:** {line}", "",
-                    f"**Leo:** {text}", "", "LLM calls, in order: " + ", ".join(calls), "",
-                    "Tool calls:"]
-        details += [f"- `{c.tool}({c.args})` -> `{c.result}`" for c in tools] or ["- none"]
-        details.append("")
-    return [
-        "## Turns",
-        "turn_s is wall time for the whole graph run (supervisor, agent loop, responder).",
-        "",
-        "| turn | llm_calls | tool_calls | turn_s |",
-        "|---|---|---|---|",
-        *rows,
-        "",
-        "## Details",
-        "",
-        *details,
-        "## Tasks table at the end",
-        "The database was empty before turn 1.",
-        "",
-        *tasks_table(conn),
-    ]
+        calls, tools_run = chat.calls[calls_before:], log[log_before:]
+        stops = [o["stopped"] for o in outcomes[runs_before:]]
+        good = [c.tool for c in tools_run if succeeded(c)]
+        ok = good == expected
+        verdicts.append(ok)
+        rows.append(f"| {number} | {len(calls)} | {len(tools_run)} | "
+                    f"{', '.join(stops) or 'agent not run'} | {wall:.2f} | "
+                    f"{'PASS' if ok else 'FAIL'} |")
+        details += turn_details(number, line, text, calls, stops, tools_run, expected, good, ok)
+    lines = ["## Turns",
+             "turn_s is wall time for the whole graph run (supervisor, agent loop, responder).",
+             "", "| turn | llm_calls | tool_calls | stop_reason | turn_s | result |",
+             "|---|---|---|---|---|---|", *rows, "", "## Details", "", *details]
+    return lines, verdicts
+
+
+# Check the end state: exactly one task with "milk" in the title, marked done.
+def milk_verdict(rows) -> tuple[bool, str]:
+    milk = [r for r in rows if "milk" in r["title"].lower()]
+    ok = len(milk) == 1 and milk[0]["done"] == 1
+    return ok, f"milk tasks: {len(milk)}, done values: {[r['done'] for r in milk]}"
 
 
 # Write a new report; refuse to overwrite an earlier one.
@@ -132,17 +112,26 @@ def main() -> None:
         sys.exit(f"{report} already exists; earlier reports are never rewritten.")
     config = load_config()
     stamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as folder:
+        conn = open_db(Path(folder) / "leo.db")
+        lines, verdicts = run_turns(config.agent.max_steps, conn)
+        rows = task_rows(conn)
+        conn.close()
+    milk_ok, milk_text = milk_verdict(rows)
+    passed = all(verdicts) and milk_ok
     header = [f"# M1.4 productivity check — {stamp}",
               (f"Local model: {config.llm.primary.model}. "
                f"Fallback: {config.llm.fallback.model}. max_hops: {config.graph.max_hops}. "
                f"agent.max_steps: {config.agent.max_steps}. "
-               "Agent: productivity on real tools, empty temporary database."),
-              ""]
-    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as folder:
-        conn = open_db(Path(folder) / "leo.db")
-        lines = run_turns(config.agent.max_steps, conn)
-        conn.close()
-    report.write_text("\n".join(header + lines) + "\n", encoding="utf-8")
+               "Agent: productivity on real tools, empty temporary database."), "",
+              (f"**Overall: {'PASS' if passed else 'FAIL'}** (turns passed: "
+              f"{sum(verdicts)}/{len(verdicts)}; end state {'PASS' if milk_ok else 'FAIL'}: "
+              f"{milk_text})"), "",
+              ("Pass rule: each turn's successful tool calls equal the expected list exactly; "
+              "the tasks table ends with exactly one milk task, done = 1."), ""]
+    footer = ["## Tasks table at the end", "The database was empty before turn 1.", "",
+              *tasks_table(rows)]
+    report.write_text("\n".join(header + lines + footer) + "\n", encoding="utf-8")
     sys.stdout.reconfigure(encoding="utf-8")  # replies may contain emoji
     print(report.read_text(encoding="utf-8"))
 
