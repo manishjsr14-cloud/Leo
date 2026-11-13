@@ -6,7 +6,7 @@ import sqlite3
 
 from leo.graph.supervisor import SupervisorDecision
 from leo.llm import gateway
-from leo.tools.base import Tool, ToolCall, ToolError
+from leo.tools.base import Tool, ToolCall, ToolError, plain
 
 
 class CountingChat:
@@ -43,9 +43,9 @@ def logged(tool: Tool, log: list[ToolCall]) -> Tool:
             result = tool.fn(args)
         except ToolError as error:
             result = {"error": str(error)}
-            log.append(ToolCall(tool=tool.name, args=args.model_dump(mode="json"), result=result))
+            log.append(ToolCall(tool=tool.name, args=plain(args), result=result))
             raise
-        log.append(ToolCall(tool=tool.name, args=args.model_dump(mode="json"), result=result))
+        log.append(ToolCall(tool=tool.name, args=plain(args), result=result))
         return result
     return tool.model_copy(update={"fn": run})
 

@@ -42,10 +42,14 @@ TURNS = [
     "Chai ke liye 10 minute ka timer laga do",
 ]
 
-# Pass rule, fixed before the run (report 4): the tools that succeed in each
-# turn must be exactly these, in this order; and at the end the tasks table
-# must hold exactly one task with "milk" in its title, with done = 1.
-EXPECTED_TOOLS = [["add_task"], ["calculate"], ["list_tasks", "complete_task"], ["start_timer"]]
+# Pass rule v2, committed before report 5. The tools that succeed in each turn
+# must be exactly these, in this order; and at the end the tasks table must hold
+# exactly one task with "milk" in its title, with done = 1.
+# Change log: v1 (report 4) expected ["list_tasks", "complete_task"] in turn 3.
+# v2 expects exactly one successful complete_task, because complete_task now
+# takes a title (decided after report 4, which stays a FAIL under v1).
+EXPECTED_TOOLS = [["add_task"], ["calculate"], ["complete_task"], ["start_timer"]]
+PASS_RULE = "v2"
 
 
 # True when a logged tool call succeeded (its result is not an {"error": ...} dict).
@@ -127,7 +131,8 @@ def main() -> None:
               (f"**Overall: {'PASS' if passed else 'FAIL'}** (turns passed: "
               f"{sum(verdicts)}/{len(verdicts)}; end state {'PASS' if milk_ok else 'FAIL'}: "
               f"{milk_text})"), "",
-              ("Pass rule: each turn's successful tool calls equal the expected list exactly; "
+              (f"Pass rule {PASS_RULE}: each turn's successful tool calls equal the expected "
+               "list exactly; "
               "the tasks table ends with exactly one milk task, done = 1."), ""]
     footer = ["## Tasks table at the end", "The database was empty before turn 1.", "",
               *tasks_table(rows)]
