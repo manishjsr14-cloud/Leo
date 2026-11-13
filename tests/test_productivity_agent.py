@@ -106,27 +106,26 @@ def test_step_schema_requires_real_tools_and_their_args():
     assert _valid(schema, '{"done": true, "summary": "ok"}')
 
 
-# The first step may not say done (act or decline); later steps may not say cannot.
-def test_first_step_offers_cannot_instead_of_done():
+# The first step must be a tool call; done is offered only on later steps,
+# and "cannot" is never offered.
+def test_first_step_must_be_a_tool_call():
     _, tools = fresh()
     first, later = step_model(tools, first_step=True), step_model(tools)
     assert not _valid(first, '{"done": true, "summary": "Added milk."}')
-    assert _valid(first, '{"cannot": true, "reason": "not my job"}')
     assert _valid(first, '{"tool": "calculate", "args": {"expression": "2+2"}}')
-    assert not _valid(later, '{"cannot": true, "reason": "not my job"}')
+    assert _valid(later, '{"done": true, "summary": "ok"}')
+    for schema in (first, later):
+        assert not _valid(schema, '{"cannot": true, "reason": "not my job"}')
 
 
-# A misrouted request is declined: cannot comes back and no tool runs.
-def test_weather_request_returns_cannot_and_runs_no_tool():
-    log, tools = fresh()
-    chat = FakeChat({"cannot": True, "reason": "Weather is not a productivity task."})
-    node = productivity_agent(chat, tools, max_steps=4)
-    update = node(state_for("will it rain tomorrow", "check the weather"), {})
-    outcome = update["agent_results"]["productivity"]
-    assert outcome == {"steps": [], "summary": "Weather is not a productivity task.",
-                       "stopped": "cannot"}
-    assert update["completed_agents"] == ["productivity"]
-    assert log == [] and len(chat.calls) == 1
+# Only an agent that returned done goes into completed_agents.
+def test_completed_agents_only_after_done():
+    _, tools = fresh()
+    done = productivity_agent(FakeChat({"tool": "list_tasks", "args": {}},
+                                       {"done": True, "summary": "ok"}), tools, 4)
+    looping = productivity_agent(FakeChat({"tool": "list_tasks", "args": {}}), tools, 2)
+    assert done(state_for("tasks?", "list"), {})["completed_agents"] == ["productivity"]
+    assert "completed_agents" not in looping(state_for("tasks?", "list"), {})
 
 
 # True when `text` passes the schema.
@@ -158,7 +157,8 @@ def test_graph_two_step_needs_no_extra_supervisor_call():
     assert out["completed_agents"] == ["productivity"]
     assert [c.tool for c in log] == ["list_tasks", "complete_task"]
     responder_sees = " ".join(m["content"] for m in chat.calls[-1]["messages"])
-    assert "Marked Buy milk as done." in responder_sees
+    assert 'complete_task({"task_id": 1}) -> {"id": 1, "title": "Buy milk", "done": true}'         in responder_sees
+    assert "Marked Buy milk as done." not in responder_sees  # LLM summary is not passed on
     assert out["messages"][-1].content == "Done, Buy milk is ticked off."
 
 

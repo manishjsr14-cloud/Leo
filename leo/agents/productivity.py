@@ -4,9 +4,9 @@ A small loop on the gateway's schema-checked JSON actions (not create_react_agen
 see section 4.2). Each LLM reply is either
   {"tool": "<name>", "args": {...}}   -> run that tool, show the model the result
   {"done": true, "summary": "..."}    -> finished, hand back to the supervisor
-  {"cannot": true, "reason": "..."}   -> first reply only: not a job for this agent
-The first reply may not be "done": the agent must act or decline before finishing.
-An agent that returns done or cannot is added to completed_agents, so the
+The first reply must be a tool call: "done" is offered only after a tool ran.
+Choosing the right agent (or FINISH) is the supervisor's job.
+An agent that returns done is added to completed_agents, so the
 supervisor does not choose it again for the same request (section 4.3).
 The loop stops after agent.max_steps LLM replies. Tool errors are shown to the
 model so it can try again; they never crash the graph. 🔴 tools are always
@@ -33,8 +33,7 @@ SYSTEM_PROMPT = (
     "notes, start timers and do arithmetic, only through these tools:\n{tools}\n"
     'Reply only with JSON: either {{"tool": "<name>", "args": {{...}}}} to use one '
     'tool, or {{"done": true, "summary": "<what you did and the results>"}} when '
-    "finished. If the request is not about tasks, notes, timers or arithmetic, reply "
-    '{{"cannot": true, "reason": "<why>"}}.\n'
+    "finished.\n"
     'Rules: a task title is just the item, e.g. "milk" for "add milk to my tasks". '
     "To complete a task named by the user, always call list_tasks first to find its "
     "id, then complete_task. For any arithmetic call calculate with the user's expression "
@@ -50,25 +49,20 @@ class Done(BaseModel):
     summary: str
 
 
-class Cannot(BaseModel):
-    """The first-step reply for a request this agent has no tool for."""
-
-    cannot: Literal[True]
-    reason: str
-
-
 # The step schema for these tools: one option per tool, each with that tool's
 # own required, typed arguments. Ollama's structured output then cannot invent a
 # tool or leave out its arguments (an open "args" object let the model reply
 # {"tool": "add_task"} with no args; see the first M1.4 report).
-# The first step offers Cannot instead of Done: the model said "done" without
-# calling any tool, so it must act or decline; later steps offer Done.
+# The first step leaves Done out: the model said "done" without calling any
+# tool, so it must act first. (A "cannot" option was tried and dropped: the
+# model declined requests it could do; see the third M1.4 report.)
 def step_model(tools: dict[str, Tool], first_step: bool = False) -> type[RootModel]:
     options: list[type[BaseModel]] = [
         create_model(f"Call_{name}", tool=(Literal[name], ...), args=(tool.args_model, ...))
         for name, tool in tools.items()
     ]
-    options.append(Cannot if first_step else Done)
+    if not first_step:
+        options.append(Done)
     return RootModel[Union[tuple(options)]]  # noqa: UP007
 
 
@@ -110,8 +104,6 @@ def run_agent(state: LeoState, chat: Callable, tools: dict[str, Tool],
         action = result.parsed.root
         if isinstance(action, Done):
             return {"steps": steps, "summary": action.summary, "stopped": "done"}
-        if isinstance(action, Cannot):
-            return {"steps": steps, "summary": action.reason, "stopped": "cannot"}
         args = action.args.model_dump(mode="json")
         output = run_tool(tools, action.tool, args)
         steps.append({"tool": action.tool, "args": args, "result": output})
@@ -123,13 +115,13 @@ def run_agent(state: LeoState, chat: Callable, tools: dict[str, Tool],
 
 
 # Build the graph node for this agent. Its result goes in agent_results["productivity"];
-# after done or cannot it is also added to completed_agents for this request.
+# after done it is also added to completed_agents for this request.
 def productivity_agent(chat: Callable, tools: dict[str, Tool], max_steps: int) -> Callable:
     # The node LangGraph calls; the run config says whether to force Groq.
     def node(state: LeoState, config: RunnableConfig) -> dict:
         outcome = run_agent(state, chat, tools, max_steps, cloud_requested(config))
         update = {"agent_results": {**(state.get("agent_results") or {}), NAME: outcome}}
-        if outcome["stopped"] in ("done", "cannot"):
+        if outcome["stopped"] == "done":
             update["completed_agents"] = [*(state.get("completed_agents") or []), NAME]
         return update
 

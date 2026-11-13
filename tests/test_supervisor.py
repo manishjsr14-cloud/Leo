@@ -100,7 +100,8 @@ def test_supervisor_passes_force_cloud():
 # and includes agent results in what it sends to the LLM.
 def test_responder_adds_reply_with_provider():
     chat = FakeChat("It will be sunny.")
-    state = {**STATE, "agent_results": {"research": "sunny, 31 C"}}
+    step = {"tool": "get_weather", "args": {}, "result": "sunny, 31 C"}
+    state = {**STATE, "agent_results": {"research": {"steps": [step]}}}
     update = responder_node(state, chat, force_cloud=True)
     (reply,) = update["messages"]
     assert isinstance(reply, AIMessage)

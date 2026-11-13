@@ -166,7 +166,7 @@ Each specialist is a LangGraph ReAct sub-graph (`create_react_agent`) with its o
 - `memory_recall → <agent>` directly when `intent_confidence ≥ 0.85` and intent is a single agent; otherwise `memory_recall → supervisor`
 - `supervisor → <agent>` via conditional edge on `next_agent`
 - `<agent> → supervisor` (loop until FINISH, max 8 hops); a directly routed agent goes `<agent> → responder`
-- **Decision (M1.4):** an agent that returned done (or cannot) is not re-chosen for the same request: it is left out of the supervisor's output schema (`completed_agents`), and with no agent left the supervisor finishes without an LLM call.
+- **Decision (M1.4):** an agent that returned done is not re-chosen for the same request: it is left out of the supervisor's output schema (`completed_agents`), and with no agent left the supervisor finishes without an LLM call.
 - Any agent proposing a 🔴 action → `human_approval → <agent>`
 - `supervisor → responder → output_guard → memory_write → END`
 
