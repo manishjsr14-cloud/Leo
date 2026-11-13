@@ -20,6 +20,13 @@ class Tier(StrEnum):
     CONFIRM = "confirm"  # 🔴 runs only after human approval
 
 
+class ToolError(Exception):
+    """A tool could not do what was asked (for example, no task with that id).
+
+    The message is short and safe to show the model, so it can try again.
+    """
+
+
 class ToolArgs(BaseModel):
     """Base for every tool's argument schema.
 

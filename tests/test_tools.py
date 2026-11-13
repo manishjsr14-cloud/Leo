@@ -26,7 +26,7 @@ def fresh():
 
 def test_every_tool_is_complete_and_names_unique():
     _, tools = fresh()
-    assert len(tools) == 3
+    assert len(tools) == 10  # 3 calendar + 7 productivity
     for name, tool in tools.items():
         assert tool.name == name
         assert tool.description
