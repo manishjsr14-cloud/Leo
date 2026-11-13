@@ -1,0 +1,123 @@
+"""Tests for leo/agents/productivity.py with a fake LLM and mock tools."""
+
+from langchain_core.messages import HumanMessage
+
+from leo.agents.productivity import AgentStep, productivity_agent, run_agent, step_model
+from leo.graph.builder import build_graph
+from leo.graph.supervisor import SupervisorDecision
+from leo.tools.mock.productivity import mock_productivity_tools
+from leo.tools.registry import by_name
+from tests.graph_fakes import FakeChat
+
+
+# A fresh call log and the mock productivity tools that write to it.
+def fresh():
+    log = []
+    return log, by_name(mock_productivity_tools(log))
+
+
+# State for one user message, as the supervisor leaves it.
+def state_for(text: str, task: str) -> dict:
+    return {"messages": [HumanMessage(text)], "plan": [task], "agent_results": {}}
+
+
+def test_add_milk_calls_add_task():
+    log, tools = fresh()
+    chat = FakeChat({"tool": "add_task", "args": {"title": "milk"}},
+                    {"done": True, "summary": "Added milk."})
+    out = run_agent(state_for("add milk to my tasks", "add milk"), chat, tools, 4)
+    assert [(c.tool, c.args) for c in log] == [("add_task", {"title": "milk"})]
+    assert out["stopped"] == "done"
+    assert out["steps"][0]["result"]["title"] == "milk"
+    # The second LLM call saw the tool result.
+    assert "Result of add_task" in chat.calls[1]["messages"][-1]["content"]
+
+
+# The number comes from sympy: the fake LLM only copies the expression.
+def test_percentage_is_computed_by_sympy_not_llm():
+    log, tools = fresh()
+    chat = FakeChat({"tool": "calculate", "args": {"expression": "18% of 2450"}},
+                    {"done": True, "summary": "18% of 2450 is 441."})
+    out = run_agent(state_for("what is 18% of 2450", "calculate"), chat, tools, 4)
+    assert log[0].result["result"] == "441"
+    assert out["steps"][0]["result"]["computed"] == "(18/100)*2450"
+
+
+def test_two_step_request_runs_inside_the_agent():
+    log, tools = fresh()
+    chat = FakeChat({"tool": "list_tasks", "args": {}},
+                    {"tool": "complete_task", "args": {"task_id": 1}},
+                    {"done": True, "summary": "Marked Buy milk as done."})
+    out = run_agent(state_for("complete my milk task", "complete milk"), chat, tools, 4)
+    assert [c.tool for c in log] == ["list_tasks", "complete_task"]
+    assert log[1].args == {"task_id": 1}
+    assert out["stopped"] == "done" and len(chat.calls) == 3
+
+
+def test_step_limit_stops_a_loop():
+    log, tools = fresh()
+    chat = FakeChat({"tool": "list_tasks", "args": {}})  # never says done
+    out = run_agent(state_for("tasks?", "list"), chat, tools, 4)
+    assert len(chat.calls) == 4 and len(log) == 4
+    assert out["stopped"] == "max_steps"
+
+
+def test_tool_errors_go_back_to_the_model():
+    log, tools = fresh()
+    chat = FakeChat({"tool": "complete_task", "args": {"task_id": 99}},
+                    {"tool": "add_task", "args": {"title": "x", "priority": 1}},
+                    {"done": True, "summary": "Could not."})
+    out = run_agent(state_for("complete task 99", "complete"), chat, tools, 4)
+    assert out["steps"][0]["result"] == {"error": "no task with id 99; use list_tasks for ids"}
+    assert "bad arguments" in out["steps"][1]["result"]["error"]
+    assert [c.tool for c in log] == ["complete_task"]  # the bad add_task never ran
+
+
+def test_invalid_llm_output_stops_without_running_tools():
+    log, tools = fresh()
+    out = run_agent(state_for("hi", "x"), FakeChat(None), tools, 4)
+    assert out == {"steps": [], "summary": "", "stopped": "invalid_output"}
+    assert log == []
+
+
+# The schema only allows real tool names, and a reply needs a tool or done.
+def test_step_schema_limits_tool_names():
+    _, tools = fresh()
+    schema = step_model(tools)
+    assert issubclass(schema, AgentStep)
+    assert set(schema.model_json_schema()["properties"]["tool"]["anyOf"][0]["enum"]) == set(tools)
+    for bad in ['{"tool": "delete_everything"}', '{"args": {}}']:
+        assert not _valid(schema, bad)
+    assert _valid(schema, '{"done": true, "summary": "ok"}')
+
+
+# True when `text` passes the schema.
+def _valid(schema, text: str) -> bool:
+    try:
+        schema.model_validate_json(text)
+        return True
+    except ValueError:
+        return False
+
+
+# Whole graph: one supervisor call routes, the agent runs two tools, the next
+# supervisor call finishes, and the responder sees the agent's results.
+def test_graph_two_step_needs_no_extra_supervisor_call():
+    log, tools = fresh()
+    chat = FakeChat(
+        {"next": "productivity", "task": "complete the milk task"},
+        {"tool": "list_tasks", "args": {}},
+        {"tool": "complete_task", "args": {"task_id": 1}},
+        {"done": True, "summary": "Marked Buy milk as done."},
+        {"next": "FINISH", "task": ""},
+        "Done, Buy milk is ticked off.",
+    )
+    agent = productivity_agent(chat, tools, max_steps=4)
+    out = build_graph(chat, agents={"productivity": agent}).invoke(
+        {"messages": [HumanMessage("complete my milk task")], "hops": 0, "plan": []})
+    supervisor_calls = [c for c in chat.calls if c["output_model"] is SupervisorDecision]
+    assert len(supervisor_calls) == 2 and out["hops"] == 1
+    assert [c.tool for c in log] == ["list_tasks", "complete_task"]
+    responder_sees = " ".join(m["content"] for m in chat.calls[-1]["messages"])
+    assert "Marked Buy milk as done." in responder_sees
+    assert out["messages"][-1].content == "Done, Buy milk is ticked off."

@@ -21,7 +21,7 @@ from leo.llm import gateway
 
 
 # Read the force_cloud flag from the run config (False when not set).
-def _force_cloud(config: RunnableConfig) -> bool:
+def cloud_requested(config: RunnableConfig) -> bool:
     return bool(config.get("configurable", {}).get("force_cloud", False))
 
 
@@ -38,11 +38,11 @@ def build_graph(
 
     # Supervisor node with the LLM, agent names and hop limit filled in.
     def supervisor(state: LeoState, config: RunnableConfig) -> dict:
-        return supervisor_node(state, chat, list(agents), max_hops, _force_cloud(config))
+        return supervisor_node(state, chat, list(agents), max_hops, cloud_requested(config))
 
     # Responder node with the LLM filled in.
     def responder(state: LeoState, config: RunnableConfig) -> dict:
-        return responder_node(state, chat, _force_cloud(config))
+        return responder_node(state, chat, cloud_requested(config))
 
     # Send the graph to the chosen agent, or to the responder on FINISH.
     def route(state: LeoState) -> str:

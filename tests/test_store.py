@@ -45,6 +45,7 @@ def test_imports_do_not_create_leo_data():
     leo_data = PROJECT_ROOT / "leo_data"
     if leo_data.exists():
         pytest.skip("leo_data/ already exists on this machine")
-    code = "import leo.cli, leo.memory.store, leo.tools.registry"
+    code = ("import leo.cli, leo.memory.store, leo.agents.productivity, "
+            "leo.tools.registry, leo.tools.real.productivity")
     subprocess.run([sys.executable, "-c", code], cwd=PROJECT_ROOT, check=True)
     assert not leo_data.exists()
