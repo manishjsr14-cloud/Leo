@@ -49,3 +49,12 @@ agent:
 tracing:                           # Langfuse Cloud (section 13.2); keys and host in .env
   include_text: false              # false: no message text, tool args or replies in traces
   timeout_s: 5                     # startup check and send timeout; tracing turns off if Langfuse is down
+
+research:                          # research agent tools (section 9); public services, no keys
+  geocoding_url: https://geocoding-api.open-meteo.com/v1/search
+  forecast_url: https://api.open-meteo.com/v1/forecast
+  timezone: Asia/Kolkata           # forecast days and "today"/"tomorrow" are in IST
+  timeout_s: 10                    # per HTTP request
+  max_redirects: 5                 # read_page follows redirects itself, checking each hop
+  max_page_bytes: 2000000          # read_page stops downloading after this many bytes
+  max_page_chars: 3000             # page text given to the model is cut to this length

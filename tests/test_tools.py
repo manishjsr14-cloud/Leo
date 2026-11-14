@@ -26,7 +26,7 @@ def fresh():
 
 def test_every_tool_is_complete_and_names_unique():
     _, tools = fresh()
-    assert len(tools) == 10  # 3 calendar + 7 productivity
+    assert len(tools) == 13  # 3 calendar + 7 productivity + 3 research
     for name, tool in tools.items():
         assert tool.name == name
         assert tool.description
@@ -42,6 +42,8 @@ def test_tiers_match_section_9():
     assert tools["get_events"].tier is Tier.SAFE
     assert tools["create_event"].tier is Tier.NOTIFY
     assert tools["cancel_event"].tier is Tier.CONFIRM
+    for name in ("web_search", "read_page", "get_weather"):
+        assert tools[name].tier is Tier.SAFE
 
 
 def test_get_events_returns_fixed_data_and_logs_each_call():

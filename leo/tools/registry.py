@@ -15,6 +15,7 @@ from leo.ops import tracing
 from leo.tools.base import Tier, Tool, ToolCall
 from leo.tools.mock.calendar import mock_calendar_tools
 from leo.tools.mock.productivity import mock_productivity_tools
+from leo.tools.mock.research import mock_research_tools
 
 
 class UnknownToolError(LookupError):
@@ -37,7 +38,8 @@ def by_name(tools: list[Tool]) -> dict[str, Tool]:
 
 # All mock tools, keyed by name. Every call they make is appended to `log`.
 def mock_tools(log: list[ToolCall]) -> dict[str, Tool]:
-    return by_name(mock_calendar_tools(log) + mock_productivity_tools(log))
+    return by_name(mock_calendar_tools(log) + mock_productivity_tools(log)
+                   + mock_research_tools(log))
 
 
 # Run one tool. `args` is what the model sent; `approved` is set only by Leo's

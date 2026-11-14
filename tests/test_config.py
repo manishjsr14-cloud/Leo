@@ -61,3 +61,17 @@ def test_max_hops_is_loaded_and_checked(tmp_path: Path):
 
     with pytest.raises(ValidationError):
         load_config(broken)
+
+
+# The research section loads, and an unknown key in it is rejected.
+def test_research_section_loads_and_rejects_unknown_keys(tmp_path: Path):
+    research = load_config().research
+    assert research.timezone == "Asia/Kolkata"
+    assert research.max_redirects == 5
+    data = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
+    data["research"]["api_key"] = "x"
+    broken = tmp_path / "config.yaml"
+    broken.write_text(yaml.safe_dump(data), encoding="utf-8")
+
+    with pytest.raises(ValidationError):
+        load_config(broken)

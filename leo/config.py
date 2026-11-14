@@ -102,6 +102,18 @@ class TracingConfig(Strict):
     timeout_s: int = Field(default=5, ge=1)
 
 
+class ResearchConfig(Strict):
+    """URLs and limits for web search, page reading and weather."""
+
+    geocoding_url: str
+    forecast_url: str
+    timezone: str
+    timeout_s: float = Field(gt=0)
+    max_redirects: int = Field(ge=0, le=10)
+    max_page_bytes: int = Field(gt=0)
+    max_page_chars: int = Field(gt=0)
+
+
 class LeoConfig(Strict):
     """The whole config.yaml file."""
 
@@ -112,6 +124,7 @@ class LeoConfig(Strict):
     storage: StorageConfig
     agent: AgentConfig
     tracing: TracingConfig
+    research: ResearchConfig
 
 
 class Secrets(BaseSettings):
