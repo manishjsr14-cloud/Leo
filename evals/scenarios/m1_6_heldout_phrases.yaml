@@ -1,0 +1,133 @@
+# M1.6 held-out phrase set: written by the user without seeing the parser code
+# (2026-11-15), converted to the schema of m1_6_indian_phrases.yaml.
+# Phrases and expected values are exactly as given; never edited to improve a score.
+#
+# Schema, defaults and rules: see the header of evals/scenarios/m1_6_indian_phrases.yaml.
+# `section` only groups cases in the report; it is not scored.
+#
+# Conversion notes:
+#   - The table gave no default "now". 2026-11-19 16:30 IST (Thursday) is the only
+#     value that fits h16-h18 (3 hours -> 19:30, 45 minutes -> 17:15, an hour -> 17:30)
+#     and the dates of h01-h20.
+#   - h21-h23 were written "... (at 01:30)". The parenthesis is their "now"
+#     (2026-11-20 01:30, from h23's expected date), not part of the phrase.
+#   - "no time" = time null; "none" = null.
+
+version: 1
+now: "2026-11-19T16:30:00+05:30"   # Thursday
+
+times:
+  - id: h01
+    section: day words, clock, kal, midnight
+    text: "Parso subah 9 baje doctor ke paas jaana hai"
+    expect: {date: "2026-11-21", time: "09:00"}
+  - id: h02
+    section: day words, clock, kal, midnight
+    text: "aaj shaam saadhe saat baje dinner hai"
+    expect: {date: "2026-11-19", time: "19:30"}
+  - id: h03
+    section: day words, clock, kal, midnight
+    text: "kal dopahar 2 baje client call karni hai"
+    expect: {date: "2026-11-20", time: "14:00"}
+  - id: h04
+    section: day words, clock, kal, midnight
+    text: "kal raat 1 baje train hai"
+    expect: {date: "2026-11-21", time: "01:00"}
+  - id: h05
+    section: day words, clock, kal, midnight
+    text: "kal subah 8 baje gym gaya tha"
+    expect: {date: "2026-11-18", time: "08:00"}
+  - id: h06
+    section: day words, clock, kal, midnight
+    text: "paune chaar baje chai break"
+    expect: {date: "2026-11-20", time: "15:45", assumed_ampm: true}
+  - id: h07
+    section: day words, clock, kal, midnight
+    text: "6 baje yaad dilana pani peene ka"
+    expect: {date: "2026-11-19", time: "18:00", assumed_ampm: true}
+  - id: h08
+    section: day words, clock, kal, midnight
+    text: "subah 11 baje standup"
+    expect: {date: "2026-11-20", time: "11:00"}
+  - id: h09
+    section: day words, clock, kal, midnight
+    text: "kal Neha se baat"
+    expect: {status: ask, ask_about: kal}
+  - id: h10
+    section: day words, clock, kal, midnight
+    text: "kal jo PDF bheji thi woh kal wapas bhejni hai"
+    expect: {status: ask, ask_about: kal}
+  - id: h11
+    section: weekdays
+    text: "Sunday ko family lunch"
+    expect: {date: "2026-11-22"}
+  - id: h12
+    section: weekdays
+    text: "Thursday ko review hai"
+    expect: {status: ask, ask_about: weekday}
+  - id: h13
+    section: weekdays
+    text: "next Saturday party hai"
+    expect: {status: ask, ask_about: weekday}
+  - id: h14
+    section: weekdays
+    text: "agle mangalvaar ko 10 baje dentist"
+    expect: {date: "2026-11-24", time: "10:00", assumed_ampm: true}
+  - id: h15
+    section: weekdays
+    text: "shukravaar shaam 5 baje"
+    expect: {date: "2026-11-20", time: "17:00"}
+  - id: h16
+    section: relative times
+    text: "3 ghante baad mujhe yaad dila dena"
+    expect: {date: "2026-11-19", time: "19:30"}
+  - id: h17
+    section: relative times
+    text: "45 minute mein call karna"
+    expect: {date: "2026-11-19", time: "17:15"}
+  - id: h18
+    section: relative times
+    text: "in an hour remind me"
+    expect: {date: "2026-11-19", time: "17:30"}
+  - id: h19
+    section: reminder offsets
+    text: "kal subah 7 baje flight hai, 2 ghante pehle yaad dila dena"
+    expect: {date: "2026-11-20", time: "07:00", remind_before_min: 120}
+  - id: h20
+    section: reminder offsets
+    text: "Monday ko report submit karni hai, ek din pehle bata dena"
+    expect: {date: "2026-11-23", remind_before_min: 1440}
+  - id: h21
+    section: day words, clock, kal, midnight
+    now: "2026-11-20T01:30:00+05:30"
+    text: "kal subah 10 baje meeting hai"
+    expect: {status: ask, ask_about: midnight}
+  - id: h22
+    section: day words, clock, kal, midnight
+    now: "2026-11-20T01:30:00+05:30"
+    text: "tomorrow evening 6 pm gym"
+    expect: {status: ask, ask_about: midnight}
+  - id: h23
+    section: day words, clock, kal, midnight
+    now: "2026-11-20T01:30:00+05:30"
+    text: "aaj dopahar 1 baje lunch"
+    expect: {date: "2026-11-20", time: "13:00"}
+  - id: h24
+    section: not understood
+    text: "this weekend kuch plan karo"
+    expect: {status: not_understood}
+  - id: h25
+    section: not understood
+    text: "jaldi se"
+    expect: {status: not_understood}
+
+numbers:
+  - {id: n01, section: numbers, text: "dedh hazaar ka recharge", expect: 1500}
+  - {id: n02, section: numbers, text: "sava lakh ki bike", expect: 125000}
+  - {id: n03, section: numbers, text: "saadhe paanch sau rupaye", expect: 550}
+  - {id: n04, section: numbers, text: "Rs 3,25,000", expect: 325000}
+  - {id: n05, section: numbers, text: "do crore", expect: 20000000}
+  - {id: n06, section: numbers, text: "paune teen hazaar", expect: 2750}
+  - {id: n07, section: numbers, text: "₹ 75", expect: 75}
+  - {id: n08, section: numbers, text: "1.2 lakh", expect: 120000}
+  - {id: n09, section: numbers, text: "kuch paise diye", expect: null}
