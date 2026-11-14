@@ -32,10 +32,10 @@ def state_for(text: str, task: str) -> dict:
 
 def test_rain_question_calls_get_weather_and_prompt_has_rules():
     log, tools = fresh()
-    chat = FakeChat({"tool": "get_weather", "args": {"place": "Pune", "days": 2}},
+    chat = FakeChat({"tool": "get_weather", "args": {"place": "Pune"}},
                     {"done": True, "summary": "60% rain chance tomorrow (Open-Meteo)."})
     out = run_agent(state_for(ASK, "rain in Pune tomorrow"), chat, tools, 4, TODAY)
-    assert [(c.tool, c.args) for c in log] == [("get_weather", {"place": "Pune", "days": 2})]
+    assert [(c.tool, c.args) for c in log] == [("get_weather", {"place": "Pune"})]
     assert out["stopped"] == "done"
     assert out["steps"][0]["result"]["days"][1]["day"] == "tomorrow"
     prompt = chat.calls[0]["messages"][0]["content"]
@@ -62,7 +62,7 @@ def test_graph_routes_rain_to_research_and_responder_sees_source():
     tasks = by_name(mock_productivity_tools(tasks_log))
     chat = FakeChat(
         {"agents": ["research"], "task": "Check if it will rain in Pune tomorrow"},
-        {"tool": "get_weather", "args": {"place": "Pune", "days": 2}},
+        {"tool": "get_weather", "args": {"place": "Pune"}},
         {"done": True, "summary": "60% chance."},
         "Yes, 60% chance of rain in Pune tomorrow, says Open-Meteo.",
     )

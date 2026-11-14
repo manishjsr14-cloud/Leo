@@ -42,7 +42,7 @@ def weather(geo: dict = PUNE, status: int = 200):
 
 def test_pune_forecast_rows_are_labelled_with_source():
     get_weather, seen = weather()
-    out = get_weather(GetWeatherArgs(place="Pune", days=3))
+    out = get_weather(GetWeatherArgs(place="Pune"))
     assert out["place"] == "Pune, Maharashtra, India"
     assert [d["day"] for d in out["days"]] == ["today", "tomorrow", "Monday"]
     assert out["days"][1]["rain_chance_pct"] == 60
@@ -61,20 +61,20 @@ def test_unknown_place_and_service_errors_give_tool_errors():
         get_weather(GetWeatherArgs(place="Pune"))
 
 
-def test_weather_args_limits():
-    with pytest.raises(ValidationError):
-        GetWeatherArgs(place="Pune", days=8)
-    with pytest.raises(ValidationError):
-        GetWeatherArgs(place="Pune", days=2, units="F")
+# get_weather takes only the place: the model cannot pick the number of days.
+def test_weather_args_take_only_a_place():
+    for extra in ({"days": 1}, {"units": "F"}):
+        with pytest.raises(ValidationError):
+            GetWeatherArgs(place="Pune", **extra)
 
 
 def test_mock_research_tools_log_calls_and_wrap_web_text():
     log = []
     tools = by_name(mock_research_tools(log))
-    weather_out = call_tool(tools, "get_weather", {"place": "pune", "days": 2})
+    weather_out = call_tool(tools, "get_weather", {"place": "pune"})
     page = call_tool(tools, "read_page", {"url": "https://example.com/pune-monsoon"})
     search = call_tool(tools, "web_search", {"query": "pune rain", "max_results": 1})
     assert [c.tool for c in log] == ["get_weather", "read_page", "web_search"]
-    assert [d["day"] for d in weather_out["days"]] == ["today", "tomorrow"]
+    assert [d["day"] for d in weather_out["days"]] == ["today", "tomorrow", "Monday"]
     assert INJECTION in page["text"] and page["text"].endswith(END)
     assert len(search["results"]) == 1 and search["results"][0]["url"].startswith("https://")

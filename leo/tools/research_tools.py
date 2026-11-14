@@ -18,8 +18,8 @@ SPECS = {
                    WebSearchArgs),
     "read_page": ("Read the main text of one web page, by its http(s) url.", ReadPageArgs),
     "get_weather": (
-        ("Daily weather forecast for a place: rain chance, rain mm, min/max temperature. "
-         "days counts from today, so tomorrow needs days of 2 or more."),
+        ("Weather forecast for a place for today, tomorrow and the day after: "
+         "rain chance, rain mm, min/max temperature."),
         GetWeatherArgs,
     ),
 }

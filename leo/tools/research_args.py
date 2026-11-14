@@ -34,7 +34,6 @@ class ReadPageArgs(ToolArgs):
 
 
 class GetWeatherArgs(ToolArgs):
-    """Arguments for get_weather: a place name and how many days from today."""
+    """Arguments for get_weather: just the place name (always today + 2 days)."""
 
     place: str = Field(min_length=1, max_length=100)
-    days: int = Field(default=3, ge=1, le=7)

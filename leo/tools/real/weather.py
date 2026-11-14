@@ -1,8 +1,9 @@
 """Real get_weather tool: Open-Meteo geocoding + daily forecast (free, no key).
 
 The place name is turned into coordinates first, then the daily forecast is
-fetched in the configured time zone (IST). The code, not the model, labels each
-day "today", "tomorrow" or its weekday, so the 4B model does no date maths.
+fetched in the configured time zone (IST), always for FORECAST_DAYS days (today,
+tomorrow, the day after). The code, not the model, labels each day "today",
+"tomorrow" or its weekday, so the 4B model chooses no days and does no date maths.
 Every result names Open-Meteo as its source (their licence asks for credit).
 """
 
@@ -17,6 +18,7 @@ from leo.tools.base import ToolError
 from leo.tools.research_args import GetWeatherArgs
 from leo.tools.research_tools import WEATHER_SOURCE, WEATHER_SOURCE_URL
 
+FORECAST_DAYS = 3
 DAILY = "precipitation_probability_max,precipitation_sum,temperature_2m_min,temperature_2m_max"
 
 
@@ -54,7 +56,7 @@ def weather_functions(client: httpx.Client, settings: ResearchConfig,
         place = found["results"][0]
         forecast = get_json(client, settings.forecast_url, {
             "latitude": place["latitude"], "longitude": place["longitude"],
-            "daily": DAILY, "timezone": settings.timezone, "forecast_days": args.days})
+            "daily": DAILY, "timezone": settings.timezone, "forecast_days": FORECAST_DAYS})
         daily = forecast.get("daily", {})
         now = today()
         days = [{

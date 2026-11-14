@@ -57,7 +57,7 @@ def mock_research_tools(log: list[ToolCall]) -> list[Tool]:
                                 "text": wrap_untrusted(FIXED_PAGE_TEXT, a.url)},
         "get_weather": lambda a: {
             "place": f"{a.place.title()}, Maharashtra, India",
-            "days": copy.deepcopy(FIXED_DAYS[: a.days]),
+            "days": copy.deepcopy(FIXED_DAYS),
             "source": WEATHER_SOURCE, "source_url": WEATHER_SOURCE_URL},
     }
     return make_tools({name: logged(name, fn) for name, fn in functions.items()})
