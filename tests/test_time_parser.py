@@ -118,3 +118,29 @@ def test_naive_now_is_ist():
 def test_default_now_is_ist():
     assert current_time().utcoffset() == timedelta(hours=5, minutes=30)
     assert parse_time("in 1 hour").status == "ok"
+
+
+@pytest.mark.parametrize(
+    ("text", "day", "clock"),
+    [
+        ("an hour baad yaad dilana", 18, "12:00"),           # "an" = 1
+        ("remind me in a minute", 18, "11:01"),              # "a" = 1
+        ("in a day", 19, "11:00"),
+        ("half an hour mein nikalna hai", 18, "11:30"),      # "half an" = 1/2
+        ("in half an hour", 18, "11:30"),
+        ("sava do ghante baad", 18, "13:15"),                # modifier + number before unit
+    ],
+)
+# "a"/"an" before a unit count as 1, "half an" as 1/2, from now.
+def test_a_an_half_an(text, day, clock):
+    result = parse(text)
+    assert (result.status, result.date, result.time) == (
+        "ok", date(2026, 11, day), time.fromisoformat(clock))
+
+
+# "a"/"an" also work in reminder offsets.
+def test_a_an_offset():
+    result = parse("parso 9 am interview, an hour before remind karna")
+    assert (result.date, result.time, result.remind_before_min) == (
+        date(2026, 11, 20), time(9, 0), 60)
+    assert parse("kal 5 pm call hai, half an hour pehle bata dena").remind_before_min == 30

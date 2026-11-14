@@ -5,26 +5,39 @@ subah/shaam/raat and the default am/pm; find_duration reads "2 ghante baad"
 and "15 minute pehle". Kept apart from time_parser.py so each file stays short.
 """
 
+from fractions import Fraction
+
 from leo.language import time_words as w
 from leo.language.numbers import number_at
+
+
+# The amount just before the unit at words[u], as (value, first index), or None.
+# "a"/"an" count as 1 ("an hour") and "half an" as 1/2 ("half an hour").
+def amount_before(words: list[str], u: int) -> tuple[Fraction, int] | None:
+    if u >= 1 and words[u - 1] in ("a", "an"):
+        if u >= 2 and words[u - 2] == "half":
+            return Fraction(1, 2), u - 2
+        return Fraction(1), u - 1
+    for start in (u - 2, u - 1):                 # longer first: "sava do ghante" = 2.25
+        read = number_at(words, start) if start >= 0 else None
+        if read is not None and read[1] == u:
+            return read[0], start
+    return None
 
 
 # Find "<number> <unit>" with a word that says after/before; returns
 # (kind, minutes, first index, last index) or None. kind is "after" or "before".
 def find_duration(words: list[str]) -> tuple[str, int, int, int] | None:
     for u, word in enumerate(words):
-        if word not in w.UNITS:
+        amount = amount_before(words, u) if word in w.UNITS else None
+        if amount is None:
             continue
-        for start in (u - 1, u - 2):
-            read = number_at(words, start) if start >= 0 else None
-            if read is None or read[1] != u:
-                continue
-            minutes = int(read[0] * w.UNITS[word])
-            following = words[u + 1] if u + 1 < len(words) else ""
-            if following in w.BEFORE_WORDS:
-                return "before", minutes, start, u + 1
-            if following in w.AFTER_WORDS or (start > 0 and words[start - 1] in w.IN_WORDS):
-                return "after", minutes, start, u + 1
+        minutes, start = int(amount[0] * w.UNITS[word]), amount[1]
+        following = words[u + 1] if u + 1 < len(words) else ""
+        if following in w.BEFORE_WORDS:
+            return "before", minutes, start, u + 1
+        if following in w.AFTER_WORDS or (start > 0 and words[start - 1] in w.IN_WORDS):
+            return "after", minutes, start, u + 1
     return None
 
 
