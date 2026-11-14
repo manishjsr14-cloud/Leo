@@ -60,12 +60,14 @@ def score_set(data: dict) -> list[dict]:
         now = datetime.fromisoformat(case.get("now", data["now"]))
         want, got = expected_fields(case), got_fields(case["text"], now)
         rows.append({"kind": "time", "id": case["id"], "text": case["text"],
+                     "section": case.get("section"),
                      "now": now.strftime("%a %Y-%m-%d %H:%M"), "want": want, "got": got,
                      "ok": want == got,
                      "ambiguous_read": sorted(set(numbers_read(case["text"])) & AMBIGUOUS)})
     for case in data.get("numbers", []):
         got = parse_amount(case["text"])
         rows.append({"kind": "number", "id": case["id"], "text": case["text"], "now": "",
+                     "section": case.get("section"),
                      "want": case["expect"], "got": got, "ok": got == case["expect"],
                      "ambiguous_read": sorted(set(tokens(case["text"])) & AMBIGUOUS)})
     return rows

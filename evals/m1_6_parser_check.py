@@ -27,6 +27,11 @@ def git_state() -> str:
     return f"{head}{' (uncommitted changes present)' if dirty else ''}"
 
 
+# A case's report section: its `section` field, else the name for its id prefix.
+def section_of(row: dict) -> str:
+    return row["section"] or SECTIONS.get(row["id"][0], "other")
+
+
 # Percentage text for (correct, total).
 def pct(correct: int, total: int) -> str:
     return f"{correct}/{total} = {100 * correct / total:.1f} %" if total else "0/0"
@@ -56,10 +61,9 @@ def set_section(label: str, path: str, rows: list[dict]) -> list[str]:
     lines = [f"## {label}", f"File: `{path}`", "",
              f"**Accuracy: {pct(correct, total)}** — target ≥ {TARGET:.0%}: **{met}**", "",
              "| section | correct |", "|---|---|"]
-    for prefix, name in SECTIONS.items():
-        part = [r for r in rows if r["id"].startswith(prefix)]
-        if part:
-            lines.append(f"| {name} | {pct(*accuracy(part))} |")
+    for name in dict.fromkeys(section_of(r) for r in rows):
+        part = [r for r in rows if section_of(r) == name]
+        lines.append(f"| {name} | {pct(*accuracy(part))} |")
     failed = [r for r in rows if not r["ok"]]
     lines += ["", f"### Failures ({len(failed)})", ""]
     if failed:
