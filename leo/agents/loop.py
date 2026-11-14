@@ -5,7 +5,9 @@ Each LLM reply is either
   {"tool": "<name>", "args": {...}}   -> run that tool, show the model the result
   {"done": true, "summary": "..."}    -> finished, hand back to the supervisor
 The first reply must be a tool call: "done" is offered only after a tool ran.
-The loop stops after max_steps LLM replies. Tool errors are shown to the
+The loop stops after max_steps LLM replies, or when the model repeats a tool
+call (same tool, same arguments) that already succeeded in this run: the
+repeat is not run and the run ends ("repeated_call"). Tool errors are shown to the
 model so it can try again; they never crash the graph. 🔴 tools are always
 refused here (call_tool without approved=True); approval arrives in M2.5.
 Each agent passes in its own system prompt and prompt version.
@@ -71,6 +73,11 @@ def run_tool(tools: dict[str, Tool], name: str, args: dict) -> Any:
         return {"error": str(error)}
 
 
+# One string per call, the same for the same tool and arguments in any key order.
+def call_key(tool: str, args: dict) -> str:
+    return json.dumps([tool, args], sort_keys=True)
+
+
 # The loop itself, with `prompt` already filled in (tools, task, ...).
 # Returns {"steps": [...], "summary": str, "stopped": why}.
 def run_steps(prompt: str, version: str, state: LeoState, chat: Callable,
@@ -78,6 +85,7 @@ def run_steps(prompt: str, version: str, state: LeoState, chat: Callable,
     messages = chat_messages(prompt, state)
     first_step, later_steps = step_model(tools, first_step=True), step_model(tools)
     steps: list[dict] = []
+    done_calls: set[str] = set()  # successful calls so far, as call_key strings
     # Each step is one span: its LLM call and tool call are nested inside it.
     for number in range(1, max_steps + 1):
         tags = {"step": number, "prompt_version": version}
@@ -92,9 +100,14 @@ def run_steps(prompt: str, version: str, state: LeoState, chat: Callable,
                 return {"steps": steps, "summary": action.summary, "stopped": "done"}
             # Unset optional arguments (None) are left out, e.g. title when task_id is given.
             args = plain(action.args)
+            if call_key(action.tool, args) in done_calls:
+                span.update(metadata={**tags, "action": "repeated_call"})
+                return {"steps": steps, "summary": "", "stopped": "repeated_call"}
             output = run_tool(tools, action.tool, args)
             failed = isinstance(output, dict) and "error" in output
             span.update(metadata={**tags, "action": action.tool, "tool_ok": not failed})
+            if not failed:
+                done_calls.add(call_key(action.tool, args))
         steps.append({"tool": action.tool, "args": args, "result": output})
         messages += [
             {"role": "assistant", "content": result.text},

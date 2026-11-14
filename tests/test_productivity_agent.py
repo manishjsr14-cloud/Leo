@@ -59,8 +59,8 @@ def test_two_step_request_runs_inside_the_agent():
 
 def test_step_limit_stops_a_loop():
     log, tools = fresh()
-    chat = FakeChat({"tool": "list_tasks", "args": {}})  # never says done
-    out = run_agent(state_for("tasks?", "list"), chat, tools, 4)
+    chat = FakeChat(*[{"tool": "list_notes", "args": {"limit": n}} for n in range(1, 6)])
+    out = run_agent(state_for("notes?", "list"), chat, tools, 4)  # never says done
     assert len(chat.calls) == 4 and len(log) == 4
     assert out["stopped"] == "max_steps"
 
