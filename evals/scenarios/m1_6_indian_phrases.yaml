@@ -1,0 +1,364 @@
+# M1.6 phrase test set: Indian time and number parser (task M1.6).
+# Committed BEFORE leo/language/time_parser.py and numbers.py exist.
+# Never edited to improve a score; a better set is a new file with a change log.
+#
+# Done when: >= 95 % of all cases (times + numbers together) are correct.
+#
+# times: each case runs parse_time(text, now). `now` is the file default unless
+# the case gives its own. All times are IST (+05:30).
+#   expect fields and their defaults when left out:
+#     status: ok            (ok | ask | not_understood)
+#     date: null            ("YYYY-MM-DD")
+#     time: null            ("HH:MM", 24-hour)
+#     assumed_ampm: false   (true when the 1-7 pm / 8-11 am / 12 noon default was used)
+#     remind_before_min: null   (reminder offset like "15 minute pehle", in minutes)
+#     ask_about: null       (kal | midnight | weekday; only for status ask)
+#   A case is correct only when every field above matches exactly.
+#
+# numbers: each case runs parse_amount(text); expect is an integer, or null for
+# text that is not an amount. Correct only on an exact match.
+#
+# Rules this set encodes (approved 2026-11-14):
+#   - No day word: today if the time is still ahead of now, else tomorrow.
+#   - "raat" with hours 12-4 means early morning of the following day.
+#   - "kal": future signal -> tomorrow; past signal -> yesterday; no signal, both
+#     signals, or both tomorrow/yesterday words -> ask (ask_about: kal).
+#   - Between 00:00 and 04:00, kal, parso, tomorrow and "day after tomorrow"
+#     always return ask (ask_about: midnight). "aaj" stays literal.
+#   - Plain weekday: the next one after today; ask if today is that weekday.
+#     "agle"/"next" + weekday: ask if that weekday falls in the current week
+#     (Monday-Sunday, today included), else the next one.
+#   - Relative times ("2 ghante baad", "in 20 minutes") count from now.
+
+version: 1
+now: "2026-11-14T10:00:00+05:30"   # Saturday
+
+times:
+  # --- day words with a time ---
+  - id: t01
+    text: "Kal subah 10 baje Rahul ke saath meeting daal do"
+    expect: {date: "2026-11-15", time: "10:00"}
+  - id: t02
+    text: "parso shaam saadhe chhe baje Neha ke saath call hai"
+    expect: {date: "2026-11-16", time: "18:30"}
+  - id: t03
+    text: "aaj shaam 7 baje gym jaana hai"
+    expect: {date: "2026-11-14", time: "19:00"}
+  - id: t04
+    text: "kal dopahar dhai baje doctor ke paas jaana hai"
+    expect: {date: "2026-11-15", time: "14:30"}
+  - id: t05
+    text: "kal raat 9 baje movie dekhenge"
+    expect: {date: "2026-11-15", time: "21:00"}
+  - id: t06
+    text: "kal raat 2 baje backup chalana hai"
+    expect: {date: "2026-11-16", time: "02:00"}
+  - id: t07
+    text: "aaj raat 12 baje"
+    expect: {date: "2026-11-15", time: "00:00"}
+  - id: t08
+    text: "parso subah sava aath baje train hai"
+    expect: {date: "2026-11-16", time: "08:15"}
+  - id: t09
+    text: "kal subah paune saat baje uthna hai"
+    expect: {date: "2026-11-15", time: "06:45"}
+  - id: t10
+    text: "tomorrow evening 5 baje call karna hai"
+    expect: {date: "2026-11-15", time: "17:00"}
+  - id: t11
+    text: "day after tomorrow 11 am dentist"
+    expect: {date: "2026-11-16", time: "11:00"}
+  - id: t12
+    text: "today at 4:30 pm meeting"
+    expect: {date: "2026-11-14", time: "16:30"}
+  - id: t13
+    text: "kal subh 10 bje meeting hai"
+    expect: {date: "2026-11-15", time: "10:00"}
+  - id: t14
+    text: "parso sham sade paanch baje"
+    expect: {date: "2026-11-16", time: "17:30"}
+
+  # --- default am/pm (assumed_ampm) ---
+  - id: t15
+    text: "kal 3 baje meeting hai"
+    expect: {date: "2026-11-15", time: "15:00", assumed_ampm: true}
+  - id: t16
+    text: "parso 9 baje interview hai"
+    expect: {date: "2026-11-16", time: "09:00", assumed_ampm: true}
+  - id: t17
+    text: "aaj dedh baje lunch hai"
+    expect: {date: "2026-11-14", time: "13:30", assumed_ampm: true}
+  - id: t18
+    text: "kal sava das baje call karna"
+    expect: {date: "2026-11-15", time: "10:15", assumed_ampm: true}
+  - id: t19
+    text: "aaj 12 baje"
+    expect: {date: "2026-11-14", time: "12:00", assumed_ampm: true}
+  - id: t20
+    text: "aaj paune paanch baje nikalna hai"
+    expect: {date: "2026-11-14", time: "16:45", assumed_ampm: true}
+
+  # --- no day word ---
+  - id: t21
+    text: "shaam 6 baje yaad dila dena"
+    expect: {date: "2026-11-14", time: "18:00"}
+  - id: t22
+    text: "subah 8 baje alarm laga do"
+    expect: {date: "2026-11-15", time: "08:00"}
+  - id: t23
+    text: "raat 11 baje"
+    expect: {date: "2026-11-14", time: "23:00"}
+  - id: t24
+    text: "at 7:45 pm"
+    expect: {date: "2026-11-14", time: "19:45"}
+  - id: t25
+    text: "dopahar 1 baje"
+    expect: {date: "2026-11-14", time: "13:00"}
+  - id: t26
+    text: "dhai baje"
+    expect: {date: "2026-11-14", time: "14:30", assumed_ampm: true}
+
+  # --- kal as yesterday ---
+  - id: t27
+    text: "kal meeting thi Rahul ke saath"
+    expect: {date: "2026-11-13"}
+  - id: t28
+    text: "kal shaam 6 baje call kiya tha"
+    expect: {date: "2026-11-13", time: "18:00"}
+  - id: t29
+    text: "yesterday subah 8 baje gaya tha"
+    expect: {date: "2026-11-13", time: "08:00"}
+  - id: t30
+    text: "kal raat khana bahar hua"
+    expect: {date: "2026-11-13"}
+
+  # --- kal asks ---
+  - id: t31
+    text: "kal"
+    expect: {status: ask, ask_about: kal}
+  - id: t32
+    text: "kal saadhe gyarah baje"
+    expect: {status: ask, ask_about: kal}
+  - id: t33
+    text: "kal wali meeting thi, use kal phir rakhna hai"
+    expect: {status: ask, ask_about: kal}
+  - id: t34
+    text: "kal ka call tomorrow hai ya yesterday tha?"
+    expect: {status: ask, ask_about: kal}
+  - id: t35
+    text: "kal Rahul ka call"
+    expect: {status: ask, ask_about: kal}
+
+  # --- now after midnight ---
+  - id: t36
+    now: "2026-11-15T01:00:00+05:30"
+    text: "kal subah 9 baje meeting hai"
+    expect: {status: ask, ask_about: midnight}
+  - id: t37
+    now: "2026-11-15T01:00:00+05:30"
+    text: "kal shaam 5 baje call karna hai"
+    expect: {status: ask, ask_about: midnight}
+  - id: t38
+    now: "2026-11-15T03:30:00+05:30"
+    text: "kal raat movie dekhi thi"
+    expect: {status: ask, ask_about: midnight}
+  - id: t39
+    now: "2026-11-15T00:15:00+05:30"
+    text: "kal"
+    expect: {status: ask, ask_about: midnight}
+  - id: t40
+    now: "2026-11-15T01:00:00+05:30"
+    text: "aaj subah 9 baje meeting hai"
+    expect: {date: "2026-11-15", time: "09:00"}
+  - id: t41
+    now: "2026-11-15T04:30:00+05:30"
+    text: "kal subah 9 baje meeting hai"
+    expect: {date: "2026-11-16", time: "09:00"}
+  - id: t42
+    now: "2026-11-14T23:30:00+05:30"
+    text: "kal subah 9 baje meeting hai"
+    expect: {date: "2026-11-15", time: "09:00"}
+  - id: t43
+    now: "2026-11-15T02:00:00+05:30"
+    text: "subah 7 baje utha dena"
+    expect: {date: "2026-11-15", time: "07:00"}
+
+  - id: t44
+    now: "2026-11-15T01:00:00+05:30"
+    text: "parso shaam 6 baje meeting hai"
+    expect: {status: ask, ask_about: midnight}
+  - id: t45
+    now: "2026-11-15T01:00:00+05:30"
+    text: "tomorrow morning 9 am call"
+    expect: {status: ask, ask_about: midnight}
+  - id: t46
+    now: "2026-11-15T02:30:00+05:30"
+    text: "day after tomorrow 11 am dentist"
+    expect: {status: ask, ask_about: midnight}
+  - id: t47
+    now: "2026-11-15T03:45:00+05:30"
+    text: "parso"
+    expect: {status: ask, ask_about: midnight}
+  - id: t48
+    now: "2026-11-15T01:00:00+05:30"
+    text: "aaj shaam 6 baje gym jaana hai"
+    expect: {date: "2026-11-15", time: "18:00"}
+
+  # --- weekdays (now Saturday 2026-11-14) ---
+  - id: w01
+    text: "Monday ko meeting hai"
+    expect: {date: "2026-11-16"}
+  - id: w02
+    text: "somvaar subah 10 baje meeting"
+    expect: {date: "2026-11-16", time: "10:00"}
+  - id: w03
+    text: "mangalvaar shaam 5 baje"
+    expect: {date: "2026-11-17", time: "17:00"}
+  - id: w04
+    text: "budhvaar ko doctor"
+    expect: {date: "2026-11-18"}
+  - id: w05
+    text: "guruvaar 3 baje call"
+    expect: {date: "2026-11-19", time: "15:00", assumed_ampm: true}
+  - id: w06
+    text: "shukravaar raat 8 baje dinner"
+    expect: {date: "2026-11-20", time: "20:00"}
+  - id: w07
+    text: "ravivaar subah 7 baje"
+    expect: {date: "2026-11-15", time: "07:00"}
+  - id: w08
+    text: "Sunday at 6 pm"
+    expect: {date: "2026-11-15", time: "18:00"}
+  - id: w09
+    text: "shanivaar ko"
+    expect: {status: ask, ask_about: weekday}
+  - id: w10
+    text: "Saturday 5 baje"
+    expect: {status: ask, ask_about: weekday}
+  - id: w11
+    text: "agle Monday"
+    expect: {date: "2026-11-16"}
+  - id: w12
+    text: "next Wednesday 4 pm"
+    expect: {date: "2026-11-18", time: "16:00"}
+  - id: w13
+    text: "agle ravivaar"
+    expect: {status: ask, ask_about: weekday}
+  - id: w14
+    text: "next Sunday"
+    expect: {status: ask, ask_about: weekday}
+  - id: w15
+    text: "next Saturday"
+    expect: {status: ask, ask_about: weekday}
+
+  # --- weekdays (now Tuesday 2026-11-17) ---
+  - id: w16
+    now: "2026-11-17T10:00:00+05:30"
+    text: "Friday ko meeting"
+    expect: {date: "2026-11-20"}
+  - id: w17
+    now: "2026-11-17T10:00:00+05:30"
+    text: "agle Friday"
+    expect: {status: ask, ask_about: weekday}
+  - id: w18
+    now: "2026-11-17T10:00:00+05:30"
+    text: "next Monday 10 am"
+    expect: {date: "2026-11-23", time: "10:00"}
+  - id: w19
+    now: "2026-11-17T10:00:00+05:30"
+    text: "mangalvaar shaam 6 baje"
+    expect: {status: ask, ask_about: weekday}
+  - id: w20
+    now: "2026-11-17T10:00:00+05:30"
+    text: "agle shanivaar subah 9 baje"
+    expect: {status: ask, ask_about: weekday}
+  - id: w21
+    now: "2026-11-17T10:00:00+05:30"
+    text: "Monday"
+    expect: {date: "2026-11-23"}
+
+  # --- relative times (from now) ---
+  - id: r01
+    text: "2 ghante baad yaad dila dena"
+    expect: {date: "2026-11-14", time: "12:00"}
+  - id: r02
+    text: "aadhe ghante mein call karna"
+    expect: {date: "2026-11-14", time: "10:30"}
+  - id: r03
+    text: "in 20 minutes"
+    expect: {date: "2026-11-14", time: "10:20"}
+  - id: r04
+    text: "dedh ghante baad"
+    expect: {date: "2026-11-14", time: "11:30"}
+  - id: r05
+    text: "15 minute baad"
+    expect: {date: "2026-11-14", time: "10:15"}
+  - id: r06
+    text: "in 2 hours"
+    expect: {date: "2026-11-14", time: "12:00"}
+  - id: r07
+    text: "dhai ghante mein"
+    expect: {date: "2026-11-14", time: "12:30"}
+  - id: r08
+    now: "2026-11-14T23:30:00+05:30"
+    text: "1 ghante baad"
+    expect: {date: "2026-11-15", time: "00:30"}
+
+  # --- reminder offsets ---
+  - id: o01
+    text: "parso shaam saadhe chhe baje Neha ke saath call hai, 15 minute pehle yaad dila dena"
+    expect: {date: "2026-11-16", time: "18:30", remind_before_min: 15}
+  - id: o02
+    text: "kal subah 10 baje meeting hai, aadha ghanta pehle bata dena"
+    expect: {date: "2026-11-15", time: "10:00", remind_before_min: 30}
+  - id: o03
+    text: "Friday ko Priya ka birthday hai, ek din pehle yaad dila dena"
+    expect: {date: "2026-11-20", remind_before_min: 1440}
+  - id: o04
+    text: "kal shaam 7 baje dinner hai, 1 ghanta pehle remind karna"
+    expect: {date: "2026-11-15", time: "19:00", remind_before_min: 60}
+  - id: o05
+    text: "somvaar 11 am interview, remind me 30 minutes before"
+    expect: {date: "2026-11-16", time: "11:00", remind_before_min: 30}
+
+  # --- not understood ---
+  - id: x01
+    text: "jab time mile tab"
+    expect: {status: not_understood}
+  - id: x02
+    text: "koi baat nahi"
+    expect: {status: not_understood}
+  - id: x03
+    text: "thodi der mein"
+    expect: {status: not_understood}
+  - id: x04
+    text: "baad mein karte hain"
+    expect: {status: not_understood}
+
+numbers:
+  - {id: m01, text: "dedh sau", expect: 150}
+  - {id: m02, text: "dhai sau", expect: 250}
+  - {id: m03, text: "sava sau", expect: 125}
+  - {id: m04, text: "saadhe teen sau", expect: 350}
+  - {id: m05, text: "paune do sau", expect: 175}
+  - {id: m06, text: "barah sau", expect: 1200}
+  - {id: m07, text: "do hazaar", expect: 2000}
+  - {id: m08, text: "dedh hazaar", expect: 1500}
+  - {id: m09, text: "saadhe teen hazaar", expect: 3500}
+  - {id: m10, text: "das hazaar", expect: 10000}
+  - {id: m11, text: "50 hazaar", expect: 50000}
+  - {id: m12, text: "paanch lakh", expect: 500000}
+  - {id: m13, text: "dedh lakh", expect: 150000}
+  - {id: m14, text: "dhai lakh", expect: 250000}
+  - {id: m15, text: "paune do lakh", expect: 175000}
+  - {id: m16, text: "sava lakh", expect: 125000}
+  - {id: m17, text: "3 lakh 50 hazaar", expect: 350000}
+  - {id: m18, text: "ek crore", expect: 10000000}
+  - {id: m19, text: "dedh crore", expect: 15000000}
+  - {id: m20, text: "2.5 crore", expect: 25000000}
+  - {id: m21, text: "₹1,50,000", expect: 150000}
+  - {id: m22, text: "₹ 12,34,567", expect: 1234567}
+  - {id: m23, text: "Rs 2.5 lakh", expect: 250000}
+  - {id: m24, text: "5 lakh rupaye", expect: 500000}
+  - {id: m25, text: "bahut saare paise", expect: null}
+  - {id: m26, text: "thoda sa", expect: null}
