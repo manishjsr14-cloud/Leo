@@ -1,32 +1,33 @@
-"""The supervisor node: picks the next agent for a request, or finishes.
+"""The supervisor node: plans, once per request, which agents run and in what order.
 
-Structured output {next, task} (architecture section 4.2). The loop
-supervisor -> agent -> supervisor stops at graph.max_hops (section 4.3).
-An agent that already finished this request (listed in completed_agents) is
-left out of the output schema, so the LLM cannot choose it again; when no
-agent is left, the supervisor finishes without calling the LLM.
+One LLM call returns {agents, task}: an ordered list of up to 2 known agent
+names with no duplicates (empty for plain chat), and one short task for them.
+The graph then runs those agents in order and goes to the responder; the
+supervisor is not asked again (architecture section 4.3, decision M1.5: the
+4B model kept choosing the remaining agent when asked after each agent).
+graph.max_hops still caps how many agents run.
 """
 
 import logging
 from collections.abc import Callable
 from typing import Literal
 
-from pydantic import BaseModel, create_model
+from pydantic import BaseModel, Field, create_model, field_validator
 
 from leo.graph.state import LeoState, chat_messages
 
 log = logging.getLogger("leo.graph")
 
-FINISH = "FINISH"
+MAX_PLANNED_AGENTS = 2
 
 # Kept here until versioned prompt files arrive in M1.8.
 SYSTEM_PROMPT = (
-    "You are the supervisor of Leo, a personal assistant. Decide which agent "
-    "should act next on the user's latest request, or FINISH if the request is "
-    "answered or no agent is needed.\n"
+    "You are the supervisor of Leo, a personal assistant. Plan which agents must "
+    "act on the user's latest request, in order. Use one agent unless the request "
+    "clearly needs two. Use an empty list when no agent is needed (plain chat).\n"
     "Agents:\n{agents}\n"
-    'Reply only with JSON: {{"next": "<agent name or FINISH>", "task": "<one short '
-    'instruction for that agent>"}}.'
+    'Reply only with JSON: {{"agents": [<agent names in order>], "task": "<one '
+    'short instruction for the agents>"}}.'
 )
 
 
@@ -43,46 +44,47 @@ def describe_agents(agents: list[str]) -> str:
                      else f"- {name}" for name in agents)
 
 
-class SupervisorDecision(BaseModel):
-    """The supervisor's structured reply."""
+class SupervisorPlan(BaseModel):
+    """The supervisor's structured reply: agents to run in order, and their task."""
 
-    next: str
+    agents: list[str] = Field(max_length=MAX_PLANNED_AGENTS)
     task: str
 
+    # The same agent may not appear twice in one plan.
+    @field_validator("agents")
+    @classmethod
+    def no_duplicates(cls, agents: list[str]) -> list[str]:
+        if len(set(agents)) != len(agents):
+            raise ValueError("an agent may appear only once in the plan")
+        return agents
 
-# The decision schema for this turn: `next` may only be one of `agents` or FINISH.
-def decision_model(agents: list[str]) -> type[SupervisorDecision]:
-    choices = Literal[(*agents, FINISH)]  # type: ignore[valid-type]
-    return create_model("SupervisorDecision", __base__=SupervisorDecision,
-                        next=(choices, ...))
+
+# The plan schema for this request: list items may only be the given agent names.
+def plan_model(agents: list[str]) -> type[SupervisorPlan]:
+    names = Literal[tuple(agents)]  # type: ignore[valid-type]
+    return create_model("SupervisorPlan", __base__=SupervisorPlan,
+                        agents=(list[names], Field(max_length=MAX_PLANNED_AGENTS)))
 
 
-# Decide the next step. Returns the state update: next_agent, and for a real
-# agent also the new task in plan and one more hop. Calls the LLM only when
-# some agent has not finished this request yet and the hop limit is not reached.
+# Plan the request. Returns the state update: agent_queue (the agents to run,
+# in order), the task added to plan, and hops reset to 0. With no agents
+# registered, or a reply that fails the schema, the queue is empty and the
+# responder answers directly.
 def supervisor_node(
     state: LeoState,
     chat: Callable,
     agents: list[str],
-    max_hops: int,
     force_cloud: bool = False,
 ) -> dict:
-    hops = state.get("hops", 0)
-    done = set(state.get("completed_agents") or [])
-    agents = [name for name in agents if name not in done]
     if not agents:
-        return {"next_agent": FINISH}
-    if hops >= max_hops:
-        log.warning("hop limit reached: hops=%s max_hops=%s", hops, max_hops)
-        return {"next_agent": FINISH}
+        return {"agent_queue": [], "hops": 0}
     prompt = SYSTEM_PROMPT.format(agents=describe_agents(agents))
-    result = chat(chat_messages(prompt, state), decision_model(agents), force_cloud)
-    decision = result.parsed if result.valid else None
-    if decision is None or decision.next not in agents:
-        log.warning("supervisor finished: valid=%s text=%r", result.valid, result.text)
-        return {"next_agent": FINISH}
-    return {
-        "next_agent": decision.next,
-        "plan": [*state.get("plan", []), decision.task],
-        "hops": hops + 1,
-    }
+    result = chat(chat_messages(prompt, state), plan_model(agents), force_cloud)
+    if not result.valid:
+        log.warning("supervisor plan invalid, answering directly: text=%r", result.text)
+        return {"agent_queue": [], "hops": 0}
+    plan = result.parsed
+    update = {"agent_queue": list(plan.agents), "hops": 0}
+    if plan.agents:
+        update["plan"] = [*state.get("plan", []), plan.task]
+    return update

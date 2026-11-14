@@ -104,8 +104,7 @@ def run_steps(prompt: str, version: str, state: LeoState, chat: Callable,
 
 
 # Build a graph node from `run(state, force_cloud)`. Its result goes in
-# agent_results[name]; after done the agent is also added to completed_agents,
-# so the supervisor does not choose it again for the same request (section 4.3).
+# agent_results[name]; after done the agent is also added to completed_agents.
 def agent_node(name: str, run: Callable[[LeoState, bool], dict]) -> Callable:
     # The node LangGraph calls; the run config says whether to force Groq.
     def node(state: LeoState, config: RunnableConfig) -> dict:

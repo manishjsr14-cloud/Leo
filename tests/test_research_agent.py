@@ -61,10 +61,9 @@ def test_graph_routes_rain_to_research_and_responder_sees_source():
     tasks_log = []
     tasks = by_name(mock_productivity_tools(tasks_log))
     chat = FakeChat(
-        {"next": "research", "task": "Check if it will rain in Pune tomorrow"},
+        {"agents": ["research"], "task": "Check if it will rain in Pune tomorrow"},
         {"tool": "get_weather", "args": {"place": "Pune", "days": 2}},
         {"done": True, "summary": "60% chance."},
-        {"next": "FINISH", "task": ""},
         "Yes, 60% chance of rain in Pune tomorrow, says Open-Meteo.",
     )
     agents = {"productivity": productivity_agent(chat, tasks, 4),

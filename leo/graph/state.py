@@ -14,11 +14,11 @@ class LeoState(TypedDict, total=False):
     """What every node can read and update during one request."""
 
     messages: Annotated[list[AnyMessage], add_messages]  # the conversation
-    next_agent: str  # supervisor's routing decision, or "FINISH"
+    agent_queue: list[str]  # agents the supervisor planned for this request, in order
     plan: list[str]  # one task per supervisor hop, in order
     agent_results: dict[str, Any]  # what each agent found, by agent name
-    hops: int  # supervisor -> agent hops so far in this request
-    completed_agents: list[str]  # agents that finished this request; never re-chosen
+    hops: int  # agents run so far in this request (capped by graph.max_hops)
+    completed_agents: list[str]  # agents that said done in this request
 
 
 # Turn the state into the plain message list the LLM gateway expects:

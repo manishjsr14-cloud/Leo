@@ -21,9 +21,9 @@ from tests.tracing_fakes import FakeTracer
 QUESTION = "what is 18% of 2450"
 REPLY = "18% of 2450 is 441."
 # Planned local-model replies: supervisor, agent step 1, agent step 2, responder.
-# The supervisor is not asked again: the agent said done (completed_agents).
+# The supervisor plans once; it is not asked again after the agent.
 PLAN = [
-    json.dumps({"next": "productivity", "task": "calculate 18% of 2450"}),
+    json.dumps({"agents": ["productivity"], "task": "calculate 18% of 2450"}),
     json.dumps({"tool": "calculate", "args": {"expression": "18% of 2450"}}),
     json.dumps({"done": True, "summary": REPLY}),
     REPLY,
@@ -58,7 +58,6 @@ def test_one_trace_with_nodes_steps_llm_and_tool_spans():
             ("step 1", [llm, ("tool:calculate", [])]),
             ("step 2", [llm]),
         ]),
-        ("supervisor", []),  # the agent is done: FINISH with no LLM call
         ("responder", [llm]),
     ])]
     kinds = {s["name"]: s["kind"] for s in tracer.spans}
@@ -90,7 +89,7 @@ def test_trace_tags_models_prompt_versions_and_tokens():
     assert "model:leo-qwen3" in root["tags"]
     assert any(t.startswith("prompt:supervisor@") for t in root["tags"])
     assert len(tracer.named("supervisor")["fields"]["metadata"]["prompt_version"]) == 8
-    assert tracer.named("supervisor")["fields"]["metadata"]["next"] == "productivity"
+    assert tracer.named("supervisor")["fields"]["metadata"]["plan"] == ["productivity"]
     assert tracer.named("step 1")["fields"]["metadata"]["action"] == "calculate"
     llm = tracer.named("llm:ollama")["fields"]
     assert llm["model"] == "leo-qwen3"

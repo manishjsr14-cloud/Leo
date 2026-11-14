@@ -7,7 +7,7 @@ from langchain_core.messages import HumanMessage
 from leo import cli
 from leo.agents.productivity import productivity_agent, run_agent, run_tool, step_model
 from leo.graph.builder import build_graph
-from leo.graph.supervisor import SupervisorDecision
+from leo.graph.supervisor import SupervisorPlan
 from leo.tools.mock.productivity import mock_productivity_tools
 from leo.tools.registry import by_name
 from tests.graph_fakes import FakeChat
@@ -137,13 +137,13 @@ def _valid(schema, text: str) -> bool:
         return False
 
 
-# Whole graph: one supervisor call routes, the agent runs two tools and says
-# done, the supervisor then finishes with no LLM call (no agent is left), and
-# the responder sees the agent's results.
+# Whole graph: one supervisor call plans [productivity], the agent runs two
+# tools and says done, the graph goes on to the responder with no second
+# supervisor call, and the responder sees the agent's results.
 def test_graph_two_step_needs_no_extra_supervisor_call():
     log, tools = fresh()
     chat = FakeChat(
-        {"next": "productivity", "task": "complete the milk task"},
+        {"agents": ["productivity"], "task": "complete the milk task"},
         {"tool": "list_tasks", "args": {}},
         {"tool": "complete_task", "args": {"task_id": 1}},
         {"done": True, "summary": "Marked Buy milk as done."},
@@ -165,14 +165,14 @@ def test_graph_two_step_needs_no_extra_supervisor_call():
 # True when a recorded fake LLM call came from the supervisor.
 def _is_supervisor(call) -> bool:
     model = call["output_model"]
-    return isinstance(model, type) and issubclass(model, SupervisorDecision)
+    return isinstance(model, type) and issubclass(model, SupervisorPlan)
 
 
 # Two requests through the CLI's run_turn: each runs the tool exactly once,
 # and completed_agents starts empty again for the second request.
 def test_tools_run_once_per_request_across_turns():
     log, tools = fresh()
-    route = {"next": "productivity", "task": "add the task"}
+    route = {"agents": ["productivity"], "task": "add the task"}
     chat = FakeChat(
         route, {"tool": "add_task", "args": {"title": "milk"}},
         {"done": True, "summary": "Added milk."}, "Added milk.",

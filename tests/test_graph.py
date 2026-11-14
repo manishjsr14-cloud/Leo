@@ -2,6 +2,7 @@
 
 from langchain_core.messages import AIMessage, HumanMessage
 
+from leo.config import load_config
 from leo.graph.builder import build_graph
 from tests.graph_fakes import FakeChat
 
@@ -34,31 +35,46 @@ def test_force_cloud_reaches_gateway():
     assert chat.calls[0]["force_cloud"] is True
 
 
-# Hop limit: an LLM that always picks the same agent is stopped after
-# graph.max_hops (8) agent runs, then the responder answers.
-def test_hop_limit_stops_loop():
-    runs = []
-    calls = []
+# A dummy agent that records its name, the task, and the results it saw.
+def dummy(name: str, seen: list):
+    def run(state):
+        seen.append((name, dict(state.get("agent_results") or {})))
+        return {"agent_results": {**(state.get("agent_results") or {}), name: f"{name} ok"}}
+    return run
 
-    # A dummy agent that only counts how often it ran.
-    def dummy(state):
-        runs.append(state["plan"][-1])
-        return {"agent_results": {"dummy": f"run {len(runs)}"}}
 
-    # The supervisor always picks "dummy"; the responder gets plain text.
-    def chat(messages, output_model=None, force_cloud=False):
-        calls.append(output_model)
-        decision = {"next": "dummy", "task": "loop forever"}
-        return FakeChat(decision if output_model else "Stopped.")(
-            messages, output_model, force_cloud)
+# Run one request with this supervisor plan; returns (output, agent runs, LLM calls).
+def run_plan(plan: list[str], config=None):
+    seen: list = []
+    chat = FakeChat({"agents": plan, "task": "do it"}, "Reply.")
+    agents = {"productivity": dummy("productivity", seen), "research": dummy("research", seen)}
+    out = build_graph(chat, agents=agents, config=config).invoke(
+        {"messages": [HumanMessage("hi")], "hops": 0, "plan": []})
+    return out, seen, chat.calls
 
-    graph = build_graph(chat, agents={"dummy": dummy})
-    out = graph.invoke({"messages": [HumanMessage("loop")], "hops": 0, "plan": []})
-    assert len(runs) == 8
-    assert out["hops"] == 8
-    assert out["next_agent"] == "FINISH"
-    assert out["messages"][-1].content == "Stopped."
-    # 8 supervisor calls that chose dummy, then one responder call; the 9th
-    # supervisor turn hits the limit and makes no call.
-    assert len(calls) == 9
-    assert calls[-1] is None
+
+def test_plan_of_productivity_never_runs_research():
+    out, seen, calls = run_plan(["productivity"])
+    assert [name for name, _ in seen] == ["productivity"]
+    assert len(calls) == 2  # one supervisor plan, one responder; no second supervisor call
+    assert out["messages"][-1].content == "Reply."
+
+
+def test_plan_of_two_runs_both_in_order_and_second_sees_first():
+    out, seen, calls = run_plan(["research", "productivity"])
+    assert [name for name, _ in seen] == ["research", "productivity"]
+    assert seen[1][1] == {"research": "research ok"}
+    assert out["hops"] == 2 and len(calls) == 2
+
+
+def test_empty_plan_goes_straight_to_the_responder():
+    out, seen, calls = run_plan([])
+    assert seen == [] and len(calls) == 2 and out["hops"] == 0
+
+
+# max_hops stays a safety limit: with max_hops 1, only the first planned agent runs.
+def test_max_hops_caps_the_planned_agents():
+    config = load_config()
+    config = config.model_copy(update={"graph": config.graph.model_copy(update={"max_hops": 1})})
+    out, seen, _ = run_plan(["research", "productivity"], config)
+    assert [name for name, _ in seen] == ["research"] and out["hops"] == 1

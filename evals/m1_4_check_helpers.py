@@ -4,7 +4,7 @@ record each agent run's outcome, and print the tasks table.
 
 import sqlite3
 
-from leo.graph.supervisor import SupervisorDecision
+from leo.graph.supervisor import SupervisorPlan
 from leo.llm import gateway
 from leo.tools.base import Tool, ToolCall, ToolError, plain
 
@@ -18,7 +18,7 @@ class CountingChat:
     # Call the real gateway and record who called it, who answered and what came back.
     def __call__(self, messages, output_model=None, force_cloud=False):
         result = gateway.chat(messages, output_model, force_cloud)
-        if isinstance(output_model, type) and issubclass(output_model, SupervisorDecision):
+        if isinstance(output_model, type) and issubclass(output_model, SupervisorPlan):
             node = "supervisor"
         elif output_model is None:
             node = "responder"
