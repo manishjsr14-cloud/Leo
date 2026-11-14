@@ -6,7 +6,8 @@
 A message starting with "use cloud" sends only that turn to Groq.
 Type "exit" or "quit" (or press Ctrl+C) to stop. The conversation lives in
 memory only; saving it across restarts comes with checkpointing in M2.4.
-The productivity agent keeps tasks and notes in leo_data/leo.db.
+The productivity agent keeps tasks and notes in leo_data/leo.db; the research
+agent uses DuckDuckGo, web pages and Open-Meteo over the internet.
 Each message is one trace in Langfuse when the keys are set (section 13.2);
 the tracer is flushed on exit so the last request is not lost.
 """
@@ -20,6 +21,7 @@ from collections.abc import Callable
 from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
 
 from leo.agents.productivity import productivity_agent
+from leo.agents.research import research_agent
 from leo.config import load_config, load_secrets
 from leo.graph.builder import build_graph
 from leo.llm import gateway
@@ -29,6 +31,7 @@ from leo.ops import tracing
 from leo.ops.trace_tags import request_tags
 from leo.ops.tracing_setup import setup_tracing
 from leo.tools.real.productivity import real_productivity_tools
+from leo.tools.real.research import real_research_tools
 from leo.tools.registry import by_name
 
 CLOUD_PREFIX = "use cloud"
@@ -69,13 +72,17 @@ def timer_ringer(output_fn: Callable[[str], None], make_timer=threading.Timer):
     return schedule
 
 
-# The real graph: the productivity agent with real tools on leo_data/leo.db.
+# The real graph: the productivity agent with real tools on leo_data/leo.db,
+# and the research agent with the real web and weather tools.
 def default_graph(output_fn: Callable[[str], None]):
     config = load_config()
     conn = open_db(config.storage.resolved_db_path())
-    tools = by_name(real_productivity_tools(conn, schedule=timer_ringer(output_fn)))
-    agent = productivity_agent(gateway.chat, tools, config.agent.max_steps)
-    return build_graph(agents={"productivity": agent}, config=config)
+    tasks = by_name(real_productivity_tools(conn, schedule=timer_ringer(output_fn)))
+    web = by_name(real_research_tools(config.research))
+    steps = config.agent.max_steps
+    return build_graph(agents={"productivity": productivity_agent(gateway.chat, tasks, steps),
+                               "research": research_agent(gateway.chat, web, steps)},
+                       config=config)
 
 
 # Read --cloud from the command line.

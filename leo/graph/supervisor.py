@@ -24,10 +24,23 @@ SYSTEM_PROMPT = (
     "You are the supervisor of Leo, a personal assistant. Decide which agent "
     "should act next on the user's latest request, or FINISH if the request is "
     "answered or no agent is needed.\n"
-    "Agents: {agents}.\n"
+    "Agents:\n{agents}\n"
     'Reply only with JSON: {{"next": "<agent name or FINISH>", "task": "<one short '
     'instruction for that agent>"}}.'
 )
+
+
+# One short line per agent for the prompt (agents without a line show by name only).
+AGENT_DESCRIPTIONS = {
+    "productivity": "tasks, notes, timers, calculations",
+    "research": "web search, reading web pages, weather",
+}
+
+
+# The agent list for the prompt: "- name: what it does", one per line.
+def describe_agents(agents: list[str]) -> str:
+    return "\n".join(f"- {name}: {AGENT_DESCRIPTIONS[name]}" if name in AGENT_DESCRIPTIONS
+                     else f"- {name}" for name in agents)
 
 
 class SupervisorDecision(BaseModel):
@@ -62,7 +75,7 @@ def supervisor_node(
     if hops >= max_hops:
         log.warning("hop limit reached: hops=%s max_hops=%s", hops, max_hops)
         return {"next_agent": FINISH}
-    prompt = SYSTEM_PROMPT.format(agents=", ".join(agents))
+    prompt = SYSTEM_PROMPT.format(agents=describe_agents(agents))
     result = chat(chat_messages(prompt, state), decision_model(agents), force_cloud)
     decision = result.parsed if result.valid else None
     if decision is None or decision.next not in agents:
