@@ -2,7 +2,7 @@
 real graph with the real LLM gateway, the REAL research tools (internet:
 Open-Meteo, DuckDuckGo, web pages; agreed for M1.5) and the real productivity
 tools on an empty temporary database (never leo_data/). Writes a new report
-with, per turn: the agents the supervisor chose, agent step replies, tool calls
+with, per turn: the supervisor plan, the agents run, agent step replies, tool calls
 and results, LLM calls and time, and the verdict.
 
   python -m evals.m1_5_cli_check evals/reports/m1.5_cli_check_<date>.md
@@ -18,6 +18,7 @@ from pathlib import Path
 
 from evals.m1_4_check_helpers import CountingChat, logged
 from evals.m1_5_check_helpers import chosen, tagged, turn_details
+from evals.m1_5_pass_rules import RULES, cell, verdict_v1, verdict_v2
 from leo import cli
 from leo.agents.productivity import productivity_agent
 from leo.agents.research import research_agent
@@ -37,35 +38,12 @@ TURNS = [
     "add milk to my tasks",
 ]
 
-# Pass rule v1, committed before the first run. Only turns 1 and 4 are scored;
-# turns 2 (Hinglish) and 3 (web search) are recorded only.
-# Turn 1: the research agent ran; get_weather succeeded with a place containing
-#   "pune" (any case); the reply contains "open-meteo" (any case, which also
-#   covers the URL open-meteo.com).
-# Turn 4: the productivity agent ran, and the research agent did not run.
-PASS_RULE = "v1"
-SCORED = {1, 4}
-HEADER = "| turn | supervisor_chose | agents_run | llm_calls | tool_calls | turn_s | result |"
-
-
-# True when a logged tool call succeeded (its result is not an {"error": ...} dict).
-def succeeded(call) -> bool:
-    return not (isinstance(call.result, dict) and "error" in call.result)
-
-
-# The verdict for one turn (None for a recorded-only turn).
-def verdict(number: int, ran: list[str], tools_run, reply: str) -> bool | None:
-    if number == 1:
-        weather_ok = any(c.tool == "get_weather" and succeeded(c)
-                         and "pune" in c.args.get("place", "").lower() for c in tools_run)
-        return "research" in ran and weather_ok and "open-meteo" in reply.lower()
-    if number == 4:
-        return "productivity" in ran and "research" not in ran
-    return None
+HEADER = ("| turn | supervisor_plan | agents_run | llm_calls | tool_calls | turn_s "
+          "| v1 | v2 |")
 
 
 # Run the turns as one conversation. Returns report lines and the scored verdicts.
-def run_turns(config, conn) -> tuple[list[str], list[bool]]:
+def run_turns(config, conn) -> tuple[list[str], dict[str, list[bool]]]:
     chat, log, runs = CountingChat(), [], []
     steps = config.agent.max_steps
     tasks = by_name([logged(t, log) for t in real_productivity_tools(conn)])
@@ -74,7 +52,7 @@ def run_turns(config, conn) -> tuple[list[str], list[bool]]:
               "research": tagged(research_agent(chat, web, steps), "research", runs)}
     graph = build_graph(chat, agents=agents, config=config)
     history: list = []
-    rows, details, verdicts = [], [], []
+    rows, details, verdicts = [], [], {"v1": [], "v2": []}
     for number, line in enumerate(TURNS, start=1):
         calls_before, log_before, runs_before = len(chat.calls), len(log), len(runs)
         start = time.perf_counter()
@@ -87,17 +65,20 @@ def run_turns(config, conn) -> tuple[list[str], list[bool]]:
         calls, tools_run, new = chat.calls[calls_before:], log[log_before:], runs[runs_before:]
         ran = [name for name, _ in new]
         stops = [f"{name}: {outcome['stopped']}" for name, outcome in new]
-        picks = chosen(calls)
-        ok = verdict(number, ran, tools_run, text)
-        if ok is not None:
-            verdicts.append(ok)
-        result = "recorded only" if ok is None else ("PASS" if ok else "FAIL")
-        rows.append(f"| {number} | {', '.join(picks)} | {', '.join(ran) or 'none'} | "
-                    f"{len(calls)} | {len(tools_run)} | {wall:.2f} | {result} |")
-        details += turn_details(number, line, text, calls, picks, ran, stops, tools_run, ok)
+        plans = chosen(calls)
+        ok = {"v1": verdict_v1(number, ran, tools_run, text),
+              "v2": verdict_v2(number, ran, tools_run, text)}
+        for rule, value in ok.items():
+            if value is not None:
+                verdicts[rule].append(value)
+        result = f"v1 {cell(ok['v1'])}, v2 {cell(ok['v2'])}"
+        rows.append(f"| {number} | {plans} | {', '.join(ran) or 'none'} | {len(calls)} | "
+                    f"{len(tools_run)} | {wall:.2f} | {cell(ok['v1'])} | {cell(ok['v2'])} |")
+        details += turn_details(number, line, text, calls, plans, ran, stops, tools_run,
+                                result)
     lines = ["## Turns",
              "turn_s is wall time for the whole graph run (supervisor, agents, responder).",
-             "", HEADER, "|---|---|---|---|---|---|---|", *rows, "", "## Details", "",
+             "", HEADER, "|---|---|---|---|---|---|---|---|", *rows, "", "## Details", "",
              *details]
     return lines, verdicts
 
@@ -113,18 +94,21 @@ def main() -> None:
         conn = open_db(Path(folder) / "leo.db")
         lines, verdicts = run_turns(config, conn)
         conn.close()
-    passed = len(verdicts) == len(SCORED) and all(verdicts)
+    overall = {rule: "PASS" if len(verdicts[rule]) == len(turns) and all(verdicts[rule])
+               else "FAIL" for rule, turns in RULES.items()}
     header = [f"# M1.5 research check — {stamp}",
               (f"Local model: {config.llm.primary.model}. "
                f"Fallback: {config.llm.fallback.model}. max_hops: {config.graph.max_hops}. "
                f"agent.max_steps: {config.agent.max_steps}. Agents: productivity (real "
                "tools, empty temporary database) and research (real tools, internet)."), "",
-              (f"**Overall: {'PASS' if passed else 'FAIL'}** (scored turns passed: "
-               f"{sum(verdicts)}/{len(SCORED)})"), "",
-              (f"Pass rule {PASS_RULE}: turn 1 runs the research agent, get_weather succeeds "
-               "with a place containing 'pune', and the reply contains 'open-meteo'; turn 4 "
-               "runs the productivity agent and never the research agent. Turns 2 and 3 are "
-               "recorded only."), ""]
+              *[f"**Overall {rule}: {overall[rule]}** (scored turns passed: "
+                f"{sum(verdicts[rule])}/{len(turns)})" for rule, turns in RULES.items()], "",
+              ("Pass rule v1: turn 1 runs the research agent, get_weather succeeds with a "
+               "place containing 'pune', and the reply contains 'open-meteo'; turn 4 runs "
+               "the productivity agent and never the research agent."),
+              ("Pass rule v2 (added after report 1, before this run): v1, plus turn 1's "
+               "get_weather result has a row labelled 'tomorrow', and turn 3 (web question) "
+               "does not run productivity. Turn 2 is recorded only under both rules."), ""]
     report.write_text("\n".join(header + lines) + "\n", encoding="utf-8")
     sys.stdout.reconfigure(encoding="utf-8")  # replies may contain emoji
     print(report.read_text(encoding="utf-8"))
