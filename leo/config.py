@@ -114,6 +114,12 @@ class ResearchConfig(Strict):
     max_page_chars: int = Field(gt=0)
 
 
+class LanguageConfig(Strict):
+    """Indian time parser: the time zone used when no "now" is given."""
+
+    timezone: str
+
+
 class LeoConfig(Strict):
     """The whole config.yaml file."""
 
@@ -125,6 +131,7 @@ class LeoConfig(Strict):
     agent: AgentConfig
     tracing: TracingConfig
     research: ResearchConfig
+    language: LanguageConfig
 
 
 class Secrets(BaseSettings):

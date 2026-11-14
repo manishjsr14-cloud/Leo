@@ -58,3 +58,6 @@ research:                          # research agent tools (section 9); public se
   max_redirects: 5                 # read_page follows redirects itself, checking each hop
   max_page_bytes: 2000000          # read_page stops downloading after this many bytes
   max_page_chars: 3000             # page text given to the model is cut to this length
+
+language:                          # Indian time and number parser (section 15.2)
+  timezone: Asia/Kolkata           # IST; dates and times from the parser are in this zone

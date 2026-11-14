@@ -63,6 +63,11 @@ def test_max_hops_is_loaded_and_checked(tmp_path: Path):
         load_config(broken)
 
 
+# The language section gives the parser's time zone (IST).
+def test_language_section_loads():
+    assert load_config().language.timezone == "Asia/Kolkata"
+
+
 # The research section loads, and an unknown key in it is rejected.
 def test_research_section_loads_and_rejects_unknown_keys(tmp_path: Path):
     research = load_config().research
