@@ -35,7 +35,10 @@ FIXED_DAYS = [  # Saturday 14 Nov 2026 is "today" in the mocks
 
 
 # Build the 3 mock research tools. Every call is appended to `log`.
-def mock_research_tools(log: list[ToolCall]) -> list[Tool]:
+# get_weather returns `days` (FIXED_DAYS unless given), whatever place is asked.
+def mock_research_tools(log: list[ToolCall], days: list[dict] | None = None) -> list[Tool]:
+    days = FIXED_DAYS if days is None else days
+
     # Run `fn`, log the call and its result, and return the result.
     def logged(name: str, fn):
         def run(args: ToolArgs):
@@ -57,7 +60,7 @@ def mock_research_tools(log: list[ToolCall]) -> list[Tool]:
                                 "text": wrap_untrusted(FIXED_PAGE_TEXT, a.url)},
         "get_weather": lambda a: {
             "place": f"{a.place.title()}, Maharashtra, India",
-            "days": copy.deepcopy(FIXED_DAYS),
+            "days": copy.deepcopy(days),
             "source": WEATHER_SOURCE, "source_url": WEATHER_SOURCE_URL},
     }
     return make_tools({name: logged(name, fn) for name, fn in functions.items()})

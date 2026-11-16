@@ -13,8 +13,8 @@ from leo.tools.registry import (
     mock_tools,
 )
 
-SAT_8 = "2026-11-14T08:00:00+05:30"
-SAT_9 = "2026-11-14T09:00:00+05:30"
+SAT_8 = "2026-11-21T08:00:00+05:30"
+SAT_9 = "2026-11-21T09:00:00+05:30"
 RANGE = {"start": SAT_8, "end": SAT_9}
 
 
@@ -26,7 +26,7 @@ def fresh():
 
 def test_every_tool_is_complete_and_names_unique():
     _, tools = fresh()
-    assert len(tools) == 13  # 3 calendar + 7 productivity + 3 research
+    assert len(tools) == 15  # 5 calendar + 7 productivity + 3 research
     for name, tool in tools.items():
         assert tool.name == name
         assert tool.description
@@ -46,15 +46,17 @@ def test_tiers_match_section_9():
         assert tools[name].tier is Tier.SAFE
 
 
-def test_get_events_returns_fixed_data_and_logs_each_call():
+# Saturday 8-9 am holds only the gym (M1.7: get_events returns events in the range).
+def test_get_events_returns_events_in_range_and_logs_each_call():
     log, tools = fresh()
+    gym = [e for e in FIXED_EVENTS if e["id"] == "mock-evt-gym"]
     first = call_tool(tools, "get_events", RANGE)
     first[0]["title"] = "changed by caller"
     second = call_tool(tools, "get_events", RANGE)
-    assert second == FIXED_EVENTS
+    assert second == gym
     assert [c.tool for c in log] == ["get_events", "get_events"]
     assert log[1].args == RANGE
-    assert log[1].result == FIXED_EVENTS
+    assert log[1].result == gym
 
 
 def test_create_event_returns_fixed_id_and_logs_args():

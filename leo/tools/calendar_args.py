@@ -37,3 +37,13 @@ class CancelEventArgs(ToolArgs):
     """Arguments for cancel_event: the id of the event to cancel."""
 
     event_id: str = Field(min_length=1)
+
+
+class FindFreeSlotsArgs(TimeRange):
+    """Arguments for find_free_slots: the time range to search for free time."""
+
+
+class MoveEventArgs(TimeRange):
+    """Arguments for move_event: the event's id and its new start and end."""
+
+    event_id: str = Field(min_length=1)
