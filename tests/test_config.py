@@ -39,7 +39,7 @@ def test_db_path_resolves_under_project():
     assert storage.resolved_db_path() == PROJECT_ROOT / "leo_data" / "leo.db"
 
 
-# The agent step limit comes from config.yaml (default 4) and must be at least 1.
+# The agent step limit comes from config.yaml (6 since M1.7) and must be at least 1.
 def test_agent_max_steps_is_loaded_and_checked(tmp_path: Path):
     assert load_config().agent.max_steps == 6
     data = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
@@ -75,6 +75,20 @@ def test_research_section_loads_and_rejects_unknown_keys(tmp_path: Path):
     assert research.max_redirects == 5
     data = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
     data["research"]["api_key"] = "x"
+    broken = tmp_path / "config.yaml"
+    broken.write_text(yaml.safe_dump(data), encoding="utf-8")
+
+    with pytest.raises(ValidationError):
+        load_config(broken)
+
+
+# Calendar settings load, and a part-of-day window must lie inside the day.
+def test_calendar_windows_are_loaded_and_checked(tmp_path: Path):
+    calendar = load_config().calendar
+    assert calendar.default_event_minutes == 60
+    assert calendar.day_parts["afternoon"] == (12, 16)
+    data = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
+    data["calendar"]["day_parts"]["night"] = [20, 25]
     broken = tmp_path / "config.yaml"
     broken.write_text(yaml.safe_dump(data), encoding="utf-8")
 

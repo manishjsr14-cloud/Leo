@@ -61,3 +61,11 @@ research:                          # research agent tools (section 9); public se
 
 language:                          # Indian time and number parser (section 15.2)
   timezone: Asia/Kolkata           # IST; dates and times from the parser are in this zone
+
+calendar:                          # calendar agent (section 9.1); mock calendar until M2.6
+  default_event_minutes: 60        # an event's length when the user gives no end
+  day_parts:                       # part-of-day windows as [start hour, end hour], IST
+    morning: [6, 12]               # subah
+    afternoon: [12, 16]            # dopahar
+    evening: [16, 20]              # shaam
+    night: [20, 24]                # raat (24 = midnight at the end of the day)

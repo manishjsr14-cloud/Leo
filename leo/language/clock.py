@@ -41,23 +41,37 @@ def find_duration(words: list[str]) -> tuple[str, int, int, int] | None:
     return None
 
 
-# The clock hour in the text as (hours, minutes, am/pm word or ""), or None.
-def find_clock(words: list[str]) -> tuple[int, int, str] | None:
-    for i, word in enumerate(words):
-        if ":" in word:
-            hours, minutes = word.split(":")
+# Every clock time in the text, in order, as (hours, minutes, am/pm word or "",
+# index of its first word). "3 baje wali meeting 5 baje" gives two.
+def find_clocks(words: list[str]) -> list[tuple[int, int, str, int]]:
+    clocks, i = [], 0
+    while i < len(words):
+        if ":" in words[i]:
+            hours, minutes = words[i].split(":")
             after = words[i + 1] if i + 1 < len(words) else ""
-            return int(hours), int(minutes), after if after in ("am", "pm") else ""
+            clocks.append((int(hours), int(minutes), after if after in ("am", "pm") else "", i))
+            i += 1
+            continue
         read = number_at(words, i)
         if read is None or read[1] >= len(words):
+            i += 1
             continue
         value, end = read
         if words[end] in w.HOUR_MARKERS or words[end] in ("am", "pm"):
             hours = int(value)
             minutes = int((value - hours) * 60)
             ampm = words[end] if words[end] in ("am", "pm") else ""
-            return hours or 12, minutes, ampm             # "paune ek" = 12:45
-    return None
+            clocks.append((hours or 12, minutes, ampm, i))    # "paune ek" = 12:45
+            i = end + 1                                   # "sava teen baje" read once
+            continue
+        i += 1
+    return clocks
+
+
+# The first clock hour in the text as (hours, minutes, am/pm word or ""), or None.
+def find_clock(words: list[str]) -> tuple[int, int, str] | None:
+    clocks = find_clocks(words)
+    return clocks[0][:3] if clocks else None
 
 
 # Turn a 12-hour clock into 24-hour time; also says whether the default was

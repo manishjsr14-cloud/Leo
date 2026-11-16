@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Literal
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, SecretStr
+from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -120,6 +120,22 @@ class LanguageConfig(Strict):
     timezone: str
 
 
+class CalendarConfig(Strict):
+    """Calendar agent: default event length and the part-of-day windows."""
+
+    default_event_minutes: int = Field(ge=1)
+    day_parts: dict[Literal["morning", "afternoon", "evening", "night"], tuple[int, int]]
+
+    # Each window must be whole hours inside the day, start before end.
+    @field_validator("day_parts")
+    @classmethod
+    def windows_inside_day(cls, parts: dict) -> dict:
+        for name, (start, end) in parts.items():
+            if not 0 <= start < end <= 24:
+                raise ValueError(f"day_parts.{name} must be 0 <= start < end <= 24")
+        return parts
+
+
 class LeoConfig(Strict):
     """The whole config.yaml file."""
 
@@ -132,6 +148,7 @@ class LeoConfig(Strict):
     tracing: TracingConfig
     research: ResearchConfig
     language: LanguageConfig
+    calendar: CalendarConfig
 
 
 class Secrets(BaseSettings):
