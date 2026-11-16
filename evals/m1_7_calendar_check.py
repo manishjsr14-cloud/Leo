@@ -3,13 +3,15 @@ alone (a new conversation) through the real graph and the real LLM gateway,
 with MOCK tools only: the turn file's calendar events and weather, and mock
 productivity tools. "now" is fixed by the turn file. Writes a new report with,
 per turn: plan, attempted and executed tool calls, stop reasons, LLM calls,
-time, reply, the verdict and why, and the (unscored) reply note.
+time, reply, the verdict and why, and the (unscored) reply note. From run3 it
+also records the first JSON key of every agent step reply (not scored).
 
   python -m evals.m1_7_calendar_check evals/reports/m1.7_calendar_check_<date>.md
 
 No personal data is used and nothing touches a real calendar.
 """
 
+import json
 import subprocess
 import sys
 import time
@@ -45,6 +47,16 @@ def git_state() -> str:
     return head + (" (uncommitted changes present)" if dirty else "")
 
 
+# The first key of a step reply as the model wrote it, "(not JSON)" if it is not
+# a JSON object.
+def first_key(text: str) -> str:
+    try:
+        data = json.loads(text)
+    except ValueError:
+        return "(not JSON)"
+    return next(iter(data), "(empty)") if isinstance(data, dict) else "(not JSON)"
+
+
 # Run one turn on a fresh graph and mock tools. Returns its report row and details.
 def run_one(turn: dict, data: dict, config, now: datetime) -> tuple[bool, str, list[str]]:
     chat, log, runs, steps = CountingChat(), [], [], config.agent.max_steps
@@ -70,14 +82,16 @@ def run_one(turn: dict, data: dict, config, now: datetime) -> tuple[bool, str, l
     stops = {name: outcome["stopped"] for name, outcome in runs}
     passed, fails = score_turn(turn["expect"], plan, attempted, [c.tool for c in log], stops)
     verdict = "PASS" if passed else "FAIL"
+    keys = [first_key(c["text"]) for c in chat.calls if c["node"] == "agent"]
     row = (f"| {turn['id']} | {plan} | {', '.join(s['tool'] for s in attempted) or 'none'} | "
-           f"{', '.join(c.tool for c in log) or 'none'} | {len(chat.calls)} | {wall:.1f} | "
-           f"{verdict} |")
+           f"{', '.join(c.tool for c in log) or 'none'} | {', '.join(keys) or 'none'} | "
+           f"{len(chat.calls)} | {wall:.1f} | {verdict} |")
     details = [f"### {turn['id']}: {verdict}", "", f"**You:** {turn['text']}", "",
                f"**Leo:** {text}", "", f"Plan: {plan}; stops: {stops or 'no agent run'}", "",
                "LLM calls: " + ", ".join(call_label(c) for c in chat.calls), "",
                "Agent step replies:"]
-    details += [f"- `{c['text']}`" for c in chat.calls if c["node"] == "agent"] or ["- none"]
+    details += [f"- first key `{first_key(c['text'])}`: `{c['text']}`"
+                for c in chat.calls if c["node"] == "agent"] or ["- none"]
     details += ["", "Attempted tool calls (agent steps):"]
     details += [f"- `{s['tool']}({s['args']})` -> `{s['result']}`" for s in attempted] or [
         "- none"]
@@ -106,8 +120,8 @@ def main() -> None:
               f"**Turns passed: {passed}/{len(results)}**", "",
               ("Scoring as in the turn file header; read strictly: an attempted write call "
                "that matches no listed call fails the turn even if the guard refused it."),
-              "", "| turn | plan | attempted | executed | llm_calls | turn_s | result |",
-              "|---|---|---|---|---|---|---|", *[row for _, row, _ in results], "",
+              "", ("| turn | plan | attempted | executed | first_keys | llm_calls | turn_s "
+                   "| result |"), "|---|---|---|---|---|---|---|---|", *[row for _, row, _ in results], "",
               "## Details", ""]
     lines = header + [line for _, _, details in results for line in details]
     report.write_text("\n".join(lines) + "\n", encoding="utf-8")
