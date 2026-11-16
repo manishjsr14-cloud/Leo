@@ -1,9 +1,9 @@
 """The step loop shared by every specialist agent (section 4.2, decision M1.4).
 
 A small loop on the gateway's schema-checked JSON actions (not create_react_agent).
-Each LLM reply is either
-  {"tool": "<name>", "args": {...}}   -> run that tool, show the model the result
-  {"done": true, "summary": "..."}    -> finished, hand back to the supervisor
+Each LLM reply (shape in leo/agents/step_schema.py) is either
+  {"<tool name>": {...args}}          -> run that tool, show the model the result
+  {"done": {"summary": "..."}}        -> finished, hand back to the supervisor
 The first reply must be a tool call: "done" is offered only after a tool ran.
 The loop stops after max_steps LLM replies, or when the model repeats a tool
 call (same tool, same arguments) that already succeeded in this run: the
@@ -17,40 +17,17 @@ Each agent passes in its own system prompt and prompt version.
 
 import json
 from collections.abc import Callable
-from typing import Any, Literal, Union
+from typing import Any
 
 from langchain_core.runnables import RunnableConfig
-from pydantic import BaseModel, RootModel, ValidationError, create_model
+from pydantic import ValidationError
 
+from leo.agents.step_schema import loose_call, read_action, step_model
 from leo.graph.builder import cloud_requested
 from leo.graph.state import LeoState, chat_messages
 from leo.ops import tracing
 from leo.tools.base import AskUser, Tool, ToolError, plain
 from leo.tools.registry import ApprovalRequiredError, UnknownToolError, call_tool
-
-
-class Done(BaseModel):
-    """The reply that ends the loop, with a short summary for the responder."""
-
-    done: Literal[True]
-    summary: str
-
-
-# The step schema for these tools: one option per tool, each with that tool's
-# own required, typed arguments. Ollama's structured output then cannot invent a
-# tool or leave out its arguments (an open "args" object let the model reply
-# {"tool": "add_task"} with no args; see the first M1.4 report).
-# The first step leaves Done out: the model said "done" without calling any
-# tool, so it must act first. (A "cannot" option was tried and dropped: the
-# model declined requests it could do; see the third M1.4 report.)
-def step_model(tools: dict[str, Tool], first_step: bool = False) -> type[RootModel]:
-    options: list[type[BaseModel]] = [
-        create_model(f"Call_{name}", tool=(Literal[name], ...), args=(tool.args_model, ...))
-        for name, tool in tools.items()
-    ]
-    if not first_step:
-        options.append(Done)
-    return RootModel[Union[tuple(options)]]  # noqa: UP007
 
 
 # One line per tool for the prompt: name, description and its arguments.
@@ -86,6 +63,9 @@ def call_key(tool: str, args: dict) -> str:
 
 
 # The loop itself, with `prompt` already filled in (tools, task, ...).
+# A reply that fails the schema but still names one known tool (e.g. an end
+# before its start) is run once through call_tool, so the model sees the
+# argument error like any tool error; a second such reply ends the run.
 # Returns {"steps": [...], "summary": str, "stopped": why}.
 def run_steps(prompt: str, version: str, state: LeoState, chat: Callable,
               tools: dict[str, Tool], max_steps: int, force_cloud: bool = False) -> dict:
@@ -93,34 +73,39 @@ def run_steps(prompt: str, version: str, state: LeoState, chat: Callable,
     first_step, later_steps = step_model(tools, first_step=True), step_model(tools)
     steps: list[dict] = []
     done_calls: set[str] = set()  # successful calls so far, as call_key strings
+    bad_args_shown = False        # an argument error was already sent back once
     # Each step is one span: its LLM call and tool call are nested inside it.
     for number in range(1, max_steps + 1):
         tags = {"step": number, "prompt_version": version}
         with tracing.span(f"step {number}", "span", metadata=tags) as span:
             result = chat(messages, first_step if number == 1 else later_steps, force_cloud)
-            if not result.valid:
-                span.update(metadata={**tags, "action": "invalid_output"})
-                return {"steps": steps, "summary": "", "stopped": "invalid_output"}
-            action = result.parsed.root
-            if isinstance(action, Done):
-                span.update(metadata={**tags, "action": "done"})
-                return {"steps": steps, "summary": action.summary, "stopped": "done"}
-            # Unset optional arguments (None) are left out, e.g. title when task_id is given.
-            args = plain(action.args)
-            if call_key(action.tool, args) in done_calls:
+            if result.valid:
+                name, value = read_action(result.parsed.root)
+                if name == "done":
+                    span.update(metadata={**tags, "action": "done"})
+                    return {"steps": steps, "summary": value.summary, "stopped": "done"}
+                # Unset optional arguments (None) are left out, e.g. title when task_id is given.
+                args = plain(value)
+            else:
+                loose = None if bad_args_shown else loose_call(result.text, tools)
+                if loose is None:
+                    span.update(metadata={**tags, "action": "invalid_output"})
+                    return {"steps": steps, "summary": "", "stopped": "invalid_output"}
+                (name, args), bad_args_shown = loose, True
+            if call_key(name, args) in done_calls:
                 span.update(metadata={**tags, "action": "repeated_call"})
                 return {"steps": steps, "summary": "", "stopped": "repeated_call"}
-            output = run_tool(tools, action.tool, args)
+            output = run_tool(tools, name, args)
             failed = isinstance(output, dict) and "error" in output
-            span.update(metadata={**tags, "action": action.tool, "tool_ok": not failed})
+            span.update(metadata={**tags, "action": name, "tool_ok": not failed})
             if not failed:
-                done_calls.add(call_key(action.tool, args))
-        steps.append({"tool": action.tool, "args": args, "result": output})
+                done_calls.add(call_key(name, args))
+        steps.append({"tool": name, "args": args, "result": output})
         if isinstance(output, dict) and "ask" in output:
             return {"steps": steps, "summary": output["ask"], "stopped": "ask"}
         messages += [
             {"role": "assistant", "content": result.text},
-            {"role": "user", "content": f"Result of {action.tool}: {json.dumps(output)}"},
+            {"role": "user", "content": f"Result of {name}: {json.dumps(output)}"},
         ]
     return {"steps": steps, "summary": "", "stopped": "max_steps"}
 

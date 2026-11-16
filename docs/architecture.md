@@ -320,6 +320,8 @@ Requests escalated to the **desktop** go to the user's own machine over Tailscal
 | **Intent router + semantic cache** | Fewer LLM calls per request |
 | **Lessons, few-shot, risk predictor** | See §8 and §14 |
 
+**Decision (M1.7):** Ollama writes JSON keys in alphabetical order, so step replies use the tool name as the only key (`{"create_event": {...}}`, `{"done": {"summary": ...}}`) and the model's first choice is the tool, not its arguments.
+
 ### 6.7 Desktop Backup Tier & Gaming Mode
 
 The laptop stays the main machine. The gaming desktop (RTX 3060 12 GB, 32 GB RAM) is a **backup tier** that runs a bigger model **only when it is on and not being used for games**. Gaming always wins: as soon as a game starts, Leo stops using the desktop.

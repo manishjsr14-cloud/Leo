@@ -27,3 +27,15 @@ def asks_to_cancel(text: str) -> bool:
 # True when the text asks to move something.
 def asks_to_move(text: str) -> bool:
     return bool(set(split_words(text)) & MOVE_WORDS)
+
+
+# Words that ask to add an event. With two times in the message as well, the
+# agent asks instead of guessing between "add 3 to 5" and "move 3 to 5".
+CREATE_WORDS = {"add", "daal", "rakh", "laga", "schedule", "plan", "book"}
+ADD_OR_MOVE = ("Message mein do time hain. Nayi event banani hai (kis time se kis time "
+               "tak?) ya koi meeting ek time se doosre time pe move karni hai?")
+
+
+# True when the text asks to add an event.
+def asks_to_create(text: str) -> bool:
+    return bool(set(split_words(text)) & CREATE_WORDS)

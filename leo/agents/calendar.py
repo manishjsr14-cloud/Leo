@@ -8,6 +8,8 @@ When the words are unclear (e.g. "kal" with no tense) the agent asks the
 user and makes no LLM call. Cancelling is 🔴: refused until approval (M2.5).
 cancel_event is offered only when the message asks to cancel, and move_event
 only when it asks to move or holds two times (leo/language/calendar_words.py).
+Two times mean a move: create_event is then not offered, and with a create
+word as well ("3 se 5 baje tak workshop add karo") the agent asks instead.
 Only the latest message is read, so a follow-up like "4 baje" alone is not
 joined to the earlier request.
 """
@@ -21,7 +23,12 @@ from leo.agents.calendar_guard import guard_calendar_tools
 from leo.agents.loop import agent_node, describe_tools, run_steps
 from leo.config import CalendarConfig
 from leo.graph.state import LeoState
-from leo.language.calendar_words import asks_to_cancel, asks_to_move
+from leo.language.calendar_words import (
+    ADD_OR_MOVE,
+    asks_to_cancel,
+    asks_to_create,
+    asks_to_move,
+)
 from leo.language.time_parser import current_time
 from leo.language.time_spans import CalendarTimes, read_calendar_times
 from leo.ops import tracing
@@ -33,8 +40,8 @@ NAME = "calendar"
 SYSTEM_PROMPT = (
     "You are Leo's calendar agent. You read and change the user's calendar, only "
     "through these tools:\n{tools}\n"
-    'Reply only with JSON: either {{"tool": "<name>", "args": {{...}}}} to use one '
-    'tool, or {{"done": true, "summary": "<what you did and the results>"}} when '
+    'Reply only with JSON: either {{"<tool name>": {{<its arguments>}}}} to use one '
+    'tool, or {{"done": {{"summary": "<what you did and the results>"}}}} when '
     "finished.\n"
     "Rules: never work out dates or times yourself; copy them exactly from 'Times "
     "from the user's words' below. Event ids come only from get_events results. "
@@ -70,9 +77,10 @@ def times_lines(times: CalendarTimes, event_minutes: int) -> str:
 
 
 # The tools offered for this message: cancel_event only when it asks to
-# cancel, move_event only when it asks to move or holds two times.
+# cancel, move_event only when it asks to move or holds two times, and no
+# create_event when it holds two times.
 def offered_tools(tools: dict[str, Tool], text: str, times: CalendarTimes) -> dict[str, Tool]:
-    left_out = set()
+    left_out = {"create_event"} if times.move_from is not None else set()
     if not asks_to_cancel(text):
         left_out.add("cancel_event")
     if not (asks_to_move(text) or times.move_from is not None):
@@ -94,6 +102,8 @@ def run_agent(state: LeoState, chat: Callable, tools: dict[str, Tool], max_steps
     times = read_calendar_times(text, now, config)
     if times.status == "ask":
         return {"steps": [], "summary": times.question, "stopped": "ask"}
+    if times.move_from is not None and asks_to_create(text):
+        return {"steps": [], "summary": ADD_OR_MOVE, "stopped": "ask"}
     guarded = guard_calendar_tools(offered_tools(tools, text, times), times,
                                    config.default_event_minutes)
     task = (state.get("plan") or [""])[-1]

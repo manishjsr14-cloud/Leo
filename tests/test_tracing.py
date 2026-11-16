@@ -24,8 +24,8 @@ REPLY = "18% of 2450 is 441."
 # The supervisor plans once; it is not asked again after the agent.
 PLAN = [
     json.dumps({"agents": ["productivity"], "task": "calculate 18% of 2450"}),
-    json.dumps({"tool": "calculate", "args": {"expression": "18% of 2450"}}),
-    json.dumps({"done": True, "summary": REPLY}),
+    json.dumps({"calculate": {"expression": "18% of 2450"}}),
+    json.dumps({"done": {"summary": REPLY}}),
     REPLY,
 ]
 # Text that must never reach a span when include_text is off.

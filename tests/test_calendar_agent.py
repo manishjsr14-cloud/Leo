@@ -10,6 +10,7 @@ from leo.agents.calendar_guard import ASK_TIME
 from leo.config import load_config
 from leo.graph.builder import build_graph
 from leo.graph.responder import APPROVAL_NOTE, ASK_NOTE, tool_result_lines
+from leo.language.calendar_words import ADD_OR_MOVE
 from leo.language.time_spans import TWO_DAYS
 from leo.tools.mock.calendar import mock_calendar_tools
 from leo.tools.registry import by_name
@@ -40,8 +41,8 @@ def run(text: str, chat, tools, max_steps: int = 6) -> dict:
 def test_done_when_phrase_creates_the_right_event():
     log, tools = fresh()
     args = {"title": "Meeting with Rahul", "start": TUE_10, "end": TUE_11}
-    chat = FakeChat({"tool": "create_event", "args": args},
-                    {"done": True, "summary": "Added."})
+    chat = FakeChat({"create_event": args},
+                    {"done": {"summary": "Added."}})
     out = run(DONE_WHEN, chat, tools)
     assert out["stopped"] == "done"
     assert [(c.tool, c.args) for c in log] == [("create_event", args)]
@@ -55,8 +56,8 @@ def test_create_with_a_different_time_is_refused():
     log, tools = fresh()
     wrong = {"title": "Meeting with Rahul", "start": TUE_11,
              "end": "2026-11-17T12:00:00+05:30"}
-    out = run(DONE_WHEN, FakeChat({"tool": "create_event", "args": wrong},
-                                  {"done": True, "summary": "x"}), tools)
+    out = run(DONE_WHEN, FakeChat({"create_event": wrong},
+                                  {"done": {"summary": "x"}}), tools)
     assert log == []
     assert TUE_10 in out["steps"][0]["result"]["error"]
 
@@ -64,9 +65,9 @@ def test_create_with_a_different_time_is_refused():
 # The model picks the 15:00 slot's neighbour (wrong event): refused, nothing logged.
 def test_move_of_the_wrong_event_is_refused():
     log, tools = fresh()
-    chat = FakeChat({"tool": "get_events", "args": MON},
-                    {"tool": "move_event", "args": {"event_id": "mock-evt-gym", **MOVE_TO}},
-                    {"done": True, "summary": "x"})
+    chat = FakeChat({"get_events": MON},
+                    {"move_event": {"event_id": "mock-evt-gym", **MOVE_TO}},
+                    {"done": {"summary": "x"}})
     out = run("3 baje wali meeting 5 baje kar do", chat, tools)
     assert [c.tool for c in log] == ["get_events"]
     assert "error" in out["steps"][1]["result"]
@@ -74,9 +75,9 @@ def test_move_of_the_wrong_event_is_refused():
 
 def test_move_of_the_right_event_runs():
     log, tools = fresh()
-    chat = FakeChat({"tool": "get_events", "args": MON},
-                    {"tool": "move_event", "args": {"event_id": "mock-evt-team", **MOVE_TO}},
-                    {"done": True, "summary": "Moved."})
+    chat = FakeChat({"get_events": MON},
+                    {"move_event": {"event_id": "mock-evt-team", **MOVE_TO}},
+                    {"done": {"summary": "Moved."}})
     run("3 baje wali meeting 5 baje kar do", chat, tools)
     assert [c.tool for c in log] == ["get_events", "move_event"]
 
@@ -84,7 +85,7 @@ def test_move_of_the_right_event_runs():
 # Two different day words in a move: the agent asks, with no LLM call.
 def test_move_with_two_day_words_asks_without_llm():
     log, tools = fresh()
-    chat = FakeChat({"done": True, "summary": "x"})
+    chat = FakeChat({"done": {"summary": "x"}})
     out = run("kal ki 3 baje wali meeting parso 5 baje kar do", chat, tools)
     assert out == {"steps": [], "summary": TWO_DAYS, "stopped": "ask"}
     assert chat.calls == [] and log == []
@@ -95,7 +96,7 @@ def test_create_with_date_but_no_time_asks_for_the_time():
     log, tools = fresh()
     args = {"title": "Meet Rahul", "start": "2026-11-19T10:00:00+05:30",
             "end": "2026-11-19T11:00:00+05:30"}
-    out = run("Thursday ko Rahul se milna hai", FakeChat({"tool": "create_event", "args": args}),
+    out = run("Thursday ko Rahul se milna hai", FakeChat({"create_event": args}),
               tools)
     assert (out["stopped"], out["summary"], log) == ("ask", ASK_TIME, [])
     assert f"- calendar: {ASK_NOTE}: {ASK_TIME}" in tool_result_lines({"calendar": out})
@@ -105,9 +106,9 @@ def test_create_with_date_but_no_time_asks_for_the_time():
 def test_cancel_is_refused_and_responder_says_approval_needed():
     log, tools = fresh()
     sat = {"start": "2026-11-21T00:00:00+05:30", "end": "2026-11-22T00:00:00+05:30"}
-    chat = FakeChat({"tool": "get_events", "args": sat},
-                    {"tool": "cancel_event", "args": {"event_id": "mock-evt-gym"}},
-                    {"done": True, "summary": "Cancelled."})
+    chat = FakeChat({"get_events": sat},
+                    {"cancel_event": {"event_id": "mock-evt-gym"}},
+                    {"done": {"summary": "Cancelled."}})
     out = run("Saturday ka gym cancel kar do", chat, tools)
     assert [c.tool for c in log] == ["get_events"]
     assert out["steps"][1]["result"]["needs_approval"] is True
@@ -118,8 +119,8 @@ def test_cancel_is_refused_and_responder_says_approval_needed():
 # A range that is neither the window nor the whole day is refused.
 def test_free_slots_range_must_come_from_the_words():
     log, tools = fresh()
-    chat = FakeChat({"tool": "find_free_slots", "args": {**SAT_MORNING}},
-                    {"done": True, "summary": "x"})
+    chat = FakeChat({"find_free_slots": {**SAT_MORNING}},
+                    {"done": {"summary": "x"}})
     out = run("Thursday dopahar free hoon?", chat, tools)
     assert log == [] and "2026-11-19T12:00:00+05:30" in out["steps"][0]["result"]["error"]
 
@@ -129,8 +130,8 @@ def test_graph_routes_to_calendar_and_responder_sees_event():
     log, tools = fresh()
     args = {"title": "Meeting with Rahul", "start": TUE_10, "end": TUE_11}
     chat = FakeChat({"agents": ["calendar"], "task": "Add meeting with Rahul"},
-                    {"tool": "create_event", "args": args},
-                    {"done": True, "summary": "Added."},
+                    {"create_event": args},
+                    {"done": {"summary": "Added."}},
                     "Ho gaya! Kal 10 baje Rahul ke saath meeting daal di.")
     agents = {"calendar": calendar_agent(chat, tools, 6, CONFIG, now=lambda: NOW)}
     out = build_graph(chat, agents=agents).invoke(
@@ -164,15 +165,24 @@ def test_clear_message_offers_cancel_and_two_times_offer_move():
     assert "cancel_event" in offered(chat) and "move_event" not in offered(chat)
     chat = FakeChat(None)  # invalid reply: stops after step 1
     run("3 baje wali meeting 5 baje kar do", chat, tools)
-    assert "move_event" in offered(chat) and "cancel_event" not in offered(chat)
+    assert offered(chat) == {"get_events", "find_free_slots", "move_event"}  # no create
 
 
 # An invented id is refused as such (before approval), and nothing is logged.
 def test_cancel_of_an_id_not_listed_is_refused_before_approval():
     log, tools = fresh()
-    chat = FakeChat({"tool": "cancel_event", "args": {"event_id": "12345"}},
-                    {"done": True, "summary": "x"})
+    chat = FakeChat({"cancel_event": {"event_id": "12345"}},
+                    {"done": {"summary": "x"}})
     out = run("Saturday ka gym cancel kar do", chat, tools)
     result = out["steps"][0]["result"]
     assert "get_events first" in result["error"] and "needs_approval" not in result
     assert log == []
+
+
+# Two times plus a create word: the agent asks, with no LLM call.
+def test_two_times_with_a_create_word_asks():
+    log, tools = fresh()
+    chat = FakeChat(None)
+    out = run("kal 3 baje se 5 baje tak workshop add karo", chat, tools)
+    assert out == {"steps": [], "summary": ADD_OR_MOVE, "stopped": "ask"}
+    assert chat.calls == [] and log == []

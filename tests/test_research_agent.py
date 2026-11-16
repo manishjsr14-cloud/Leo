@@ -32,8 +32,8 @@ def state_for(text: str, task: str) -> dict:
 
 def test_rain_question_calls_get_weather_and_prompt_has_rules():
     log, tools = fresh()
-    chat = FakeChat({"tool": "get_weather", "args": {"place": "Pune"}},
-                    {"done": True, "summary": "60% rain chance tomorrow (Open-Meteo)."})
+    chat = FakeChat({"get_weather": {"place": "Pune"}},
+                    {"done": {"summary": "60% rain chance tomorrow (Open-Meteo)."}})
     out = run_agent(state_for(ASK, "rain in Pune tomorrow"), chat, tools, 4, TODAY)
     assert [(c.tool, c.args) for c in log] == [("get_weather", {"place": "Pune"})]
     assert out["stopped"] == "done"
@@ -46,8 +46,8 @@ def test_rain_question_calls_get_weather_and_prompt_has_rules():
 # The injection line on the mock page reaches the LLM only inside the markers.
 def test_page_text_reaches_the_model_only_inside_markers():
     _, tools = fresh()
-    chat = FakeChat({"tool": "read_page", "args": {"url": "https://example.com/pune"}},
-                    {"done": True, "summary": "Read it."})
+    chat = FakeChat({"read_page": {"url": "https://example.com/pune"}},
+                    {"done": {"summary": "Read it."}})
     run_agent(state_for("read https://example.com/pune", "read page"), chat, tools, 4, TODAY)
     seen = chat.calls[1]["messages"][-1]["content"]
     start = seen.index("<<<UNTRUSTED DATA from https://example.com/pune")
@@ -62,8 +62,8 @@ def test_graph_routes_rain_to_research_and_responder_sees_source():
     tasks = by_name(mock_productivity_tools(tasks_log))
     chat = FakeChat(
         {"agents": ["research"], "task": "Check if it will rain in Pune tomorrow"},
-        {"tool": "get_weather", "args": {"place": "Pune"}},
-        {"done": True, "summary": "60% chance."},
+        {"get_weather": {"place": "Pune"}},
+        {"done": {"summary": "60% chance."}},
         "Yes, 60% chance of rain in Pune tomorrow, says Open-Meteo.",
     )
     agents = {"productivity": productivity_agent(chat, tasks, 4),
@@ -89,7 +89,7 @@ def test_responder_prompt_asks_for_sources_and_treats_web_text_as_data():
 # After done, research is added to completed_agents (not chosen again).
 def test_research_is_completed_after_done():
     _, tools = fresh()
-    node = research_agent(FakeChat({"tool": "web_search", "args": {"query": "pune"}},
-                                   {"done": True, "summary": "ok"}), tools, 4,
+    node = research_agent(FakeChat({"web_search": {"query": "pune"}},
+                                   {"done": {"summary": "ok"}}), tools, 4,
                           today=lambda: TODAY)
     assert node(state_for("search pune", "search"), {})["completed_agents"] == ["research"]

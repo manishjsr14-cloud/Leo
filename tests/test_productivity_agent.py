@@ -26,8 +26,8 @@ def state_for(text: str, task: str) -> dict:
 
 def test_add_milk_calls_add_task():
     log, tools = fresh()
-    chat = FakeChat({"tool": "add_task", "args": {"title": "milk"}},
-                    {"done": True, "summary": "Added milk."})
+    chat = FakeChat({"add_task": {"title": "milk"}},
+                    {"done": {"summary": "Added milk."}})
     out = run_agent(state_for("add milk to my tasks", "add milk"), chat, tools, 4)
     assert [(c.tool, c.args) for c in log] == [("add_task", {"title": "milk"})]
     assert out["stopped"] == "done"
@@ -39,8 +39,8 @@ def test_add_milk_calls_add_task():
 # The number comes from sympy: the fake LLM only copies the expression.
 def test_percentage_is_computed_by_sympy_not_llm():
     log, tools = fresh()
-    chat = FakeChat({"tool": "calculate", "args": {"expression": "18% of 2450"}},
-                    {"done": True, "summary": "18% of 2450 is 441."})
+    chat = FakeChat({"calculate": {"expression": "18% of 2450"}},
+                    {"done": {"summary": "18% of 2450 is 441."}})
     out = run_agent(state_for("what is 18% of 2450", "calculate"), chat, tools, 4)
     assert log[0].result["result"] == "441"
     assert out["steps"][0]["result"]["computed"] == "(18/100)*2450"
@@ -48,9 +48,9 @@ def test_percentage_is_computed_by_sympy_not_llm():
 
 def test_two_step_request_runs_inside_the_agent():
     log, tools = fresh()
-    chat = FakeChat({"tool": "list_tasks", "args": {}},
-                    {"tool": "complete_task", "args": {"task_id": 1}},
-                    {"done": True, "summary": "Marked Buy milk as done."})
+    chat = FakeChat({"list_tasks": {}},
+                    {"complete_task": {"task_id": 1}},
+                    {"done": {"summary": "Marked Buy milk as done."}})
     out = run_agent(state_for("complete my milk task", "complete milk"), chat, tools, 4)
     assert [c.tool for c in log] == ["list_tasks", "complete_task"]
     assert log[1].args == {"task_id": 1}
@@ -59,7 +59,7 @@ def test_two_step_request_runs_inside_the_agent():
 
 def test_step_limit_stops_a_loop():
     log, tools = fresh()
-    chat = FakeChat(*[{"tool": "list_notes", "args": {"limit": n}} for n in range(1, 6)])
+    chat = FakeChat(*[{"list_notes": {"limit": n}} for n in range(1, 6)])
     out = run_agent(state_for("notes?", "list"), chat, tools, 4)  # never says done
     assert len(chat.calls) == 4 and len(log) == 4
     assert out["stopped"] == "max_steps"
@@ -67,8 +67,8 @@ def test_step_limit_stops_a_loop():
 
 def test_tool_errors_go_back_to_the_model():
     log, tools = fresh()
-    chat = FakeChat({"tool": "complete_task", "args": {"task_id": 99}},
-                    {"done": True, "summary": "Could not."})
+    chat = FakeChat({"complete_task": {"task_id": 99}},
+                    {"done": {"summary": "Could not."}})
     out = run_agent(state_for("complete task 99", "complete"), chat, tools, 4)
     error = {"error": "no task with id 99; use list_tasks for ids"}
     assert out["steps"][0]["result"] == error
@@ -96,14 +96,19 @@ def test_invalid_llm_output_stops_without_running_tools():
 def test_step_schema_requires_real_tools_and_their_args():
     _, tools = fresh()
     schema = step_model(tools)
-    for bad in ['{"tool": "delete_everything", "args": {}}',
+    for bad in ['{"delete_everything": {}}',
                 '{"tool": "add_task"}',  # the first real run's failure: no args
-                '{"tool": "add_task", "args": {}}',
-                '{"tool": "add_task", "args": {"title": "milk", "approved": true}}',
-                '{"args": {}}']:
+                '{"add_task": {}}',
+                '{"add_task": {"title": "milk", "approved": true}}',
+                '{"args": {}}',
+                # the old M1.4 shape is no longer accepted (changed in M1.7)
+                '{"tool": "add_task", "args": {"title": "milk"}}',
+                '{"done": true, "summary": "ok"}',
+                # one key per reply: a tool and done together is refused
+                '{"add_task": {"title": "milk"}, "done": {"summary": "x"}}']:
         assert not _valid(schema, bad), bad
-    assert _valid(schema, '{"tool": "add_task", "args": {"title": "milk"}}')
-    assert _valid(schema, '{"done": true, "summary": "ok"}')
+    assert _valid(schema, '{"add_task": {"title": "milk"}}')
+    assert _valid(schema, '{"done": {"summary": "ok"}}')
 
 
 # The first step must be a tool call; done is offered only on later steps,
@@ -111,19 +116,19 @@ def test_step_schema_requires_real_tools_and_their_args():
 def test_first_step_must_be_a_tool_call():
     _, tools = fresh()
     first, later = step_model(tools, first_step=True), step_model(tools)
-    assert not _valid(first, '{"done": true, "summary": "Added milk."}')
-    assert _valid(first, '{"tool": "calculate", "args": {"expression": "2+2"}}')
-    assert _valid(later, '{"done": true, "summary": "ok"}')
+    assert not _valid(first, '{"done": {"summary": "Added milk."}}')
+    assert _valid(first, '{"calculate": {"expression": "2+2"}}')
+    assert _valid(later, '{"done": {"summary": "ok"}}')
     for schema in (first, later):
-        assert not _valid(schema, '{"cannot": true, "reason": "not my job"}')
+        assert not _valid(schema, '{"cannot": {"reason": "not my job"}}')
 
 
 # Only an agent that returned done goes into completed_agents.
 def test_completed_agents_only_after_done():
     _, tools = fresh()
-    done = productivity_agent(FakeChat({"tool": "list_tasks", "args": {}},
-                                       {"done": True, "summary": "ok"}), tools, 4)
-    looping = productivity_agent(FakeChat({"tool": "list_tasks", "args": {}}), tools, 2)
+    done = productivity_agent(FakeChat({"list_tasks": {}},
+                                       {"done": {"summary": "ok"}}), tools, 4)
+    looping = productivity_agent(FakeChat({"list_tasks": {}}), tools, 2)
     assert done(state_for("tasks?", "list"), {})["completed_agents"] == ["productivity"]
     assert "completed_agents" not in looping(state_for("tasks?", "list"), {})
 
@@ -144,9 +149,9 @@ def test_graph_two_step_needs_no_extra_supervisor_call():
     log, tools = fresh()
     chat = FakeChat(
         {"agents": ["productivity"], "task": "complete the milk task"},
-        {"tool": "list_tasks", "args": {}},
-        {"tool": "complete_task", "args": {"task_id": 1}},
-        {"done": True, "summary": "Marked Buy milk as done."},
+        {"list_tasks": {}},
+        {"complete_task": {"task_id": 1}},
+        {"done": {"summary": "Marked Buy milk as done."}},
         "Done, Buy milk is ticked off.",
     )
     agent = productivity_agent(chat, tools, max_steps=4)
@@ -174,10 +179,10 @@ def test_tools_run_once_per_request_across_turns():
     log, tools = fresh()
     route = {"agents": ["productivity"], "task": "add the task"}
     chat = FakeChat(
-        route, {"tool": "add_task", "args": {"title": "milk"}},
-        {"done": True, "summary": "Added milk."}, "Added milk.",
-        route, {"tool": "add_task", "args": {"title": "eggs"}},
-        {"done": True, "summary": "Added eggs."}, "Added eggs.",
+        route, {"add_task": {"title": "milk"}},
+        {"done": {"summary": "Added milk."}}, "Added milk.",
+        route, {"add_task": {"title": "eggs"}},
+        {"done": {"summary": "Added eggs."}}, "Added eggs.",
     )
     graph = build_graph(chat, agents={"productivity": productivity_agent(chat, tools, 4)})
     _, history = cli.run_turn(graph, [], "add milk to my tasks", False)

@@ -17,8 +17,8 @@ NAME = "productivity"
 SYSTEM_PROMPT = (
     "You are Leo's productivity agent. You manage the user's to-do tasks and "
     "notes, start timers and do arithmetic, only through these tools:\n{tools}\n"
-    'Reply only with JSON: either {{"tool": "<name>", "args": {{...}}}} to use one '
-    'tool, or {{"done": true, "summary": "<what you did and the results>"}} when '
+    'Reply only with JSON: either {{"<tool name>": {{<its arguments>}}}} to use one '
+    'tool, or {{"done": {{"summary": "<what you did and the results>"}}}} when '
     "finished.\n"
     'Rules: a task title is just the item, e.g. "milk" for "add milk to my tasks". '
     'To complete a task by name, pass its title, e.g. complete_task(title="milk"). '
