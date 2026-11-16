@@ -41,7 +41,7 @@ def test_db_path_resolves_under_project():
 
 # The agent step limit comes from config.yaml (default 4) and must be at least 1.
 def test_agent_max_steps_is_loaded_and_checked(tmp_path: Path):
-    assert load_config().agent.max_steps == 4
+    assert load_config().agent.max_steps == 6
     data = yaml.safe_load(CONFIG_PATH.read_text(encoding="utf-8"))
     data["agent"]["max_steps"] = 0
     broken = tmp_path / "config.yaml"

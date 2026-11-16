@@ -44,7 +44,7 @@ storage:
   db_path: leo_data/leo.db         # relative to the project folder; git-ignored (section 7)
 
 agent:
-  max_steps: 4                     # tool steps inside one specialist run before it hands back
+  max_steps: 6                     # tool steps inside one specialist run before it hands back
 
 tracing:                           # Langfuse Cloud (section 13.2); keys and host in .env
   include_text: false              # false: no message text, tool args or replies in traces
