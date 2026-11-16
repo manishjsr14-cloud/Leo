@@ -35,7 +35,9 @@ SYSTEM_PROMPT = (
 AGENT_DESCRIPTIONS = {
     "productivity": "tasks, notes, timers, calculations",
     "research": "web search, reading web pages, weather",
-    "calendar": "calendar events: list, find free time, create, move, cancel",
+    "calendar": ("the user's own calendar: what is on a day, whether the user is "
+                 "free, adding, planning or scheduling an event, meeting or trip at "
+                 "a time, moving it, cancelling or clearing events"),
 }
 
 
