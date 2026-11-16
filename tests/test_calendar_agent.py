@@ -135,7 +135,44 @@ def test_graph_routes_to_calendar_and_responder_sees_event():
     agents = {"calendar": calendar_agent(chat, tools, 6, CONFIG, now=lambda: NOW)}
     out = build_graph(chat, agents=agents).invoke(
         {"messages": [HumanMessage(DONE_WHEN)], "hops": 0, "plan": []})
-    assert "- calendar: calendar events" in chat.calls[0]["messages"][0]["content"]
+    assert "- calendar: the user's own calendar" in chat.calls[0]["messages"][0]["content"]
     assert [c.tool for c in log] == ["create_event"]
     assert "mock-evt-1" in " ".join(m["content"] for m in chat.calls[-1]["messages"])
     assert out["messages"][-1].content.startswith("Ho gaya!")
+
+
+# The tool names the first step's schema offered the model.
+def offered(chat) -> set[str]:
+    schema = chat.calls[0]["output_model"].model_json_schema()
+    return {ref["$ref"].split("_", 1)[1] for ref in schema["anyOf"]}
+
+
+# An "add" message never offers cancel_event or move_event (schema or prompt).
+def test_add_message_never_offers_cancel_or_move():
+    for text in (DONE_WHEN, "Add a dentist appointment on Thursday at 4:30 pm"):
+        _, tools = fresh()
+        chat = FakeChat(None)  # invalid reply: stops after step 1
+        run(text, chat, tools)
+        assert offered(chat) == {"get_events", "find_free_slots", "create_event"}
+        assert "cancel_event(" not in chat.calls[0]["messages"][0]["content"]
+
+
+def test_clear_message_offers_cancel_and_two_times_offer_move():
+    _, tools = fresh()
+    chat = FakeChat(None)  # invalid reply: stops after step 1
+    run("Saturday subah clear kar do", chat, tools)
+    assert "cancel_event" in offered(chat) and "move_event" not in offered(chat)
+    chat = FakeChat(None)  # invalid reply: stops after step 1
+    run("3 baje wali meeting 5 baje kar do", chat, tools)
+    assert "move_event" in offered(chat) and "cancel_event" not in offered(chat)
+
+
+# An invented id is refused as such (before approval), and nothing is logged.
+def test_cancel_of_an_id_not_listed_is_refused_before_approval():
+    log, tools = fresh()
+    chat = FakeChat({"tool": "cancel_event", "args": {"event_id": "12345"}},
+                    {"done": True, "summary": "x"})
+    out = run("Saturday ka gym cancel kar do", chat, tools)
+    result = out["steps"][0]["result"]
+    assert "get_events first" in result["error"] and "needs_approval" not in result
+    assert log == []

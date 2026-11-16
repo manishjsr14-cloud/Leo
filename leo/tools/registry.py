@@ -1,7 +1,8 @@
 """Find tools by name and call them safely (architecture sections 9 and 12.3).
 
 call_tool is the only way agents run a tool. It checks the arguments against
-the tool's schema, and refuses a 🔴 tool unless Leo's own code passes
+the tool's schema, runs the tool's own extra check if it has one, and
+refuses a 🔴 tool unless Leo's own code passes
 approved=True. The approval never comes from the model's tool-call arguments:
 those are checked against a schema that forbids unknown keys like "approved".
 The full action rails (rate limits, taint tracking) move to
@@ -55,6 +56,8 @@ def call_tool(
         if tool is None:
             raise UnknownToolError(f"no tool named {name!r}")
         checked = tool.args_model.model_validate(args)
+        if tool.check is not None:
+            tool.check(checked)  # e.g. the calendar guard; before approval is asked
         if tool.tier is Tier.CONFIRM and approved is not True:
             raise ApprovalRequiredError(f"{name} needs human approval")
         result = tool.fn(checked)

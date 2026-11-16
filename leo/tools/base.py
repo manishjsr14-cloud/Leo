@@ -54,6 +54,9 @@ class Tool(BaseModel):
     tier: Tier
     args_model: type[ToolArgs]
     fn: Callable[[Any], Any]
+    # Optional extra check on the checked arguments, run by call_tool before the
+    # approval check; it raises ToolError (or AskUser) to refuse the call.
+    check: Callable[[Any], None] | None = None
 
 
 class ToolCall(BaseModel):
