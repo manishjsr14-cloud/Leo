@@ -9,7 +9,9 @@ The loop stops after max_steps LLM replies, or when the model repeats a tool
 call (same tool, same arguments) that already succeeded in this run: the
 repeat is not run and the run ends ("repeated_call"). Tool errors are shown to the
 model so it can try again; they never crash the graph. 🔴 tools are always
-refused here (call_tool without approved=True); approval arrives in M2.5.
+refused here (call_tool without approved=True) and the step is marked
+needs_approval; approval arrives in M2.5. A tool that raises AskUser ends the
+run ("ask"), with the code's question as the summary.
 Each agent passes in its own system prompt and prompt version.
 """
 
@@ -23,7 +25,7 @@ from pydantic import BaseModel, RootModel, ValidationError, create_model
 from leo.graph.builder import cloud_requested
 from leo.graph.state import LeoState, chat_messages
 from leo.ops import tracing
-from leo.tools.base import Tool, ToolError, plain
+from leo.tools.base import AskUser, Tool, ToolError, plain
 from leo.tools.registry import ApprovalRequiredError, UnknownToolError, call_tool
 
 
@@ -62,14 +64,19 @@ def describe_tools(tools: dict[str, Tool]) -> str:
 
 
 # Run one tool; on a bad call return {"error": ...} for the model instead of raising.
+# A refused 🔴 call also carries needs_approval; an AskUser carries the question.
 def run_tool(tools: dict[str, Tool], name: str, args: dict) -> Any:
     try:
         return call_tool(tools, name, args)
+    except AskUser as error:
+        return {"error": "the user must answer first", "ask": str(error)}
+    except ApprovalRequiredError as error:
+        return {"error": str(error), "needs_approval": True}
     except ValidationError as error:
         problems = "; ".join(f"{'.'.join(map(str, e['loc']))}: {e['msg']}"
                              for e in error.errors())
         return {"error": f"bad arguments: {problems}"}
-    except (ToolError, UnknownToolError, ApprovalRequiredError) as error:
+    except (ToolError, UnknownToolError) as error:
         return {"error": str(error)}
 
 
@@ -109,6 +116,8 @@ def run_steps(prompt: str, version: str, state: LeoState, chat: Callable,
             if not failed:
                 done_calls.add(call_key(action.tool, args))
         steps.append({"tool": action.tool, "args": args, "result": output})
+        if isinstance(output, dict) and "ask" in output:
+            return {"steps": steps, "summary": output["ask"], "stopped": "ask"}
         messages += [
             {"role": "assistant", "content": result.text},
             {"role": "user", "content": f"Result of {action.tool}: {json.dumps(output)}"},

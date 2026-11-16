@@ -27,6 +27,13 @@ class ToolError(Exception):
     """
 
 
+class AskUser(ToolError):
+    """The tool needs something only the user can give, such as a time.
+
+    The message is the question for the user, written by Leo's code (never the model).
+    """
+
+
 class ToolArgs(BaseModel):
     """Base for every tool's argument schema.
 
