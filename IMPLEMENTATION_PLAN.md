@@ -75,7 +75,29 @@ Read: §4, §6, §9 (tool table), §15.
 
 **Note for M1.1 (from Phase 0 setup):** `qwen3:4b` runs in thinking mode by default, which is slow. The gateway must send `think=false` on every request to the local model and strip any leftover `<think>...</think>` text from replies. Add one test for each: (1) every request built for Ollama carries `think=false`; (2) a reply containing `<think>...</think>` comes back without it.
 
+**M1.7 closure (2026-11-16): done rule not met, closed with known limits.** The done rule set before run4 (pass t01 and t10 and at least 8/10 turns of `evals/scenarios/m1_7_calendar_turns.yaml`) was not met. Run4 scored 7/10 with t01 (the done-when phrase) passing (`evals/reports/m1.7_calendar_check_2026-11-16_run4.md`; earlier runs 3/10, 4/10, 7/10 stay as recorded). The model no longer writes dates or times: code fills them in. Known limits:
+- t05 "3 baje wali meeting 5 baje kar do": the model first calls `move_event` with an invented id (refused by the guard), then recovers through `get_events`.
+- t07 "Saturday ko kya kya hai?": the model calls `find_free_slots` instead of `get_events`.
+- t10 (§4.5 example): only one of the two cancels (gym) is attempted; the call is not.
+
+No more fixes in M1.7.
+
+**Notes for M1.8 (from M1.7 run4):**
+- The responder copies the "In words" result line into the reply instead of using it (t01).
+- Free-time replies are wrong (t07: the times given do not match the free slots).
+- A "day" range starts at midnight; it should use waking hours from `config.yaml`.
+- The t10 reply leaves out the event still on the calendar (the call that was not cancelled).
+
+**M1.10 eval cases carried over from M1.7 run4** (failing turns; written into the M1.10 scenario files, committed before the M1.10 run):
+- "3 baje wali meeting 5 baje kar do": `get_events`, then `move_event` on the 3 pm event to 5-6 pm, with no write call on an invented id.
+- "Saturday ko kya kya hai?": `get_events` for the whole Saturday, no `find_free_slots`.
+- "Agar Saturday ko baarish nahi hogi to subah 7 baje Lonavala trip plan kar do, aur Saturday subah clear kar do.": `get_weather`, `create_event` 7-8 am, and `cancel_event` attempted for both morning events, both refused without approval.
+
 **M1 exit check:** the cross-agent example in §4.5 (weather → calendar) runs end to end in the CLI on mock calendar, on the local model.
+
+**Planned follow-ups from M1.7** (each done with a fresh check written and committed before it runs):
+- "clear <range>" handled in code: propose `cancel_event` for every event in the range, approved together (fits M2.5).
+- Query words ("kya kya hai", "what's on") offer `get_events` only.
 
 ---
 
