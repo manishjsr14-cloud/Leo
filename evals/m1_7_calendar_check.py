@@ -9,6 +9,13 @@ also records the first JSON key of every agent step reply (not scored).
   python -m evals.m1_7_calendar_check evals/reports/m1.7_calendar_check_<date>.md
 
 No personal data is used and nothing touches a real calendar.
+
+Change log:
+  - run1 (3/10), run2 (4/10), run3 (7/10): reports kept as run.
+  - 2026-11-16, decided BEFORE run4 (DONE_RULE below): M1.7 is done if run4
+    passes t01 and t10 and at least 8 of 10 turns. Turns that still fail are
+    recorded as known limits and become M1.10 eval cases; no further fix
+    rounds in M1.7.
 """
 
 import json
@@ -36,6 +43,9 @@ from leo.tools.mock.research import mock_research_tools
 from leo.tools.registry import by_name
 
 TURNS_FILE = Path("evals/scenarios/m1_7_calendar_turns.yaml")
+DONE_RULE = ("M1.7 is done if run4 passes t01 and t10 and at least 8 of 10 turns; "
+             "turns that still fail are known limits and become M1.10 eval cases "
+             "(decided before run4).")
 
 
 # The current commit and whether the working tree has uncommitted changes.
@@ -117,7 +127,7 @@ def main() -> None:
               (f"Local model: {config.llm.primary.model}. Fallback: "
                f"{config.llm.fallback.model}. agent.max_steps: {config.agent.max_steps}. "
                f"Fixed now: {data['now']}. All tools are mocks."), "",
-              f"**Turns passed: {passed}/{len(results)}**", "",
+              f"**Turns passed: {passed}/{len(results)}**", "", f"Done rule: {DONE_RULE}", "",
               ("Scoring as in the turn file header; read strictly: an attempted write call "
                "that matches no listed call fails the turn even if the guard refused it."),
               "", ("| turn | plan | attempted | executed | first_keys | llm_calls | turn_s "
