@@ -1,8 +1,9 @@
 """Checks that hold the calendar agent to the times worked out in code (M1.7).
 
 The model never decides a date or time. Before a calendar tool runs:
-  - get_events / find_free_slots: the range must be exactly the part-of-day
-    window or the whole day taken from the user's words;
+  - get_events / find_free_slots: the range must be exactly one of the named
+    ranges code offered (calendar_fill.named_ranges), or without those the
+    part-of-day window or the whole day taken from the user's words;
   - create_event: start must be exactly the parsed time, end start + the
     default length (calendar.default_event_minutes);
   - move_event: the same for the new time, and the event must be one that
@@ -30,19 +31,23 @@ ASK_MOVE = "Meeting abhi kis time pe hai, aur kis time pe le jaani hai?"
 
 
 # Copies of the calendar tools whose functions first run the checks above.
-def guard_calendar_tools(tools: dict[str, Tool], times: CalendarTimes,
-                         event_minutes: int) -> dict[str, Tool]:
+def guard_calendar_tools(tools: dict[str, Tool], times: CalendarTimes, event_minutes: int,
+                         ranges: dict[str, tuple[datetime, datetime]] | None = None,
+                         ) -> dict[str, Tool]:
     length = timedelta(minutes=event_minutes)
     seen: dict[str, datetime] = {}  # event id -> current start, from get_events
 
-    # Refuse a range that is not the window or the whole day from the words.
+    # Refuse a range that is not one of the allowed ranges.
     def check_range(args) -> None:
-        if times.day is None:
+        if ranges is not None:
+            allowed = list(ranges.values())
+        elif times.day is None:
             raise AskUser(ASK_DAY)
-        allowed = [r for r in (times.window, times.day) if r is not None]
+        else:
+            allowed = [r for r in (times.window, times.day) if r is not None]
         if (args.start, args.end) not in allowed:
-            ranges = " or ".join(f"{a.isoformat()} to {b.isoformat()}" for a, b in allowed)
-            raise ToolError(f"use exactly this range: {ranges}")
+            text = " or ".join(f"{a.isoformat()} to {b.isoformat()}" for a, b in allowed)
+            raise ToolError(f"use exactly this range: {text}")
 
     # Refuse a start or end that is not the parsed time and the default end.
     def check_start(args) -> None:

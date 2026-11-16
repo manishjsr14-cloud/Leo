@@ -2,8 +2,9 @@
 
 Runs the shared step loop (leo/agents/loop.py) on mock calendar tools until
 Radicale arrives in M2.6. Dates and times come from code, not the model:
-read_calendar_times reads the user's latest message, the prompt shows the
-exact values, and calendar_guard refuses any call that uses other ones.
+read_calendar_times reads the user's latest message, calendar_fill adds the
+exact times to every call (the model gives only a title, an event id or a
+range name), and calendar_guard checks each filled call again.
 When the words are unclear (e.g. "kal" with no tense) the agent asks the
 user and makes no LLM call. Cancelling is 🔴: refused until approval (M2.5).
 cancel_event is offered only when the message asks to cancel, and move_event
@@ -19,6 +20,7 @@ from datetime import datetime, timedelta
 
 from langchain_core.messages import HumanMessage
 
+from leo.agents.calendar_fill import Range, fill_calendar_tools, named_ranges
 from leo.agents.calendar_guard import guard_calendar_tools
 from leo.agents.loop import agent_node, describe_tools, run_steps
 from leo.config import CalendarConfig
@@ -29,6 +31,7 @@ from leo.language.calendar_words import (
     asks_to_create,
     asks_to_move,
 )
+from leo.language.say_time import say_clock, say_day, say_span
 from leo.language.time_parser import current_time
 from leo.language.time_spans import CalendarTimes, read_calendar_times
 from leo.ops import tracing
@@ -43,37 +46,39 @@ SYSTEM_PROMPT = (
     'Reply only with JSON: either {{"<tool name>": {{<its arguments>}}}} to use one '
     'tool, or {{"done": {{"summary": "<what you did and the results>"}}}} when '
     "finished.\n"
-    "Rules: never work out dates or times yourself; copy them exactly from 'Times "
-    "from the user's words' below. Event ids come only from get_events results. "
-    "Steps: to add an event, call create_event with the Event start and end. To "
-    "move or cancel an event, first call get_events with a given range, then "
-    "move_event or cancel_event with the id of the matching event from its result. "
-    "To say what is on a day or whether the user is free, call get_events or "
-    "find_free_slots with a given range. Then reply done. Cancelling needs the "
-    "user's approval: if cancel_event is refused, do not retry it. A title is a few "
-    "words from the user's message. Never repeat a tool call that already succeeded.\n"
+    "Rules: you never write dates or times. Code fills in the times of "
+    "create_event and move_event, and for get_events or find_free_slots you choose a "
+    "range name from the list below. Event ids come only from get_events results. "
+    "Steps: to add an event, call create_event with a short title. To move or "
+    "cancel an event, first call get_events with a range name, then move_event or "
+    "cancel_event with the id of the matching event from its result. To say what is "
+    "on a day or whether the user is free, call get_events or find_free_slots with "
+    "a range name. Then reply done. Cancelling needs the user's approval. A title "
+    "is a few words from the user's message. Never repeat a tool call that already "
+    "succeeded.\n"
     'Example: "Parso shaam 6 baje Neha ke saath call rakh do" -> create_event with '
-    'title "Call with Neha" and the Event start and end below -> done.\n'
-    "Today is {today}.\nTimes from the user's words:\n{times}\nYour task: {task}"
+    'title "Call with Neha" -> done.\n'
+    "Today is {today}.\nTimes from the user's words (filled in by code):\n{times}\n"
+    "Your task: {task}"
 )
 
 VERSION = tracing.prompt_version(SYSTEM_PROMPT)  # tags this agent's spans
 
 
-# The exact times for the prompt, one per line.
-def times_lines(times: CalendarTimes, event_minutes: int) -> str:
+# The times and range names for the prompt, written out, one per line.
+def times_lines(times: CalendarTimes, ranges: dict[str, Range], event_minutes: int) -> str:
     lines = []
     if times.start is not None:
-        end = times.start + timedelta(minutes=event_minutes)
-        label = "New start for the moved event" if times.move_from else "Event"
-        lines.append(f"- {label}: start {times.start.isoformat()}, end {end.isoformat()}")
+        span = say_span(times.start, times.start + timedelta(minutes=event_minutes))
+        label = "New time for the moved event" if times.move_from else "Event time"
+        lines.append(f"- {label}: {span}")
+    else:
+        lines.append("- No event time in the user's words.")
     if times.move_from is not None:
-        lines.append(f"- The event to move now starts at {times.move_from.isoformat()}")
-    for name, span in (("part of the day", times.window), ("whole day", times.day)):
-        if span is not None:
-            lines.append(f"- Range for get_events or find_free_slots ({name}): "
-                         f"start {span[0].isoformat()}, end {span[1].isoformat()}")
-    return "\n".join(lines) or "- No date or time in the user's words."
+        lines.append(f"- The event to move now starts: {say_day(times.move_from)}, "
+                     f"{say_clock(times.move_from)}")
+    lines += [f'- range "{name}": {say_span(*span)}' for name, span in ranges.items()]
+    return "\n".join(lines)
 
 
 # The tools offered for this message: cancel_event only when it asks to
@@ -104,13 +109,14 @@ def run_agent(state: LeoState, chat: Callable, tools: dict[str, Tool], max_steps
         return {"steps": [], "summary": times.question, "stopped": "ask"}
     if times.move_from is not None and asks_to_create(text):
         return {"steps": [], "summary": ADD_OR_MOVE, "stopped": "ask"}
-    guarded = guard_calendar_tools(offered_tools(tools, text, times), times,
-                                   config.default_event_minutes)
+    minutes, ranges = config.default_event_minutes, named_ranges(times, now)
+    guarded = guard_calendar_tools(offered_tools(tools, text, times), times, minutes, ranges)
+    filled = fill_calendar_tools(guarded, times, ranges, minutes)
     task = (state.get("plan") or [""])[-1]
-    prompt = SYSTEM_PROMPT.format(tools=describe_tools(guarded), task=task,
+    prompt = SYSTEM_PROMPT.format(tools=describe_tools(filled), task=task,
                                   today=now.strftime("%A %d %B %Y, %H:%M"),
-                                  times=times_lines(times, config.default_event_minutes))
-    return run_steps(prompt, VERSION, state, chat, guarded, max_steps, force_cloud)
+                                  times=times_lines(times, ranges, minutes))
+    return run_steps(prompt, VERSION, state, chat, filled, max_steps, force_cloud)
 
 
 # Build the graph node for this agent. Its result goes in agent_results["calendar"].
