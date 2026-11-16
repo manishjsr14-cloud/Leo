@@ -57,6 +57,11 @@ class Tool(BaseModel):
     # Optional extra check on the checked arguments, run by call_tool before the
     # approval check; it raises ToolError (or AskUser) to refuse the call.
     check: Callable[[Any], None] | None = None
+    # Optional: the smaller schema the MODEL fills in instead of args_model, and
+    # how code turns the model's arguments into the full ones (e.g. the calendar
+    # agent adds the exact start and end, so the model never writes a date).
+    model_args: type[ToolArgs] | None = None
+    fill: Callable[[dict], dict] | None = None
 
 
 class ToolCall(BaseModel):

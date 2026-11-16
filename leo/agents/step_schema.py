@@ -42,7 +42,7 @@ class Done(BaseModel):
 def step_model(tools: dict[str, Tool], first_step: bool = False) -> type[RootModel]:
     options: list[type[BaseModel]] = [
         create_model(f"Call_{name}", __config__=ConfigDict(extra="forbid"),
-                     **{name: (tool.args_model, ...)})
+                     **{name: (tool.model_args or tool.args_model, ...)})
         for name, tool in tools.items()
     ]
     if not first_step:

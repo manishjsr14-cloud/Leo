@@ -6,8 +6,10 @@ Each LLM reply (shape in leo/agents/step_schema.py) is either
   {"done": {"summary": "..."}}        -> finished, hand back to the supervisor
 The first reply must be a tool call: "done" is offered only after a tool ran.
 The loop stops after max_steps LLM replies, or when the model repeats a tool
-call (same tool, same arguments) that already succeeded in this run: the
-repeat is not run and the run ends ("repeated_call"). Tool errors are shown to the
+call (same tool, same arguments) that already succeeded, or was refused for
+approval, in this run: the repeat is not run and the run ends ("repeated_call").
+A tool may let code fill in its arguments (Tool.fill); the step then records
+the full arguments that were sent to the tool. Tool errors are shown to the
 model so it can try again; they never crash the graph. 🔴 tools are always
 refused here (call_tool without approved=True) and the step is marked
 needs_approval; approval arrives in M2.5. A tool that raises AskUser ends the
@@ -34,7 +36,7 @@ from leo.tools.registry import ApprovalRequiredError, UnknownToolError, call_too
 def describe_tools(tools: dict[str, Tool]) -> str:
     lines = []
     for tool in tools.values():
-        props = tool.args_model.model_json_schema().get("properties", {})
+        props = (tool.model_args or tool.args_model).model_json_schema().get("properties", {})
         args = ", ".join(f"{k}: {v.get('type', 'any')}" for k, v in props.items())
         lines.append(f"- {tool.name}({args}): {tool.description}")
     return "\n".join(lines)
@@ -55,6 +57,20 @@ def run_tool(tools: dict[str, Tool], name: str, args: dict) -> Any:
         return {"error": f"bad arguments: {problems}"}
     except (ToolError, UnknownToolError) as error:
         return {"error": str(error)}
+
+
+# The full arguments for a call: the model's own, or the tool's fill of them.
+# Returns (args, None), or (the model's args, an error output) when filling refuses.
+def full_args(tools: dict[str, Tool], name: str, args: dict) -> tuple[dict, dict | None]:
+    tool = tools.get(name)
+    if tool is None or tool.fill is None:
+        return args, None
+    try:
+        return tool.fill(args), None
+    except AskUser as error:
+        return args, {"error": "the user must answer first", "ask": str(error)}
+    except ToolError as error:
+        return args, {"error": str(error)}
 
 
 # One string per call, the same for the same tool and arguments in any key order.
@@ -92,14 +108,15 @@ def run_steps(prompt: str, version: str, state: LeoState, chat: Callable,
                     span.update(metadata={**tags, "action": "invalid_output"})
                     return {"steps": steps, "summary": "", "stopped": "invalid_output"}
                 (name, args), bad_args_shown = loose, True
+            args, refused = full_args(tools, name, args)  # code-filled args, if any
             if call_key(name, args) in done_calls:
                 span.update(metadata={**tags, "action": "repeated_call"})
                 return {"steps": steps, "summary": "", "stopped": "repeated_call"}
-            output = run_tool(tools, name, args)
+            output = refused or run_tool(tools, name, args)
             failed = isinstance(output, dict) and "error" in output
             span.update(metadata={**tags, "action": name, "tool_ok": not failed})
-            if not failed:
-                done_calls.add(call_key(name, args))
+            if not failed or output.get("needs_approval") is True:
+                done_calls.add(call_key(name, args))  # also no retry of a refused 🔴 call
         steps.append({"tool": name, "args": args, "result": output})
         if isinstance(output, dict) and "ask" in output:
             return {"steps": steps, "summary": output["ask"], "stopped": "ask"}
