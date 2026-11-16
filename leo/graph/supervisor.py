@@ -41,10 +41,25 @@ AGENT_DESCRIPTIONS = {
 }
 
 
-# The agent list for the prompt: "- name: what it does", one per line.
+# Example requests per agent, shown only when that agent is on offer. None of
+# them is a phrase from an eval turn file.
+AGENT_EXAMPLES = {
+    "calendar": [
+        "Mera Wednesday ka schedule batao",
+        "Friday ko 11 baje bank jaana hai, calendar mein daal do",
+        "Doctor wali meeting hata do",
+    ],
+}
+
+
+# The agent list for the prompt: "- name: what it does", one per line, then
+# example requests for the agents that have them.
 def describe_agents(agents: list[str]) -> str:
-    return "\n".join(f"- {name}: {AGENT_DESCRIPTIONS[name]}" if name in AGENT_DESCRIPTIONS
-                     else f"- {name}" for name in agents)
+    lines = [f"- {name}: {AGENT_DESCRIPTIONS[name]}" if name in AGENT_DESCRIPTIONS
+             else f"- {name}" for name in agents]
+    examples = [f'- "{text}" -> ["{name}"]' for name in agents
+                for text in AGENT_EXAMPLES.get(name, [])]
+    return "\n".join(lines + (["Examples:", *examples] if examples else []))
 
 
 class SupervisorPlan(BaseModel):

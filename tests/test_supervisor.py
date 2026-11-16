@@ -80,3 +80,11 @@ def test_responder_adds_reply_with_provider():
     sent = " ".join(m["content"] for m in chat.calls[0]["messages"])
     assert "sunny, 31 C" in sent
     assert chat.calls[0]["output_model"] is None
+
+
+# Calendar example lines appear only when the calendar agent is on offer.
+def test_calendar_examples_only_with_calendar():
+    from leo.graph.supervisor import describe_agents
+    assert "Examples:" not in describe_agents(["productivity", "research"])
+    text = describe_agents(["research", "calendar"])
+    assert '- "Mera Wednesday ka schedule batao" -> ["calendar"]' in text

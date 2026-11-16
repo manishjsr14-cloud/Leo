@@ -63,3 +63,8 @@ def test_plain_chat_has_no_note():
     chat = FakeChat("Hi!")
     responder_node({"messages": [HumanMessage("hi")]}, chat)
     assert "Tool results" not in sent(chat)
+
+
+def test_responder_prompt_forbids_adding_plans_or_details():
+    from leo.graph.responder import SYSTEM_PROMPT
+    assert "never add plans, steps, details or facts" in SYSTEM_PROMPT
