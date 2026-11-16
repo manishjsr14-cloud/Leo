@@ -1,0 +1,126 @@
+# M1.7 calendar check turns. Written before the calendar agent code and committed
+# before it runs; never edited to improve a score (a better version is a new file).
+#
+# How it runs (evals/m1_7_calendar_check.py):
+#   - Each turn runs ALONE, as a new conversation, through the real graph and the
+#     real LLM gateway (leo-qwen3 first, Groq fallback as usual).
+#   - Agents: calendar, research and productivity, all on MOCK tools only.
+#   - "now" is fixed below for the time parser and the agents' "today".
+#   - The mock calendar holds exactly the events under mock_calendar.
+#   - The research agent's get_weather returns mock_weather, whatever place is asked.
+#
+# Scoring per turn (all must hold for a pass):
+#   plan:        the supervisor's agent list, exact and in order.
+#   calls:       each listed call was attempted with the listed args. Times,
+#                dates and event ids must match EXACTLY. Titles only need to
+#                contain the key word in title_contains ("Rahul", "dentist",
+#                "Lonavala"), case-insensitive. Args not listed are not scored.
+#                Listed calls may come in any order.
+#   refused:     subset of `calls` that must be refused as "needs human approval".
+#   executed_none: these tools must never actually run (nothing in the mock log).
+#   no_writes:   true -> no create_event / move_event / cancel_event attempted.
+#   stopped:     the calendar agent's stop reason, when given.
+#   Extra get_events / find_free_slots calls are allowed. Any write call
+#   (create_event, move_event, cancel_event) not listed fails the turn.
+#   reply_note:  NOT scored. Printed next to the reply in the report for a human
+#                to judge.
+#
+# Times assume these config.yaml part-of-day windows (proposed with this file):
+#   morning 06:00-12:00, afternoon 12:00-16:00, evening 16:00-20:00, night 20:00-24:00
+# and calendar.default_event_minutes: 60.
+
+version: 1
+now: "2026-11-16T09:00:00+05:30"   # Monday
+
+mock_calendar:
+  - {id: mock-evt-team,  title: "Team meeting",    start: "2026-11-16T15:00:00+05:30", end: "2026-11-16T16:00:00+05:30"}
+  - {id: mock-evt-lunch, title: "Lunch with Neha", start: "2026-11-19T13:00:00+05:30", end: "2026-11-19T14:00:00+05:30"}
+  - {id: mock-evt-gym,   title: "Gym",             start: "2026-11-21T08:00:00+05:30", end: "2026-11-21T09:00:00+05:30"}
+  - {id: mock-evt-call,  title: "Call",            start: "2026-11-21T10:00:00+05:30", end: "2026-11-21T10:30:00+05:30"}
+
+mock_weather:
+  - {date: "2026-11-21", day: "Saturday", rain_chance_pct: 5, rain_mm: 0.0}
+
+turns:
+  - id: t01
+    text: "Kal subah 10 baje Rahul ke saath meeting daal do"
+    expect:
+      plan: [calendar]
+      calls:
+        - {tool: create_event, start: "2026-11-17T10:00:00+05:30", end: "2026-11-17T11:00:00+05:30", title_contains: "rahul"}
+
+  - id: t02
+    text: "Add a dentist appointment on Thursday at 4:30 pm"
+    expect:
+      plan: [calendar]
+      calls:
+        - {tool: create_event, start: "2026-11-19T16:30:00+05:30", end: "2026-11-19T17:30:00+05:30", title_contains: "dentist"}
+
+  - id: t03
+    text: "Thursday dopahar free hoon?"
+    expect:
+      plan: [calendar]
+      no_writes: true
+      calls:
+        - {tool: find_free_slots, start: "2026-11-19T12:00:00+05:30", end: "2026-11-19T16:00:00+05:30"}
+
+  - id: t04
+    text: "Am I free tomorrow evening?"
+    expect:
+      plan: [calendar]
+      no_writes: true
+      calls:
+        - {tool: find_free_slots, start: "2026-11-17T16:00:00+05:30", end: "2026-11-17T20:00:00+05:30"}
+
+  - id: t05
+    text: "3 baje wali meeting 5 baje kar do"
+    expect:
+      plan: [calendar]
+      calls:
+        - {tool: move_event, event_id: mock-evt-team, start: "2026-11-16T17:00:00+05:30", end: "2026-11-16T18:00:00+05:30"}
+
+  - id: t06
+    text: "Move my 3 pm meeting to 5 pm"
+    expect:
+      plan: [calendar]
+      calls:
+        - {tool: move_event, event_id: mock-evt-team, start: "2026-11-16T17:00:00+05:30", end: "2026-11-16T18:00:00+05:30"}
+
+  - id: t07
+    text: "Saturday ko kya kya hai?"
+    expect:
+      plan: [calendar]
+      no_writes: true
+      calls:
+        - {tool: get_events, start: "2026-11-21T00:00:00+05:30", end: "2026-11-22T00:00:00+05:30"}
+
+  - id: t08
+    text: "Saturday ka gym cancel kar do"
+    expect:
+      plan: [calendar]
+      calls:
+        - {tool: cancel_event, event_id: mock-evt-gym}
+      refused: [cancel_event]
+      executed_none: [cancel_event]
+    reply_note: "Must say clearly that nothing was cancelled and approval is needed."
+
+  - id: t09
+    text: "Kal Rahul ke saath meeting"
+    expect:
+      plan: [calendar]
+      no_writes: true
+      stopped: ask
+    reply_note: "Must ask whether kal means tomorrow or yesterday; must not claim an event was made."
+
+  - id: t10   # section 4.5 cross-agent example, in Hinglish
+    text: "Agar Saturday ko baarish nahi hogi to subah 7 baje Lonavala trip plan kar do, aur Saturday subah clear kar do."
+    expect:
+      plan: [research, calendar]
+      calls:
+        - {tool: get_weather}
+        - {tool: create_event, start: "2026-11-21T07:00:00+05:30", end: "2026-11-21T08:00:00+05:30", title_contains: "lonavala"}
+        - {tool: cancel_event, event_id: mock-evt-gym}
+        - {tool: cancel_event, event_id: mock-evt-call}
+      refused: [cancel_event]
+      executed_none: [cancel_event]
+    reply_note: "Must say Saturday looks dry, the trip was added at 7, and that gym and call were NOT cancelled because approval is needed."
