@@ -35,8 +35,8 @@ def test_supervisor_and_responder_have_hinglish_examples():
     examples = [e for agent in agents.values() for e in agent["examples"]]
     assert all(language_tag(e, 0.2) == "hinglish" for e in examples)
     responder = load_prompt("responder")
-    assert "{language}" in responder.system
     assert responder.examples
+    assert any(language_tag(e.split("->")[1], 0.2) == "en" for e in responder.examples)
 
 
 def test_reply_templates_cover_both_languages():

@@ -10,7 +10,8 @@ cannot claim that something was done.
 Also written by code: a question the agent must ask (stopped "ask"), every 🔴
 call refused for lack of approval, named by event, and after a cancel or
 clear request, the events still on the calendar (M1.7 t10).
-The reply language comes from the language tag in the state (M1.8). A
+The reply language comes from the language tag in the state (M1.8), as the
+last line the model reads; today's date is written in by code. A
 Devanagari reply to a Roman-script message is asked for again once, in Roman
 letters. A single successful write gets a code-written reply instead, with no
 LLM call (leo/graph/quick_reply.py).
@@ -19,6 +20,7 @@ LLM call (leo/graph/quick_reply.py).
 import json
 import re
 from collections.abc import Callable
+from datetime import date
 
 from langchain_core.messages import AIMessage, convert_to_openai_messages
 
@@ -26,6 +28,7 @@ from leo.graph.quick_reply import quick_reply
 from leo.graph.result_words import refused_words, result_in_words, still_on_calendar
 from leo.graph.state import LeoState, latest_user_text
 from leo.language.calendar_words import asks_to_cancel
+from leo.language.time_parser import current_time
 from leo.llm.prompts import load_prompt
 
 PROMPT = load_prompt("responder")
@@ -72,15 +75,28 @@ def fact_lines(agent_results: dict, asked_cancel: bool = False) -> list[str]:
     return lines
 
 
-# The messages for the LLM: prompt, facts (only if an agent ran), conversation.
+# Today's date: the one an agent worked with (a check can fix it), else today in IST.
+def today_of(agent_results: dict) -> date:
+    for outcome in agent_results.values():
+        if isinstance(outcome, dict) and outcome.get("today"):
+            return date.fromisoformat(outcome["today"])
+    return current_time().date()
+
+
+# The messages for the LLM: prompt with today's date, facts (only if an agent
+# ran), the conversation, and last the reply language (M1.8 fix round: a
+# 4B model follows the last line best).
 def responder_messages(state: LeoState) -> list[dict]:
-    language = LANGUAGES.get(state.get("language") or "", "the same language as the user")
-    messages = [{"role": "system", "content": PROMPT.render(language=language)}]
-    asked_cancel = asks_to_cancel(latest_user_text(state))
-    lines = fact_lines(state.get("agent_results") or {}, asked_cancel)
+    results = state.get("agent_results") or {}
+    today = today_of(results)
+    system = f"{PROMPT.render()}\nToday is {today:%A} {today.day} {today:%b %Y}."
+    messages = [{"role": "system", "content": system}]
+    lines = fact_lines(results, asks_to_cancel(latest_user_text(state)))
     if lines:
         messages.append({"role": "system", "content": "Facts:\n" + "\n".join(lines)})
-    return messages + convert_to_openai_messages(state.get("messages", []))
+    language = LANGUAGES.get(state.get("language") or "", "the same language as the user")
+    return [*messages, *convert_to_openai_messages(state.get("messages", [])),
+            {"role": "system", "content": f"Reply in {language}."}]
 
 
 # The reply as an AIMessage, with provider, model and timings in response_metadata.

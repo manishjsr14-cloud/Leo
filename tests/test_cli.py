@@ -29,7 +29,8 @@ def test_two_turns_keep_history():
     printed = run_cli(["my name is Asha", "what is my name?", "exit"], chat)
     assert printed[1:] == ["Leo: Hi Asha!  [ollama]", "Leo: Your name is Asha.  [ollama]"]
     second = [m["content"] for m in chat.calls[1]["messages"]]
-    assert second[-3:] == ["my name is Asha", "Hi Asha!", "what is my name?"]
+    # The last message is the reply-language line (M1.8); the conversation is before it.
+    assert second[-4:-1] == ["my name is Asha", "Hi Asha!", "what is my name?"]
 
 
 # Empty lines are skipped; end of input stops the loop without an error.
@@ -53,7 +54,7 @@ def test_use_cloud_prefix_forces_one_turn():
     chat = FakeChat("one", "two")
     run_cli(["use cloud: what is 2+2?", "and now?", "exit"], chat)
     assert [c["force_cloud"] for c in chat.calls] == [True, False]
-    assert chat.calls[0]["messages"][-1]["content"] == "what is 2+2?"
+    assert chat.calls[0]["messages"][-2]["content"] == "what is 2+2?"
 
 
 # The prefix check ignores case and leaves other messages alone.
@@ -95,6 +96,6 @@ def test_run_turn_normalizes_and_tags_the_language():
     chat = FakeChat("Theek hai.")
     _, history = cli.run_turn(build_graph(chat), [], "kl kia plan hai?", False)
     assert history[0].content == "kal kya plan hai?"
-    assert "Hinglish" in chat.calls[0]["messages"][0]["content"]
+    assert "Hinglish" in chat.calls[0]["messages"][-1]["content"]
     cli.run_turn(build_graph(chat), [], "What is the plan for tomorrow?", False)
-    assert "in English." in chat.calls[-1]["messages"][0]["content"]
+    assert "in English." in chat.calls[-1]["messages"][-1]["content"]

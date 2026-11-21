@@ -24,7 +24,8 @@ def test_responder_sees_history():
                HumanMessage("what is my name?")]
     build_graph(chat).invoke({"messages": history})
     sent = [m["content"] for m in chat.calls[0]["messages"]]
-    assert sent[-3:] == ["my name is Asha", "Nice to meet you, Asha.", "what is my name?"]
+    # The last message is the reply-language line (M1.8); the conversation is before it.
+    assert sent[-4:-1] == ["my name is Asha", "Nice to meet you, Asha.", "what is my name?"]
 
 
 # force_cloud in the run config reaches the gateway call.

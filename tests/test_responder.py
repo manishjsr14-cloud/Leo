@@ -72,11 +72,19 @@ def test_plain_chat_has_no_facts():
     assert "Facts" not in sent(chat)
 
 
-def test_reply_language_follows_the_tag():
+# The reply language is the LAST line the model reads (M1.8 fix round).
+def test_reply_language_follows_the_tag_and_comes_last():
     hinglish = responder_messages({"messages": [HumanMessage("x")], "language": "hinglish"})
-    assert "Hinglish" in hinglish[0]["content"] and "never Devanagari" in hinglish[0]["content"]
+    assert "Hinglish" in hinglish[-1]["content"] and "never Devanagari" in hinglish[-1]["content"]
     english = responder_messages({"messages": [HumanMessage("x")], "language": "en"})
-    assert "in English." in english[0]["content"]
+    assert english[-1] == {"role": "system", "content": "Reply in English."}
+
+
+# Today's date comes from the agent's own "today" (a check can fix it).
+def test_today_comes_from_the_agent():
+    state = {"messages": [HumanMessage("x")], "language": "en",
+             "agent_results": {"calendar": {"steps": [], "today": "2026-11-16"}}}
+    assert "Today is Monday 16 Nov 2026." in responder_messages(state)[0]["content"]
 
 
 def test_devanagari_reply_to_roman_text_is_asked_again_once():

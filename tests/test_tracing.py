@@ -86,7 +86,7 @@ def test_trace_tags_models_prompt_versions_and_tokens():
     assert root["session_id"] == "session-1"
     assert "model:leo-qwen3" in root["tags"]
     assert any(t.startswith("prompt:supervisor@") for t in root["tags"])
-    assert tracer.named("supervisor")["fields"]["metadata"]["prompt_version"] == "supervisor@1"
+    assert tracer.named("supervisor")["fields"]["metadata"]["prompt_version"] == "supervisor@2"
     assert tracer.named("supervisor")["fields"]["metadata"]["plan"] == ["productivity"]
     assert tracer.named("step 1")["fields"]["metadata"]["action"] == "calculate"
     llm = tracer.named("llm:ollama")["fields"]

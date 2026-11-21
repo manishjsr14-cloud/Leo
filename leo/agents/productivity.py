@@ -9,6 +9,7 @@ never end a run early: a list may be the first step of a change.
 
 from collections.abc import Callable
 
+from leo.agents.calculate_guard import guard_calculate
 from leo.agents.finish import finish_rule
 from leo.agents.loop import agent_node, describe_tools, run_steps, run_tool, step_model
 from leo.graph.state import LeoState, latest_user_text
@@ -27,9 +28,10 @@ __all__ = ["NAME", "productivity_agent", "run_agent", "run_tool", "step_model"]
 # Returns {"steps": [...], "summary": str, "stopped": why}.
 def run_agent(state: LeoState, chat: Callable, tools: dict[str, Tool],
               max_steps: int, force_cloud: bool = False) -> dict:
-    task = (state.get("plan") or [""])[-1]
+    task, text = (state.get("plan") or [""])[-1], latest_user_text(state)
+    tools = guard_calculate(tools, text)  # numbers must come from the message (M1.8)
     prompt = PROMPT.render(tools=describe_tools(tools), task=task)
-    finish = finish_rule(latest_user_text(state), ENDS_RUN)
+    finish = finish_rule(text, ENDS_RUN)
     return run_steps(prompt, VERSION, state, chat, tools, max_steps, force_cloud, finish)
 
 

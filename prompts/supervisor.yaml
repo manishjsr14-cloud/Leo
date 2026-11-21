@@ -2,8 +2,10 @@
 # {agents} is filled in by code (leo/graph/supervisor.py) from the agents below
 # that are on offer: one line each, then their example requests.
 # No example is a phrase from an eval turn file.
+# Version 2 (M1.8 fix round): a calendar example for moving a meeting (run1 I03
+# was planned to productivity).
 name: supervisor
-version: 1
+version: 2
 system: |
   Plan which agents act on the user's latest message, in order: usually one, two only when clearly needed, none for plain chat.
   Agents:
@@ -18,4 +20,4 @@ agents:
     examples: ["Parso Nashik mein dhoop hogi?"]
   calendar:
     does: "the user's own calendar: what is on a day, free time, adding or planning an event, meeting or trip at a time, moving, cancelling or clearing events"
-    examples: ["Mera Wednesday ka schedule batao", "Friday ko 11 baje bank jaana hai, calendar mein daal do", "Doctor wali meeting hata do"]
+    examples: ["Mera Wednesday ka schedule batao", "Friday ko 11 baje bank jaana hai, calendar mein daal do", "Doctor wali meeting hata do", "Kal ki review meeting Friday pe shift kar do"]

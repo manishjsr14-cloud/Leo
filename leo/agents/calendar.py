@@ -88,7 +88,8 @@ def asks_change(text: str, times: CalendarTimes) -> bool:
 
 
 # Run the agent for the supervisor's latest task, with `now` in IST.
-# Returns {"steps": [...], "summary": str, "stopped": why, "assumed_ampm": bool}.
+# Returns {"steps": [...], "summary": str, "stopped": why, "assumed_ampm": bool,
+# "today": ISO date the responder uses for "tomorrow" etc.}.
 def run_agent(state: LeoState, chat: Callable, tools: dict[str, Tool], max_steps: int,
               now: datetime, config: CalendarConfig, force_cloud: bool = False) -> dict:
     text = latest_user_text(state)
@@ -108,7 +109,7 @@ def run_agent(state: LeoState, chat: Callable, tools: dict[str, Tool], max_steps
                            times=times_lines(times, ranges, minutes))
     finish = finish_rule(text, ENDS_RUN, READS, asks_change(text, times))
     out = run_steps(prompt, VERSION, state, chat, filled, max_steps, force_cloud, finish)
-    return {**out, "assumed_ampm": times.assumed_ampm}
+    return {**out, "assumed_ampm": times.assumed_ampm, "today": now.date().isoformat()}
 
 
 # Build the graph node for this agent. Its result goes in agent_results["calendar"].

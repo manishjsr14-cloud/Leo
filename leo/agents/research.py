@@ -31,7 +31,8 @@ def run_agent(state: LeoState, chat: Callable, tools: dict[str, Tool], max_steps
     prompt = PROMPT.render(tools=describe_tools(tools), task=task,
                            today=today.strftime("%A %d %B %Y"))
     finish = finish_rule(latest_user_text(state), set(), {"get_weather"}, asks_change=False)
-    return run_steps(prompt, VERSION, state, chat, tools, max_steps, force_cloud, finish)
+    out = run_steps(prompt, VERSION, state, chat, tools, max_steps, force_cloud, finish)
+    return {**out, "today": today.isoformat()}  # the responder says dates from this day
 
 
 # Build the graph node for this agent. Its result goes in agent_results["research"].
