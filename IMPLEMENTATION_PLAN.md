@@ -176,6 +176,8 @@ Break each phase into tasks the same way when you reach it; details will be clea
 | 11 | Weekly ML retraining, DSPy prompt optimization, lesson-to-code, learning dashboard, on/off ablation | §14, §8.5 | +10 % task success with learning on vs off |
 | 12 | Leo-4B (L7): dataset builder, public Leo-4B on synthetic data (Google Colab) → eval gate → release on Hugging Face + Ollama; then private Leo-4B on real data (desktop RTX 3060, after 4–8 weeks of use) as the laptop's main model | §14.9, §6.7 | Passes the §14.9 eval gate, incl. 0 personal data reproduced in the memorization check |
 
+**Note for Phase 5 (from M1.8):** speech-to-text may produce Devanagari even with the Hinglish prompt hint. M1.8 tags Devanagari input `hi` and leaves it as it is (no transliteration dependency), so transliteration (§15.2, e.g. `indic-transliteration`) may be needed then; adding it is a new pinned dependency and needs approval.
+
 ---
 
 ## Things to decide before you start
