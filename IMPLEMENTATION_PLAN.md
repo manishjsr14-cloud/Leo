@@ -2,7 +2,7 @@
 
 Built from `docs/problem_statement.md` and `docs/architecture.md` (v6). Section numbers like §6.2 refer to the architecture file.
 
-The order follows the architecture roadmap (§19): **Phase 0 → M1 → M2 → M3 → M4 = MVP**, then Phases 5–11. Every task ends with something you can run and a test that proves it.
+The order follows the architecture roadmap (§19): **Phase 0 → M1 → M2 → M3 → M4 = MVP**, then Phases 5–12. Every task ends with something you can run and a test that proves it.
 
 ## How to use this plan with Claude Code
 
@@ -173,7 +173,8 @@ Break each phase into tasks the same way when you reach it; details will be clea
 | 8 | AG2 eval harness (simulator, judges, red team), local vs Groq runs, risk predictor | §11, §8.4 | Risk predictor AUC ≥ 0.80; nightly eval runs on the laptop |
 | 9 | Self-learning L1–L4, feedback signals, Groq teacher, review card, compliance checks, bootstrapping | §14 | Repeat-mistake rate < 5 % |
 | 10 | Web demo (Groq profile), dashboards, alerts, quota manager, semantic cache, demo video | §10, §13 | Demo link works with mock data only |
-| 11 | Weekly ML retraining, DSPy prompt optimization, lesson-to-code, learning dashboard, on/off ablation; stretch: LoRA | §14, §8.5 | +10 % task success with learning on vs off |
+| 11 | Weekly ML retraining, DSPy prompt optimization, lesson-to-code, learning dashboard, on/off ablation | §14, §8.5 | +10 % task success with learning on vs off |
+| 12 | Leo-4B (L7): dataset builder, public Leo-4B on synthetic data (Google Colab) → eval gate → release on Hugging Face + Ollama; then private Leo-4B on real data (desktop RTX 3060, after 4–8 weeks of use) as the laptop's main model | §14.9, §6.7 | Passes the §14.9 eval gate, incl. 0 personal data reproduced in the memorization check |
 
 ---
 

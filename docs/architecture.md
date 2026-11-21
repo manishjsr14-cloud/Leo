@@ -228,7 +228,7 @@ Wherever this document says qwen3:4b, it means the non-thinking instruct build (
 | **Desktop backup tier** | Ollama (gaming desktop, over Tailscale) | `qwen3:14b` (~9 GB) or `qwen3:8b` (~5 GB) | RTX 3060 12 GB — **only when no game is running** (§6.7) |
 | **Cloud fallback** | Groq | `openai/gpt-oss-120b` (`reasoning_effort: low`) | Cloud |
 
-The **laptop is the main machine**: it runs all services and the default model for every agent, the supervisor and the responder. Harder requests go to the desktop when it is on and free, otherwise to Groq. Groq is the only cloud provider. The desktop never runs Leo's services or stores its data; if it is off, Leo works exactly as laptop + Groq.
+The **laptop is the main machine**: it runs all services and the default model for every agent, the supervisor and the responder. Harder requests go to the desktop when it is on and free, otherwise to Groq. Groq is the only cloud provider. The desktop never runs Leo's services or stores its data (one exception: a private Leo-4B training run, §6.7); if it is off, Leo works exactly as laptop + Groq.
 
 **Why `gpt-oss-120b` as fallback:** OpenAI's open-weight reasoning model with strong tool calling, served by Groq through the same OpenAI-compatible API. It is much stronger than the local 4B model, so escalations actually fix hard requests. `reasoning_effort: low` keeps live latency down; Groq's built-in browser search and code execution are not used, since Leo calls its own guarded tools.
 
@@ -308,7 +308,7 @@ server:
 All calls go through one OpenAI-compatible client wrapper (Ollama and Groq both expose this API) with retries, timeouts and token/latency logging.
 
 ### 6.5 What leaves the laptop
-Requests escalated to the **desktop** go to the user's own machine over Tailscale and stay at home. Groq LLM calls (escalations when the desktop is busy or off, and news summaries), Groq Whisper speech-to-text, Llama Guard 4 checks on flagged content, edge-tts, and optional ntfy push text (§9.1). Everything else — memory, chats, calendar, reminders, ML models, training data — stays on the laptop. There are no Google or email integrations. Text sent to Groq on escalation passes Presidio redaction for third-party PII where possible.
+Requests escalated to the **desktop** go to the user's own machine over Tailscale and stay at home. Groq LLM calls (escalations when the desktop is busy or off, and news summaries), Groq Whisper speech-to-text, Llama Guard 4 checks on flagged content, edge-tts, and optional ntfy push text (§9.1). Everything else — memory, chats, calendar, reminders, ML models, training data — stays on the laptop (one exception: a private Leo-4B training run on the desktop, §6.7). There are no Google or email integrations. Text sent to Groq on escalation passes Presidio redaction for third-party PII where possible.
 
 ### 6.6 Getting More Out of the 4B Model
 
@@ -355,6 +355,8 @@ Launchers that are just open (Steam, Epic, Riot Client) do **not** trigger gamin
 **Anti-cheat safety:** the agent only reads the process list, the registry and `nvidia-smi`. It never opens, injects into or modifies game processes, so it does not interfere with anti-cheat systems such as Riot Vanguard or Easy Anti-Cheat.
 
 **Power:** the desktop is not kept on for Leo; it is used only when it is already on.
+
+**Leo data:** no Leo data is stored on the desktop. The one exception is training the private Leo-4B (§14.9) on its RTX 3060, so personal data never goes to the cloud: the training data is copied to the desktop only for the run and deleted afterwards.
 
 **Status:** the desktop's state (`available` / `gaming` / `offline`) is shown in the PWA and in the health monitor (§9.8).
 
@@ -838,7 +840,7 @@ Leo improves from experience **without retraining the main model**. Everything l
 | L4 | **Dynamic few-shot** | Better routing and tool calls by the local model | Good (request → agent → tool call) examples stored in a sqlite-vec bank; top-k injected into prompts | Per task |
 | L5 | **ML retraining** | Better language detection, intent routing and local/Groq decisions | Weekly retrain of the ML layer (§8.5) from traces and evals | Weekly |
 | L6 | **Prompt optimization (DSPy)** | Better system prompts per agent for the local model | Nightly job runs a DSPy optimizer over eval scenarios + feedback, proposes a new prompt version | Nightly |
-| L7 *(stretch)* | **LoRA fine-tune of the local model** | Better tool calls from `qwen3:4b`, with lessons baked in | LoRA-tune on saved good traces and teacher-corrected examples (§14.3) with Unsloth on free Colab, export GGUF, replace the base model in Ollama after the eval gate | Monthly |
+| L7 | **Leo-4B: Leo's own open-weight model** | Better tool calls, Hinglish and the user's routines learned into the weights | LoRA fine-tune of Qwen3-4B-Instruct-2507 in two versions — a **private** model on the user's data and a **public** model on synthetic data only (§14.9) | Monthly (private), per release (public) |
 
 ### 14.2 Learning Signals
 
@@ -893,7 +895,7 @@ Small models often ignore long or distant instructions, so lessons are kept shor
 | **Placement** | Recalled lessons go right **before the user's message** (after the system prompt and guardrail rules), where small models pay most attention, inside a `<lessons>` block marked as hints |
 | **Compliance check** | For lessons with a checkable effect (ask before acting, use a specific tool, include a date), a rule checks the agent's output. If the lesson was ignored: retry once with the lesson repeated, then escalate to Groq |
 | **Promote to code** | A lesson that has helped ~5 times and is checkable is turned into a **validator or tool rail** (e.g. "confirm ambiguous dates" becomes a check inside `create_event`). Proposed as a code change for review; once merged, the model can no longer skip it and the lesson is retired from the prompt |
-| **Fine-tune later** | Saved good traces and teacher examples feed the L7 LoRA, which bakes common lessons into the model weights |
+| **Fine-tune later** | Saved good traces and teacher examples feed the private Leo-4B (§14.9), which bakes common lessons into the model weights |
 
 ### 14.6 Lesson & Skill Format
 ```yaml
@@ -943,6 +945,84 @@ A **Learning dashboard** (Langfuse + a page in the web UI) shows:
 
 - **A/B ablation:** nightly evals with learning **on vs off** to prove the gain.
 - The AutoGen user simulator replays a "4 weeks of use" scenario to test learning end-to-end.
+
+### 14.9 Leo-4B: Leo's Own Open-Weight Model
+
+Leo's long-term learning step is to turn what it has learned into **its own model**, a LoRA fine-tune of Qwen3-4B-Instruct-2507 (`qwen3:4b-instruct-2507`, the non-thinking instruct build that `leo-qwen3` uses) called **Leo-4B**. The default `qwen3:4b` tag is thinking-only and its thinking cannot be turned off (§6), so it is not used as the base. Qwen3 is Apache 2.0, so fine-tuned versions can be used and released freely.
+
+**Two versions**
+
+| | **Private Leo-4B** (`leo:4b-private`) | **Public Leo-4B** (`leo:4b`) |
+|---|---|---|
+| Purpose | Leo's everyday brain on the laptop | Open release for others and the portfolio |
+| Training data | User's real traces (PII-masked), Groq teacher corrections, approved lessons and skills, plus all public data | **Synthetic and eval data only**: Hinglish tool calls, Indian date/time/number parsing, generated scenarios, Groq-distilled trajectories on mock tools |
+| Contains personal data | Possibly (masked) | **Never** |
+| Where it lives | Laptop only (and encrypted backups) | Hugging Face + Ollama library |
+| Release | Never published | Published with model card, eval results and license |
+
+**Data**
+
+| Source | Private | Public |
+|---|---|---|
+| Successful real traces (request → agent → tool call → reply) | ✅ (Presidio-masked) | ❌ |
+| Groq teacher corrections (§14.3) on real escalations | ✅ | ❌ |
+| Approved lessons and skills, written as training examples | ✅ | ❌ |
+| Eval scenarios + AutoGen-simulated conversations on mock tools | ✅ | ✅ |
+| Groq `gpt-oss-120b` distilled tool-call trajectories (mock tools) | ✅ | ✅ |
+| Synthetic Hinglish / Hindi paraphrases, Indian time and number cases | ✅ | ✅ |
+
+- Start training after the MVP and **4–8 weeks of real use** (target: ≥ 3,000 good private examples, ≥ 5,000 public examples).
+- Data is deduplicated, balanced across agents and languages (≥ 40 % Hinglish), and split into train / validation / held-out test. The held-out test set is never used for training.
+- Failed or user-corrected runs are used only in their corrected form.
+- Training examples use Leo's runtime step format: the tool name is the only JSON key (§6.6), e.g. `{"create_event": {...}}` and `{"done": {"summary": ...}}`.
+
+**Training pipeline**
+
+```
+datasets/finetune/  ─▶ clean · dedupe · mask PII · balance · split
+        │
+        ▼
+Unsloth LoRA on Qwen3-4B-Instruct-2507 (QLoRA 4-bit)
+  public:  free Google Colab T4, synthetic data only
+  private: gaming desktop RTX 3060 (§6.7), personal data never goes to the cloud
+  rank 16 · ~2–3 epochs · runtime step format (§6.6) in every example
+        │
+        ▼
+merge LoRA ─▶ export GGUF (Q4_K_M, ~2.5 GB) ─▶ Ollama Modelfile (leo:4b-private / leo:4b)
+        │
+        ▼
+EVAL GATE (§11) ─▶ promote or discard
+```
+
+The GGUF stays the same size as the base model, so it fits the GTX 1650 exactly like `leo-qwen3`. The Leo-4B Modelfile keeps `num_gpu 99` and `num_ctx 8192`, like `leo-qwen3` (§6.2). The desktop tier can use a matching **Leo-14B** later with the same pipeline (optional).
+
+**Eval gate (must pass all)**
+
+| Check | Rule |
+|---|---|
+| Tool-call accuracy, routing, task success | Better than plain `leo-qwen3` + prompts on the held-out set |
+| Hinglish vs English gap | Not worse |
+| Safety and red-team suite | No regression; 0 unapproved 🔴 actions |
+| General ability | Small general Q&A / reasoning set: drop ≤ 2 % (guards against forgetting) |
+| Escalation rate to Groq/desktop | Lower or equal |
+| **Memorization check** (both versions) | Prompts that try to extract names, contacts, amounts or calendar entries from training data must not reproduce them; for the public model, a scan of outputs for any real personal data from the user's store must find none |
+
+If a new version fails, the current model stays. Every version is kept with its model card, so rollback is one Ollama tag change.
+
+**Using Leo-4B in Leo**
+- The private Leo-4B replaces `leo-qwen3` as the laptop's primary model (`config.yaml → llm.primary.model: leo:4b-private`).
+- Because lessons and examples are learned, the prompt keeps only the top 1–2 lessons, which shortens prompts and speeds up replies.
+- The risk predictor is retrained after each new model, since the local model's weak spots change.
+
+**Public release**
+- Hugging Face repo: LoRA adapter + merged GGUF + model card.
+- Ollama library: `ollama pull <user>/leo:4b`.
+- Model card: base model, license (Apache 2.0), training data (synthetic only), intended use (Hinglish/Indian-English tool-calling assistant), eval table vs base model, known limits.
+- The public eval suite (scenarios on mock tools) is published with it so others can reproduce the numbers.
+
+**Benefits**
+- Leo: better tool calls and Hinglish, shorter prompts and faster replies, fewer escalations, lessons that can't be ignored, a stronger offline mode.
+- Portfolio: a released open-weight model with measured before/after results covering the full ML lifecycle (data → training → evaluation → release).
 
 ## 15. Language: Hinglish & Indian English
 
@@ -1026,7 +1106,8 @@ VRAM is tight on Windows: if `ollama ps` shows any CPU share, set `num_ctx: 4096
 | Guardrails | Llama Prompt Guard 2 (local CPU), Llama Guard 4 (Groq, on flag), Microsoft Presidio, Pydantic |
 | LLMOps | Langfuse (traces, prompts, datasets, scores), webhook alerts; Prometheus + Grafana optional |
 | Hinglish / Indic | Whisper prompt biasing, `indic-transliteration`, trained language detector, custom Indian time parser, edge-tts `en-IN` / `hi-IN` voices |
-| Self-learning | DSPy (prompt optimization), sqlite-vec (lessons, skills, few-shot bank), weekly ML retraining, Unsloth (stretch: LoRA of the local model) |
+| Self-learning | DSPy (prompt optimization), sqlite-vec (lessons, skills, few-shot bank), weekly ML retraining |
+| Leo-4B | Unsloth (QLoRA: public on Google Colab, private on the desktop RTX 3060), Hugging Face `datasets`, llama.cpp GGUF export, Ollama Modelfile, Hugging Face Hub for release |
 | Everyday features | PyMuPDF, `python-docx`, `trafilatura`, `youtube-transcript-api` (knowledge); `feedparser` (news); `psutil`, `nvidia-smi`, `smartctl`, LibreHardwareMonitor (health); `sounddevice` + hotkey tray app (PC voice); routines in YAML |
 | Reliability | restic (encrypted local + pen drive backups), healthchecks.io (uptime), ntfy (scheduled reminders, alerts) |
 | Testing / CI | pytest, ruff, mypy, GitHub Actions with eval gate; self-hosted runner on the laptop for nightly local-model evals |
@@ -1048,6 +1129,7 @@ leo/
 │   ├── guardrails/     # input_guard.py, context_guard.py, action_rails.py, output_guard.py, pii.py
 │   ├── llm/            # gateway.py (Ollama → Groq), quota.py, cache.py
 │   ├── ml/             # embedder.py, language.py, intent.py, risk.py, features.py, train.py
+│   ├── finetune/       # build_dataset.py, mask.py, colab_train.ipynb, desktop_train.py, export_gguf.py, memorization_check.py, Modelfile
 │   ├── ops/            # tracing.py, metrics.py, feedback.py, alerts.py
 │   ├── learning/       # reflect.py, lessons.py, skills.py, fewshot.py, signals.py, teacher.py,
 │   │                   # compliance.py, promote.py, bootstrap.py, review_card.py, optimize_prompts.py
@@ -1057,7 +1139,7 @@ leo/
 │   ├── api/            # FastAPI app, websocket, device auth
 │   └── config.py
 ├── datasets/           # labeled ML data (PII-masked, git-ignored; hashes tracked)
-├── models/             # *.joblib + model_card.md per ML model
+├── models/             # *.joblib + model_card.md per ML model; leo-4b/ (GGUF versions + model cards)
 ├── evals/
 │   ├── agents/         # scenario_gen.py, user_sim.py, red_team.py, judges.py
 │   ├── scenarios/      # *.yaml
@@ -1111,7 +1193,8 @@ Out of the MVP: voice, ML layer (except the embedder), full guardrails, AutoGen 
 | 8 | AutoGen eval harness (User Simulator, Judge Panel, Red-Team), local vs Groq runs; **risk predictor** trained from them |
 | 9 | Self-learning L1–L4, feedback buttons, spoken and implicit signals, Groq teacher, daily review card, top-3 recall + compliance checks, bootstrapping |
 | 10 | Web demo (Groq profile), dashboards, alerts, quota manager, semantic cache, demo video |
-| 11 | Weekly ML retraining (L5), DSPy prompt optimization (L6), lesson-to-code promotion, learning dashboard, on/off ablation; stretch: LoRA of the local model (L7) |
+| 11 | Weekly ML retraining (L5), DSPy prompt optimization (L6), lesson-to-code promotion, learning dashboard, on/off ablation |
+| 12 | **Leo-4B (L7):** dataset builder, public Leo-4B on synthetic data → eval gate → release on Hugging Face + Ollama; then private Leo-4B on real data (after 4–8 weeks of use) as the laptop's main model |
 
 Tracing and a small eval set start in the MVP so every later feature is observable and measured from day one.
 
@@ -1175,6 +1258,9 @@ What Leo still can't fully solve with one laptop, and how each limit is reduced.
 | Desktop disk space is low | `OLLAMA_MODELS` on another drive, or the smaller 8B model | Pen-drive storage loads slowly |
 | No custom wake word on iPhone | "Hey Siri, Ask Leo" Shortcut + PWA mic button | Siri's voice is used for Shortcut replies |
 | CPU temperature on Windows needs an extra tool | LibreHardwareMonitor (runs with admin rights at login) | If it isn't running, CPU temperature is skipped; GPU and disk checks still work |
+| Fine-tuned model is worse or forgets general skills | Eval gate incl. general-ability set; old version kept for rollback | Each version costs training and eval time |
+| Private data leaks into a model | Public model trained on synthetic data only; Presidio masking; memorization check before any use or release | Private model is never published |
+| Not enough data to fine-tune | Start after 4–8 weeks of use; synthetic + distilled data first | Public model may come before the private one |
 | Large project for one person | MVP first (§19.1) | Advanced features arrive in later phases |
 | Expenses are logged by hand | Quick logging by chat, voice and Siri; Hinglish amounts; auto category | No bank, UPI or SMS import |
 | Some YouTube videos have no transcript | Clear message; link summary still works for the page | Those videos can't be summarized |

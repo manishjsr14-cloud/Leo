@@ -74,6 +74,7 @@ It ships in two forms:
 | F26 | Laptop & PC health monitor | Alerts for temperature, battery, disk space and SSD health, services and backups on the laptop; disk space, SSD health, GPU/CPU temperature and gaming session reports on the PC |
 | F27 | World & India news | Top stories from several outlets, grouped by story, summarized neutrally by Groq (`gpt-oss-120b`) in the user's language mix with source links; follow topics like cricket or AI; top 5 in the morning briefing |
 | F28 | Desktop backup tier with gaming mode | A bigger model (`qwen3:14b`) on the gaming desktop handles harder requests when it is on and free; Leo detects Steam, Epic Games and Riot games (and any GPU-heavy full-screen game) and switches to laptop → Groq automatically |
+| F29 | Leo-4B: own open-weight model | A LoRA fine-tune of Qwen3-4B-Instruct-2507 (the non-thinking build `leo-qwen3` uses) in two versions: a **private** model trained on the user's real data that becomes Leo's main laptop model, and a **public** model trained only on synthetic data, released on Hugging Face and Ollama |
 
 **Delivery in stages:** the **MVP** covers F2, F4, F5, F6, F7, F8, F9, F15, F17, F18, F20 and F27 (headlines) by text (plus basic guardrails and evals). Voice, the full ML layer, everyday and knowledge features, the desktop backup tier, full guardrails, the AutoGen harness, self-learning and the web demo follow after the MVP (see `architecture.md` §19).
 
@@ -83,12 +84,13 @@ It ships in two forms:
 - Google or other cloud calendars (the calendar is local; read-only iCal subscriptions are optional)
 - Native mobile app (the iPhone uses the installable web app and Shortcuts)
 - Controlling the phone or PC directly (PC control acts on the laptop only)
-- Running Leo's services or data on the gaming desktop (it is only a backup model tier), or using it for backups
+- Running Leo's services or data on the gaming desktop (it is only a backup model tier), or using it for backups. One exception: the private Leo-4B is trained on the desktop's RTX 3060 so personal data never goes to the cloud; the training data is copied there only for the run and deleted afterwards
 - Bank, UPI or SMS import for expenses
 - Smart-home device control
 - Payments or purchases
 - Fully autonomous actions without user confirmation
-- Fine-tuning the main model (a LoRA of the local model is an optional stretch goal)
+- Full fine-tuning or pre-training of a model (Leo-4B is a LoRA fine-tune of Qwen3-4B-Instruct-2507, after the MVP)
+- Publishing any model trained on the user's personal data
 
 ## 7. Constraints
 
@@ -96,7 +98,7 @@ It ships in two forms:
 - **Hardware:** one laptop with 8 GB RAM and a GTX 1650 (4 GB VRAM); Windows Home now, Linux Mint later. The phone is an iPhone. The laptop is the main machine; its model must stay fully on the GPU, and the ML layer runs on the CPU. As a backup, a gaming desktop (RTX 3060 12 GB, 32 GB RAM) lends its GPU when it is on and no game is running; gaming always has priority, and its model files may need to live on another drive because its main disk is full.
 - **Availability:** the laptop must stay on and awake for phone access; Leo shows an offline state when it is not.
 - **Rate limits:** Groq free tier is rate-limited per model, so fallback and news summaries are used sparingly (batched) and 429s are handled.
-- **Privacy:** memory, chats, calendar, reminders, expenses, documents and ML data stay on the laptop. Requests escalated to the desktop stay inside the home network. Data goes to the cloud only for Groq escalations, news summaries, speech-to-text, text-to-speech and flagged safety checks. The web demo uses mock data.
+- **Privacy:** memory, chats, calendar, reminders, expenses, documents and ML data stay on the laptop (one exception: the private Leo-4B training data is copied to the desktop only for the training run and deleted afterwards). Requests escalated to the desktop stay inside the home network. Data goes to the cloud only for Groq escalations, news summaries, speech-to-text, text-to-speech and flagged safety checks. The web demo uses mock data.
 - **Latency:** target under 3 s from end of speech to start of spoken reply for simple queries on the local model.
 
 ## 8. Success Metrics
@@ -119,6 +121,8 @@ It ships in two forms:
 | PII in stored logs, traces and ML datasets | 0 (redacted) |
 | Releases shipped without passing the eval gate | 0 |
 | Task success improvement from self-learning (after 4 weeks of use) | +10 % vs. learning disabled |
+| Leo-4B vs plain `leo-qwen3` (held-out set) | Tool-call accuracy +5 %, escalation rate −20 %, no safety regression, general ability drop ≤ 2 % |
+| Personal data reproduced by any Leo-4B version (memorization check) | 0 |
 | Repeat-mistake rate (same error twice after a lesson exists) | < 5 % |
 | Hinglish vs English task-success gap | < 5 % |
 | Language mirroring (reply matches user's language mix) | ≥ 95 % |
@@ -138,6 +142,7 @@ It ships in two forms:
 - **Agent design:** tool calling, planning, error recovery — with a small local model, which is harder than with a frontier API.
 - **Classical ML engineering:** embeddings, a language classifier, an intent router, an expense category classifier and a gradient-boosted risk predictor, trained from the agent's own traces and evals, with eval gates, model cards and measurable impact (fewer LLM calls, lower latency, smarter routing between laptop, desktop and cloud).
 - **Local inference & self-hosting:** running an LLM on a 4 GB GPU (quantization, KV cache tuning, VRAM budgeting), a three-tier model setup that yields the desktop GPU to games automatically, a laptop server reachable privately from iPhone and PC, cross-platform deployment (Windows → Linux).
+- **Model training & release:** Leo-4B, a fine-tuned open-weight Hinglish tool-calling model — dataset building, privacy-safe training, eval gating, memorization checks, GGUF export and public release with a model card.
 - **Self-improving agents:** Reflexion-style lessons, skill library, dynamic few-shot learning, weekly ML retraining and DSPy prompt optimization, with a measurable learning curve.
 - **Retrieval & memory:** multilingual embeddings and vector search in sqlite-vec for long-term memory, ask-your-files RAG with citations, and news story clustering.
 - **Guardrails:** layered input, tool and output rails using Llama Prompt Guard 2, Llama Guard 4 and Presidio PII detection.
