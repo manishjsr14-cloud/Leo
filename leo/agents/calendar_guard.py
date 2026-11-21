@@ -34,9 +34,11 @@ ASK_MOVE = "Meeting abhi kis time pe hai, aur kis time pe le jaani hai?"
 def guard_calendar_tools(tools: dict[str, Tool], times: CalendarTimes, event_minutes: int,
                          ranges: dict[str, tuple[datetime, datetime]] | None = None,
                          free_ranges: dict[str, tuple[datetime, datetime]] | None = None,
+                         seen: dict[str, datetime] | None = None,
                          ) -> dict[str, Tool]:
     length = timedelta(minutes=event_minutes)
-    seen: dict[str, datetime] = {}  # event id -> current start, from get_events
+    # Event id -> current start, from get_events; shared with the move fill when given.
+    seen = {} if seen is None else seen
 
     # A check that refuses a range not in `named` (find_free_slots: the ranges
     # cut to waking hours, M1.8).

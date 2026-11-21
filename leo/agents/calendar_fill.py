@@ -2,7 +2,8 @@
 
 The model never writes a date. It fills in only:
   - create_event: {"title": ...}            -> code adds the parsed start and end
-  - move_event:   {"event_id": ...}         -> code adds the new start and end
+  - move_event:   {"event_id": ...}         -> code adds the new start and end, and
+                  the id of the one listed event that starts at the first time
   - get_events / find_free_slots: {"range": "<name>"} -> code adds that range
 Range names: "window" (part of the day, when the words name one) and "day"
 (the whole day the words name); with no date in the words, "today" and
@@ -63,7 +64,8 @@ def waking_ranges(ranges: dict[str, Range], waking: tuple[int, int]) -> dict[str
 # find_free_slots uses `free_ranges` (the waking-hours cut) when given.
 def fill_calendar_tools(tools: dict[str, Tool], times: CalendarTimes,
                         ranges: dict[str, Range], event_minutes: int,
-                        free_ranges: dict[str, Range] | None = None) -> dict[str, Tool]:
+                        free_ranges: dict[str, Range] | None = None,
+                        seen: dict[str, datetime] | None = None) -> dict[str, Tool]:
     length = timedelta(minutes=event_minutes)
     range_args = create_model("RangeArgs", __base__=ToolArgs,
                               range=(Literal[tuple(ranges)], ...))  # type: ignore[valid-type]
@@ -88,11 +90,15 @@ def fill_calendar_tools(tools: dict[str, Tool], times: CalendarTimes,
     def create(args: dict) -> dict:
         return {"title": args.get("title"), **event_times()}
 
-    # move_event: the model's event id plus the code's new times.
+    # move_event: the id of the one listed event that starts at the message's
+    # first time (M1.8 fix round: run1 had garbled and wrong ids), else the
+    # model's id; plus the code's new times.
     def move(args: dict) -> dict:
         if times.move_from is None:
             raise AskUser(ASK_MOVE)
-        return {"event_id": args.get("event_id"), **event_times()}
+        starting = [i for i, start in (seen or {}).items() if start == times.move_from]
+        event_id = starting[0] if len(starting) == 1 else args.get("event_id")
+        return {"event_id": event_id, **event_times()}
 
     fills = {"get_events": (range_args, range_fill(ranges)),
              "find_free_slots": (range_args, range_fill(free_ranges or ranges)),

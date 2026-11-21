@@ -101,13 +101,23 @@ def test_move_by_event_id_gets_the_new_time():
                            "end": "2026-11-16T18:00:00+05:30"}
 
 
-# The guard still checks the filled call: the event at 3 pm only.
-def test_move_of_the_wrong_event_is_refused():
+# M1.8 fix round: code fills the id of the listed event starting at the first
+# time, so a wrong or garbled id from the model is replaced.
+def test_move_id_comes_from_the_listed_event_at_the_first_time():
+    for model_id in ("mock-evt-gym", "mock-evt-team”, "):
+        log, tools = fresh()
+        chat = FakeChat({"get_events": DAY}, {"move_event": {"event_id": model_id}})
+        out = run("3 baje wali meeting 5 baje kar do", chat, tools)
+        assert [c.tool for c in log] == ["get_events", "move_event"]
+        assert out["steps"][1]["args"]["event_id"] == "mock-evt-team"
+
+
+# Before get_events has listed anything, the model's id is kept and the guard refuses it.
+def test_move_before_get_events_is_still_refused():
     log, tools = fresh()
-    chat = FakeChat({"get_events": DAY}, {"move_event": {"event_id": "mock-evt-gym"}},
-                    {"done": {"summary": "x"}})
+    chat = FakeChat({"move_event": {"event_id": "123456"}}, None)
     out = run("3 baje wali meeting 5 baje kar do", chat, tools)
-    assert [c.tool for c in log] == ["get_events"] and "error" in out["steps"][1]["result"]
+    assert log == [] and "call get_events first" in out["steps"][0]["result"]["error"]
 
 
 def test_move_with_two_day_words_asks_without_llm():

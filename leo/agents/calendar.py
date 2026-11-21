@@ -99,10 +99,10 @@ def run_agent(state: LeoState, chat: Callable, tools: dict[str, Tool], max_steps
     if times.move_from is not None and asks_to_create(text):
         return {"steps": [], "summary": ADD_OR_MOVE, "stopped": "ask"}
     minutes, ranges = config.default_event_minutes, named_ranges(times, now)
-    free = waking_ranges(ranges, config.waking_hours)
+    free, seen = waking_ranges(ranges, config.waking_hours), {}  # seen: events listed
     guarded = guard_calendar_tools(offered_tools(tools, text, times), times, minutes,
-                                   ranges, free)
-    filled = fill_calendar_tools(guarded, times, ranges, minutes, free)
+                                   ranges, free, seen)
+    filled = fill_calendar_tools(guarded, times, ranges, minutes, free, seen)
     task = (state.get("plan") or [""])[-1]
     prompt = PROMPT.render(tools=describe_tools(filled), task=task,
                            today=now.strftime("%A %d %B %Y, %H:%M"),
