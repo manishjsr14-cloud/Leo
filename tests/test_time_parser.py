@@ -39,6 +39,11 @@ def parse(text: str, hour: int = 11, minute: int = 0):
         ("teen ghante baad", 18, "14:00", False),            # relative from now
         ("in 45 minutes", 18, "11:45", False),
         ("after 2 hours", 18, "13:00", False),
+        ("dentist tomorrow at 4", 19, "16:00", True),       # "at <hour>": default pm, assumed
+        ("call Riya on Friday at 9", 20, "09:00", True),    # 8-11 default am, assumed
+        ("lunch tomorrow at 12", 19, "12:00", True),
+        ("tomorrow at 4 pm", 19, "16:00", False),           # am/pm given: not assumed
+        ("tomorrow at 17", 19, "17:00", False),             # 24-hour clock: not assumed
     ],
 )
 # Each rule gives the expected IST date, time and assumed_ampm flag.
@@ -144,3 +149,10 @@ def test_a_an_offset():
     assert (result.date, result.time, result.remind_before_min) == (
         date(2026, 11, 20), time(9, 0), 60)
     assert parse("kal 5 pm call hai, half an hour pehle bata dena").remind_before_min == 30
+
+
+# "at" before a duration or a non-hour number is not a clock time.
+def test_at_without_an_hour_is_not_a_clock():
+    assert parse("remind me in 10 minutes").time == time(11, 10)
+    assert parse("tomorrow at 30").time is None
+    assert parse("tomorrow at 2.5").time is None

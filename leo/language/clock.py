@@ -1,6 +1,6 @@
 """Clock and duration reading for the Indian time parser (time_parser.py).
 
-find_clock reads "sava teen baje", "4:30 pm", "11 am"; to_24h applies
+find_clock reads "sava teen baje", "4:30 pm", "11 am", "at 4"; to_24h applies
 subah/shaam/raat and the default am/pm; find_duration reads "2 ghante baad"
 and "15 minute pehle". Kept apart from time_parser.py so each file stays short.
 """
@@ -53,19 +53,32 @@ def find_clocks(words: list[str]) -> list[tuple[int, int, str, int]]:
             i += 1
             continue
         read = number_at(words, i)
-        if read is None or read[1] >= len(words):
+        if read is None:
             i += 1
             continue
         value, end = read
-        if words[end] in w.HOUR_MARKERS or words[end] in ("am", "pm"):
+        following = words[end] if end < len(words) else ""
+        if following in w.HOUR_MARKERS or following in ("am", "pm"):
             hours = int(value)
             minutes = int((value - hours) * 60)
-            ampm = words[end] if words[end] in ("am", "pm") else ""
+            ampm = following if following in ("am", "pm") else ""
             clocks.append((hours or 12, minutes, ampm, i))    # "paune ek" = 12:45
             i = end + 1                                   # "sava teen baje" read once
             continue
+        if at_hour(words, i, value, following):         # "tomorrow at 4" (M1.8)
+            clocks.append((int(value), 0, "", i))
+            i = end
+            continue
         i += 1
     return clocks
+
+
+# True for a bare whole hour right after "at" ("at 4"), not a duration
+# ("at 5 minutes") or a number that is not an hour. to_24h then applies the
+# default am/pm and marks it as assumed.
+def at_hour(words: list[str], i: int, value, following: str) -> bool:
+    return (i > 0 and words[i - 1] == "at" and value == int(value) and 1 <= value <= 23
+            and following not in w.UNITS)
 
 
 # The first clock hour in the text as (hours, minutes, am/pm word or ""), or None.
