@@ -1,0 +1,281 @@
+# M1.8 language and reply check. Written and committed BEFORE the M1.8 code;
+# never edited to improve a score (a better version is a new file, logged).
+#
+# How it runs (evals/m1_8_check.py):
+#   - Each turn runs ALONE, as a new conversation, through the real graph and the
+#     real LLM gateway (leo-qwen3 first, Groq fallback as usual).
+#   - Agents: calendar, research and productivity, on MOCK tools only:
+#     the events under mock_calendar, the weather under mock_weather (whatever
+#     place is asked), and the fixed mock tasks (1 "Buy milk", 2 "Pay electricity bill").
+#   - "now" is fixed below for the time parser and the agents' "today".
+#   - The report records the machine, every LLM call (node, provider, prompt
+#     tokens, time to first token, total time) and the wall time per turn.
+#
+# Checks per turn (scored by evals/m1_8_scoring.py):
+#   lang (language turns L01-L20, and reported for every turn):
+#     hinglish -> no Devanagari, and at least 2 Hindi marker words (list in the scorer).
+#     en       -> no Devanagari, and no Hindi marker words, after leaving out words
+#                 that appear in the turn's tool results (titles, places).
+#   reply rules (every turn):
+#     no_devanagari  no Devanagari letter when the message is in Roman script.
+#     no_json        no "{" and no '":' in the reply.
+#     no_in_words    the reply does not contain "In words".
+#     clock_times    every clock time in the reply matches a time in the turn's tool
+#                    calls or results (17:00, 5 pm, 5:00 PM and "shaam 5 baje" are the
+#                    same time; a time with no am/pm or part of day may be either).
+#   per-turn reply rules (only where listed):
+#     reply_forbid           none of these words or phrases (case-insensitive).
+#     reply_must_mention     each of these (case-insensitive).
+#     reply_times_required   each of these clock times is mentioned in the reply.
+#   tool checks (as in M1.7: plan exact, listed calls attempted with listed args,
+#     refused, executed_none, no_writes). Times compared as moments in time.
+#   single_step: the request needs one tool call. multi_step: it needs more.
+#
+# Times assume config.yaml calendar.day_parts (morning 6-12, afternoon 12-16,
+# evening 16-20, night 20-24), calendar.default_event_minutes 60, and the new
+# calendar.waking_hours [6, 23] (agreed for M1.8): find_free_slots for a whole
+# day covers 06:00-23:00; get_events for a whole day still covers 00:00-24:00.
+#
+# DONE RULE (decided before any run, 2026-11-22):
+#   M1.8 is done when ALL of these hold in one run:
+#     1. language correct on at least 18 of the 20 language turns (L01-L20);
+#     2. no Devanagari reply to a Roman-script message (all turns);
+#     3. every issue rule passes: the reply rules (no_devanagari, no_json,
+#        no_in_words, clock_times, reply_forbid, reply_must_mention,
+#        reply_times_required) on every turn, and the tool checks of the issue
+#        turns I01-I05;
+#     4. every multi_step turn attempts all its expected calls;
+#     5. every single_step turn uses at least one LLM call fewer than in the
+#        baseline report (the run on the code before M1.8, same machine).
+#   Runs: "baseline" on the pre-M1.8 code (for comparison only, not scored for
+#   done), then run1 on the M1.8 code. If run1 misses the done rule, one fix
+#   round is allowed (run2). If run2 also misses, M1.8 closes with known limits
+#   and the failing turns become M1.10 eval cases. No further fix rounds.
+#   Desktop (RTX 3060) timings are never compared with or quoted as laptop results.
+
+version: 1
+now: "2026-11-16T09:00:00+05:30"   # Monday
+
+mock_calendar:
+  - {id: mock-evt-team,   title: "Team meeting",    start: "2026-11-16T15:00:00+05:30", end: "2026-11-16T16:00:00+05:30"}
+  - {id: mock-evt-review, title: "Review call",     start: "2026-11-16T17:00:00+05:30", end: "2026-11-16T18:00:00+05:30"}
+  - {id: mock-evt-lunch,  title: "Lunch with Neha", start: "2026-11-19T13:00:00+05:30", end: "2026-11-19T14:00:00+05:30"}
+  - {id: mock-evt-gym,    title: "Gym",             start: "2026-11-21T08:00:00+05:30", end: "2026-11-21T09:00:00+05:30"}
+  - {id: mock-evt-call,   title: "Call",            start: "2026-11-21T10:00:00+05:30", end: "2026-11-21T10:30:00+05:30"}
+
+mock_weather:
+  - {date: "2026-11-16", day: "today",    rain_chance_pct: 10, rain_mm: 0.0}
+  - {date: "2026-11-17", day: "tomorrow", rain_chance_pct: 70, rain_mm: 6.2}
+  - {date: "2026-11-21", day: "Saturday", rain_chance_pct: 5,  rain_mm: 0.0}
+
+turns:
+  # ---- Language turns: 11 Hinglish, 9 English ----
+  - id: L01   # M1.5: this message got a Devanagari reply
+    lang: hinglish
+    text: "Kal Pune mein baarish hogi?"
+    single_step: true
+    expect: {plan: [research], calls: [{tool: get_weather}]}
+
+  - id: L02
+    lang: en
+    text: "Will it rain in Pune tomorrow?"
+    single_step: true
+    expect: {plan: [research], calls: [{tool: get_weather}]}
+
+  - id: L03
+    lang: hinglish
+    text: "Doodh ko meri tasks list mein daal do"
+    single_step: true
+    expect: {plan: [productivity], calls: [{tool: add_task}]}
+
+  - id: L04
+    lang: en
+    text: "Add bread to my tasks"
+    single_step: true
+    expect: {plan: [productivity], calls: [{tool: add_task, title_contains: "bread"}]}
+
+  - id: L05   # M1.4: "already complete" after completing a task
+    lang: hinglish
+    text: "Milk wala task complete kar do"
+    single_step: true
+    reply_forbid: ["already", "pehle se", "pehle hi"]
+    expect: {plan: [productivity], calls: [{tool: complete_task}]}
+
+  - id: L06   # M1.4: "already complete" after completing a task
+    lang: en
+    text: "Mark the electricity bill task as done"
+    single_step: true
+    reply_forbid: ["already", "pehle se", "pehle hi"]
+    expect: {plan: [productivity], calls: [{tool: complete_task}]}
+
+  - id: L07
+    lang: hinglish
+    text: "2450 ka 18 percent kitna hai?"
+    single_step: true
+    reply_must_mention: ["441"]
+    expect: {plan: [productivity], calls: [{tool: calculate}]}
+
+  - id: L08
+    lang: en
+    text: "What is 15% of 3200?"
+    single_step: true
+    reply_must_mention: ["480"]
+    expect: {plan: [productivity], calls: [{tool: calculate}]}
+
+  - id: L09
+    lang: hinglish
+    text: "Chai ke liye 10 minute ka timer laga do"
+    single_step: true
+    expect: {plan: [productivity], calls: [{tool: start_timer, minutes: 10}]}
+
+  - id: L10
+    lang: en
+    text: "Set a 5 minute timer for the eggs"
+    single_step: true
+    expect: {plan: [productivity], calls: [{tool: start_timer, minutes: 5}]}
+
+  - id: L11   # M1.7 t01: the reply copied the "In words" line
+    lang: hinglish
+    text: "Kal subah 10 baje Rahul ke saath meeting daal do"
+    single_step: true
+    expect:
+      plan: [calendar]
+      calls:
+        - {tool: create_event, start: "2026-11-17T10:00:00+05:30", end: "2026-11-17T11:00:00+05:30", title_contains: "rahul"}
+
+  - id: L12
+    lang: en
+    text: "Add a dentist appointment on Thursday at 4:30 pm"
+    single_step: true
+    expect:
+      plan: [calendar]
+      calls:
+        - {tool: create_event, start: "2026-11-19T16:30:00+05:30", end: "2026-11-19T17:30:00+05:30", title_contains: "dentist"}
+
+  - id: L13   # free-time answer; free 12:00-13:00 and 14:00-16:00
+    lang: hinglish
+    text: "Thursday dopahar free hoon?"
+    single_step: true
+    reply_times_required: ["13:00", "14:00"]
+    expect:
+      plan: [calendar]
+      no_writes: true
+      calls:
+        - {tool: find_free_slots, start: "2026-11-19T12:00:00+05:30", end: "2026-11-19T16:00:00+05:30"}
+
+  - id: L14   # free the whole window; no time has to be named
+    lang: en
+    text: "Am I free tomorrow evening?"
+    single_step: true
+    expect:
+      plan: [calendar]
+      no_writes: true
+      calls:
+        - {tool: find_free_slots, start: "2026-11-17T16:00:00+05:30", end: "2026-11-17T20:00:00+05:30"}
+
+  - id: L15
+    lang: hinglish
+    text: "Saturday ko kya kya hai?"
+    single_step: true
+    reply_must_mention: ["Gym", "Call"]
+    expect:
+      plan: [calendar]
+      no_writes: true
+      calls:
+        - {tool: get_events, start: "2026-11-21T00:00:00+05:30", end: "2026-11-22T00:00:00+05:30"}
+
+  - id: L16
+    lang: en
+    text: "What's on my calendar on Thursday?"
+    single_step: true
+    reply_must_mention: ["Lunch"]
+    expect:
+      plan: [calendar]
+      no_writes: true
+      calls:
+        - {tool: get_events, start: "2026-11-19T00:00:00+05:30", end: "2026-11-20T00:00:00+05:30"}
+
+  - id: L17   # invented times: 17:00 was once shown as 5-7 PM
+    lang: hinglish
+    text: "Aaj shaam 5 baje kya hai?"
+    single_step: true
+    reply_must_mention: ["Review"]
+    expect: {plan: [calendar], no_writes: true, calls: [{tool: get_events}]}
+
+  - id: L18
+    lang: en
+    text: "Move my 5 pm call to 6 pm"
+    multi_step: true
+    expect:
+      plan: [calendar]
+      calls:
+        - {tool: get_events}
+        - {tool: move_event, event_id: mock-evt-review, start: "2026-11-16T18:00:00+05:30", end: "2026-11-16T19:00:00+05:30"}
+
+  - id: L19
+    lang: hinglish
+    text: "Ek note likh lo: gas cylinder book karna hai"
+    single_step: true
+    expect: {plan: [productivity], calls: [{tool: add_note}]}
+
+  - id: L20
+    lang: hinglish
+    text: "Hi Leo, kaise ho?"
+    expect: {plan: []}
+
+  # ---- Issue turns ----
+  - id: I01   # a "day" range must use waking hours: free 06:00-08:00, 09:00-10:00, 10:30-23:00
+    lang: hinglish
+    text: "Saturday ko free time kab hai?"
+    single_step: true
+    reply_times_required: ["08:00", "09:00", "10:00", "10:30"]
+    expect:
+      plan: [calendar]
+      no_writes: true
+      calls:
+        - {tool: find_free_slots, start: "2026-11-21T06:00:00+05:30", end: "2026-11-21T23:00:00+05:30"}
+
+  - id: I02   # M1.7 t10 (section 4.5): the reply left out the event still on the calendar
+    lang: hinglish
+    text: "Agar Saturday ko baarish nahi hogi to subah 7 baje Lonavala trip plan kar do, aur Saturday subah clear kar do."
+    multi_step: true
+    reply_must_mention: ["Gym", "Call"]
+    expect:
+      plan: [research, calendar]
+      calls:
+        - {tool: get_weather}
+        - {tool: create_event, start: "2026-11-21T07:00:00+05:30", end: "2026-11-21T08:00:00+05:30", title_contains: "lonavala"}
+        - {tool: cancel_event, event_id: mock-evt-gym}
+        - {tool: cancel_event, event_id: mock-evt-call}
+      refused: [cancel_event]
+      executed_none: [cancel_event]
+
+  - id: I03   # a move still needs get_events, then move_event (multi-step after the speed change)
+    lang: hinglish
+    text: "3 baje wali meeting 4 baje kar do"
+    multi_step: true
+    expect:
+      plan: [calendar]
+      calls:
+        - {tool: get_events}
+        - {tool: move_event, event_id: mock-evt-team, start: "2026-11-16T16:00:00+05:30", end: "2026-11-16T17:00:00+05:30"}
+
+  - id: I04   # assumed am/pm: "4 baje" is taken as 4 pm; the reply asks about it
+    lang: hinglish
+    text: "Kal 4 baje dentist appointment daal do"
+    single_step: true
+    reply_must_mention: ["?"]
+    expect:
+      plan: [calendar]
+      calls:
+        - {tool: create_event, start: "2026-11-17T16:00:00+05:30", end: "2026-11-17T17:00:00+05:30", title_contains: "dentist"}
+
+  - id: I05   # assumed am/pm in English: "at 4" is taken as 4 pm; the reply asks about it
+    lang: en
+    text: "Add a haircut tomorrow at 4"
+    single_step: true
+    reply_must_mention: ["?"]
+    expect:
+      plan: [calendar]
+      calls:
+        - {tool: create_event, start: "2026-11-17T16:00:00+05:30", end: "2026-11-17T17:00:00+05:30", title_contains: "haircut"}
