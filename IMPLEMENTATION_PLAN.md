@@ -93,6 +93,20 @@ No more fixes in M1.7.
 - "Saturday ko kya kya hai?": `get_events` for the whole Saturday, no `find_free_slots`.
 - "Agar Saturday ko baarish nahi hogi to subah 7 baje Lonavala trip plan kar do, aur Saturday subah clear kar do.": `get_weather`, `create_event` 7-8 am, and `cancel_event` attempted for both morning events, both refused without approval.
 
+**M1.8 closure (2026-11-22): done rule not met, closed with known limits.** The done rule in `evals/scenarios/m1_8_language_turns.yaml` (decided before any run; one fix round allowed) was not met in run1 or run2. All runs were on the gaming desktop (RTX 3060); their timings are not laptop results. Reports: baseline (pre-M1.8 code) `evals/reports/m1.8_language_check_2026-11-22_baseline.md` (L01, L02 failed before any LLM call: model loading, no Groq key) and `..._baseline_run2.md` (the comparison baseline); `..._run1.md`; `..._run2.md`. Run2: language correct 20/20, no Devanagari replies, every single-step turn except L08 used fewer LLM calls than the baseline (writes 4 → 2, reads 4 → 3); average prompt tokens per call, baseline run2 → run2: supervisor 224 → 245, agent 514 → 397, responder 452 → 398. Latency probe (desktop only): `evals/reports/m1.8_latency_probe_2026-11-22.md`. Known limits after run2:
+- L08 "What is 15% of 3200?": the model miscopied the expression ("15% of 320 tqdm"); the new number check refused it and the retry was right (reply 480), but the turn used 4 LLM calls, the same as the baseline.
+- L13 "Thursday dopahar free hoon?": the reply named only the 2-4 pm slot and left out 12-1 pm.
+- L17 "Aaj shaam 5 baje kya hai?": planned to research instead of calendar (as in the baseline).
+- I02 (§4.5 example): the calendar agent did not call `create_event` for the 7 am trip, attempted only the gym cancel, and the reply said the trip "plan karne wala hai" without naming Gym or Call.
+
+Also done in the M1.8 session as separate commits: "at <hour>" read by the time parser (M1.6 regression report `evals/reports/m1.6_parser_check_2026-11-22_at_hour.md`; the M1.6 held-out score stays 97.1 %), and move `event_id` filled by code (M1.7 turn-set regression report `evals/reports/m1.7_calendar_check_2026-11-22_movefill.md`; M1.7's recorded score stays 7/10). No more fixes in M1.8.
+
+**M1.10 eval cases carried over from M1.8 run2** (written into the M1.10 scenario files, committed before the M1.10 run):
+- "What is 15% of 3200?": `calculate` with an expression holding 15 and 3200 only, on the first attempt.
+- "Thursday dopahar free hoon?" (calendar as in the M1.8 turn file): the reply names both free slots, 12-1 pm and 2-4 pm.
+- "Aaj shaam 5 baje kya hai?": plan `calendar`, `get_events`, the reply names the 5 pm event.
+- The §4.5 example (already carried over from M1.7): `create_event` 7-8 am is attempted, and the reply names every event still on the calendar.
+
 **M1 exit check:** the cross-agent example in §4.5 (weather → calendar) runs end to end in the CLI on mock calendar, on the local model.
 
 **Planned follow-ups from M1.7** (each done with a fresh check written and committed before it runs):
