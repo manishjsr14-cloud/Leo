@@ -32,7 +32,18 @@ def test_add_milk_calls_add_task():
     assert [(c.tool, c.args) for c in log] == [("add_task", {"title": "milk"})]
     assert out["stopped"] == "done"
     assert out["steps"][0]["result"]["title"] == "milk"
-    # The second LLM call saw the tool result.
+    # One successful add ends the run in code (M1.8): no second LLM call.
+    assert len(chat.calls) == 1 and out["summary"] == "Added task 'milk'"
+
+
+# With two requests linked by "and", the model is asked again after the first add.
+def test_linked_requests_go_back_to_the_model():
+    log, tools = fresh()
+    chat = FakeChat({"add_task": {"title": "milk"}}, {"add_task": {"title": "eggs"}},
+                    {"done": {"summary": "Added both."}})
+    out = run_agent(state_for("add milk and eggs", "add both"), chat, tools, 4)
+    assert [c.args["title"] for c in log] == ["milk", "eggs"]
+    assert len(chat.calls) == 3 and out["summary"] == "Added both."
     assert "Result of add_task" in chat.calls[1]["messages"][-1]["content"]
 
 
@@ -54,7 +65,8 @@ def test_two_step_request_runs_inside_the_agent():
     out = run_agent(state_for("complete my milk task", "complete milk"), chat, tools, 4)
     assert [c.tool for c in log] == ["list_tasks", "complete_task"]
     assert log[1].args == {"task_id": 1}
-    assert out["stopped"] == "done" and len(chat.calls) == 3
+    # A list does not end the run; the completion does, in code (M1.8).
+    assert out["stopped"] == "done" and len(chat.calls) == 2
 
 
 def test_step_limit_stops_a_loop():
@@ -151,7 +163,6 @@ def test_graph_two_step_needs_no_extra_supervisor_call():
         {"agents": ["productivity"], "task": "complete the milk task"},
         {"list_tasks": {}},
         {"complete_task": {"task_id": 1}},
-        {"done": {"summary": "Marked Buy milk as done."}},
         "Done, Buy milk is ticked off.",
     )
     agent = productivity_agent(chat, tools, max_steps=4)
@@ -162,8 +173,8 @@ def test_graph_two_step_needs_no_extra_supervisor_call():
     assert out["completed_agents"] == ["productivity"]
     assert [c.tool for c in log] == ["list_tasks", "complete_task"]
     responder_sees = " ".join(m["content"] for m in chat.calls[-1]["messages"])
-    assert 'complete_task({"task_id": 1}) -> {"id": 1, "title": "Buy milk", "done": true}'         in responder_sees
-    assert "Marked Buy milk as done." not in responder_sees  # LLM summary is not passed on
+    assert "Marked task 'Buy milk' as done" in responder_sees  # in words, no JSON
+    assert '"done": true' not in responder_sees
     assert out["messages"][-1].content == "Done, Buy milk is ticked off."
 
 
@@ -180,13 +191,11 @@ def test_tools_run_once_per_request_across_turns():
     route = {"agents": ["productivity"], "task": "add the task"}
     chat = FakeChat(
         route, {"add_task": {"title": "milk"}},
-        {"done": {"summary": "Added milk."}}, "Added milk.",
         route, {"add_task": {"title": "eggs"}},
-        {"done": {"summary": "Added eggs."}}, "Added eggs.",
     )
     graph = build_graph(chat, agents={"productivity": productivity_agent(chat, tools, 4)})
     _, history = cli.run_turn(graph, [], "add milk to my tasks", False)
     reply, _ = cli.run_turn(graph, history, "add eggs to my tasks", False)
     assert [(c.tool, c.args["title"]) for c in log] == [("add_task", "milk"), ("add_task", "eggs")]
     assert sum(_is_supervisor(c) for c in chat.calls) == 2
-    assert reply.content == "Added eggs."
+    assert reply.content == "Added 'eggs' to your tasks."  # written by code (M1.8)

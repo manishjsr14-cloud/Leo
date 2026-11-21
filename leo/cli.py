@@ -26,6 +26,7 @@ from leo.agents.productivity import productivity_agent
 from leo.agents.research import research_agent
 from leo.config import load_config, load_secrets
 from leo.graph.builder import build_graph
+from leo.language.normalize import language_tag, normalize
 from leo.llm import gateway
 from leo.llm.gateway import LLMUnavailable
 from leo.memory.store import open_db
@@ -55,8 +56,9 @@ def split_cloud_prefix(text: str) -> tuple[str, bool]:
 def run_turn(
     graph, history: list[AnyMessage], text: str, force_cloud: bool, session_id: str = ""
 ) -> tuple[AIMessage, list[AnyMessage]]:
+    text = normalize(text)  # short spellings fixed; Devanagari left as it is (M1.8)
     state = {"messages": [*history, HumanMessage(text)], "hops": 0, "plan": [],
-             "agent_results": {}, "completed_agents": []}
+             "agent_results": {}, "completed_agents": [], "language": language_tag(text)}
     tags, metadata = request_tags()
     with tracing.request_trace(session_id, tags, metadata):
         out = graph.invoke(state, {"configurable": {"force_cloud": force_cloud}})

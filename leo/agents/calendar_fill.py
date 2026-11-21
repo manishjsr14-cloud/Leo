@@ -7,6 +7,9 @@ The model never writes a date. It fills in only:
 Range names: "window" (part of the day, when the words name one) and "day"
 (the whole day the words name); with no date in the words, "today" and
 "next_7_days". The guard (calendar_guard.py) still checks the filled call.
+find_free_slots gets the same ranges cut to calendar.waking_hours (M1.8), so
+"free on Saturday?" is not answered with 00:00-08:00; get_events keeps the
+whole day, so no event is missed.
 """
 
 from datetime import datetime, time, timedelta
@@ -43,19 +46,37 @@ def named_ranges(times: CalendarTimes, now: datetime) -> dict[str, Range]:
     return {**window, "day": times.day}
 
 
+# The ranges cut to waking hours, for find_free_slots (M1.8): a range that
+# starts at midnight starts at the first waking hour, and one that ends at
+# midnight ends at the last. Nights inside a range of several days stay in.
+def waking_ranges(ranges: dict[str, Range], waking: tuple[int, int]) -> dict[str, Range]:
+    first, last = timedelta(hours=waking[0]), timedelta(hours=24 - waking[1])
+    cut = {}
+    for name, (start, end) in ranges.items():
+        start = start + first if start.time() == time(0) else start
+        end = end - last if end.time() == time(0) else end
+        cut[name] = (start, end)
+    return cut
+
+
 # Copies of the tools with the model's smaller schema and the code fill.
+# find_free_slots uses `free_ranges` (the waking-hours cut) when given.
 def fill_calendar_tools(tools: dict[str, Tool], times: CalendarTimes,
-                        ranges: dict[str, Range], event_minutes: int) -> dict[str, Tool]:
+                        ranges: dict[str, Range], event_minutes: int,
+                        free_ranges: dict[str, Range] | None = None) -> dict[str, Tool]:
     length = timedelta(minutes=event_minutes)
     range_args = create_model("RangeArgs", __base__=ToolArgs,
                               range=(Literal[tuple(ranges)], ...))  # type: ignore[valid-type]
 
-    # Start and end of the named range, as ISO text.
-    def by_range(args: dict) -> dict:
-        if args.get("range") not in ranges:
-            raise ToolError(f"range must be one of {list(ranges)}")
-        start, end = ranges[args["range"]]
-        return {"start": start.isoformat(), "end": end.isoformat()}
+    # A fill that gives the start and end of the named range, as ISO text.
+    def range_fill(named: dict[str, Range]):
+        # Start and end of the named range.
+        def by_range(args: dict) -> dict:
+            if args.get("range") not in named:
+                raise ToolError(f"range must be one of {list(named)}")
+            start, end = named[args["range"]]
+            return {"start": start.isoformat(), "end": end.isoformat()}
+        return by_range
 
     # The parsed start and the default end, or a question when there is no time.
     def event_times() -> dict:
@@ -73,7 +94,8 @@ def fill_calendar_tools(tools: dict[str, Tool], times: CalendarTimes,
             raise AskUser(ASK_MOVE)
         return {"event_id": args.get("event_id"), **event_times()}
 
-    fills = {"get_events": (range_args, by_range), "find_free_slots": (range_args, by_range),
+    fills = {"get_events": (range_args, range_fill(ranges)),
+             "find_free_slots": (range_args, range_fill(free_ranges or ranges)),
              "create_event": (TitleArgs, create), "move_event": (EventIdArgs, move)}
     return {name: tool.model_copy(update={"model_args": fills[name][0], "fill": fills[name][1]})
             if name in fills else tool for name, tool in tools.items()}

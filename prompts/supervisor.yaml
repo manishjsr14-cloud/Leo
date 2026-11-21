@@ -1,0 +1,21 @@
+# The supervisor's prompt: plans which agents act on the latest message, in order.
+# {agents} is filled in by code (leo/graph/supervisor.py) from the agents below
+# that are on offer: one line each, then their example requests.
+# No example is a phrase from an eval turn file.
+name: supervisor
+version: 1
+system: |
+  Plan which agents act on the user's latest message, in order: usually one, two only when clearly needed, none for plain chat.
+  Agents:
+  {agents}
+  Reply only with JSON: {{"agents": [<names in order>], "task": "<one short instruction>"}}.
+agents:
+  productivity:
+    does: "tasks, notes, timers, calculations"
+    examples: ["Sabzi lena meri list mein add karo"]
+  research:
+    does: "web search, reading web pages, weather"
+    examples: ["Parso Nashik mein dhoop hogi?"]
+  calendar:
+    does: "the user's own calendar: what is on a day, free time, adding or planning an event, meeting or trip at a time, moving, cancelling or clearing events"
+    examples: ["Mera Wednesday ka schedule batao", "Friday ko 11 baje bank jaana hai, calendar mein daal do", "Doctor wali meeting hata do"]

@@ -1,17 +1,26 @@
-"""Tests for the responder rule: only successful tool results reach the reply."""
+"""Tests for the responder: only successful results reach the reply, as facts in
+words (no raw JSON), in the language of the message (M1.8)."""
 
 from langchain_core.messages import HumanMessage
 
-from leo.graph.responder import NO_ACTION_NOTE, responder_node
+from leo.graph.responder import (
+    NO_ACTION_NOTE,
+    PROMPT,
+    responder_messages,
+    responder_node,
+)
 from tests.graph_fakes import FakeChat
 
 ASK = {"messages": [HumanMessage("what is 18% of 2450")]}
+GYM = {"id": "g", "title": "Gym", "start": "2026-11-21T08:00:00+05:30",
+       "end": "2026-11-21T09:00:00+05:30"}
+CALL = {"id": "c", "title": "Call", "start": "2026-11-21T10:00:00+05:30",
+        "end": "2026-11-21T10:30:00+05:30"}
 
 
-# Everything the responder sent to the LLM after its fixed system prompt
-# (which itself mentions the note), as one string.
-def sent(chat: FakeChat) -> str:
-    return " ".join(m["content"] for m in chat.calls[0]["messages"][1:])
+# Everything the responder sent to the LLM after its fixed system prompt, as one string.
+def sent(chat: FakeChat, call: int = 0) -> str:
+    return " ".join(m["content"] for m in chat.calls[call]["messages"][1:])
 
 
 # (a) An agent ran but no tool call succeeded: the note is added, and the
@@ -34,16 +43,15 @@ def test_agent_with_no_steps_gets_the_note():
     assert NO_ACTION_NOTE in sent(chat)
 
 
-# (b) A successful calculate result of 441 reaches the responder.
-def test_successful_calculate_passes_441():
+# (b) A successful result reaches the responder in words, with no raw JSON.
+def test_successful_calculate_is_sent_in_words_without_json():
     result = {"expression": "18% of 2450", "computed": "(18/100)*2450", "result": "441"}
     step = {"tool": "calculate", "args": {"expression": "18% of 2450"}, "result": result}
-    outcome = {"steps": [step], "summary": "", "stopped": "done"}
     chat = FakeChat("18% of 2450 is 441.")
-    responder_node({**ASK, "agent_results": {"productivity": outcome}}, chat)
+    responder_node({**ASK, "agent_results": {"productivity": {"steps": [step, step]}}}, chat)
     text = sent(chat)
-    assert '"result": "441"' in text
-    assert NO_ACTION_NOTE not in text
+    assert "18% of 2450 = 441" in text
+    assert "{" not in text and "In words" not in text
 
 
 # Only failed steps are dropped: a good step after a failed one is kept.
@@ -54,17 +62,49 @@ def test_failed_steps_are_dropped_and_good_ones_kept():
     chat = FakeChat("Done.")
     responder_node({**ASK, "agent_results": {"productivity": {"steps": [bad, good]}}}, chat)
     text = sent(chat)
-    assert "no task" not in text and '"title": "milk"' in text
-    assert NO_ACTION_NOTE not in text
+    assert "no task" not in text and "Marked task 'milk' as done" in text
 
 
-# A plain chat turn (no agent ran) has no tool results and no note.
-def test_plain_chat_has_no_note():
+# A plain chat turn (no agent ran) has no facts and no note.
+def test_plain_chat_has_no_facts():
     chat = FakeChat("Hi!")
     responder_node({"messages": [HumanMessage("hi")]}, chat)
-    assert "Tool results" not in sent(chat)
+    assert "Facts" not in sent(chat)
 
 
-def test_responder_prompt_forbids_adding_plans_or_details():
-    from leo.graph.responder import SYSTEM_PROMPT
-    assert "never add plans, steps, details or facts" in SYSTEM_PROMPT
+def test_reply_language_follows_the_tag():
+    hinglish = responder_messages({"messages": [HumanMessage("x")], "language": "hinglish"})
+    assert "Hinglish" in hinglish[0]["content"] and "never Devanagari" in hinglish[0]["content"]
+    english = responder_messages({"messages": [HumanMessage("x")], "language": "en"})
+    assert "in English." in english[0]["content"]
+
+
+def test_devanagari_reply_to_roman_text_is_asked_again_once():
+    chat = FakeChat("नहीं, बारिश नहीं होगी।", "Nahi, baarish nahi hogi.")
+    out = responder_node({"messages": [HumanMessage("Kal baarish hogi?")],
+                          "language": "hinglish"}, chat)
+    assert len(chat.calls) == 2
+    assert out["messages"][0].content == "Nahi, baarish nahi hogi."
+
+
+def test_devanagari_reply_to_hindi_is_kept():
+    chat = FakeChat("नहीं, बारिश नहीं होगी।")
+    responder_node({"messages": [HumanMessage("कल बारिश होगी?")], "language": "hi"}, chat)
+    assert len(chat.calls) == 1
+
+
+def test_refused_cancel_is_named_and_the_rest_is_still_on_the_calendar():
+    steps = [{"tool": "get_events", "args": {}, "result": [GYM, CALL]},
+             {"tool": "cancel_event", "args": {"event_id": "g"},
+              "result": {"error": "needs approval", "needs_approval": True}}]
+    chat = FakeChat("Gym and Call are still on; nothing was cancelled.")
+    state = {"messages": [HumanMessage("Saturday subah clear kar do")],
+             "agent_results": {"calendar": {"steps": steps, "stopped": "done"}}}
+    responder_node(state, chat)
+    text = sent(chat)
+    assert "cancel event 'Gym', Sat 21 Nov, 8:00-9:00 am: NOT done" in text
+    assert "Still on the calendar: 'Gym', Sat 21 Nov, 8:00-9:00 am; 'Call'" in text
+
+
+def test_responder_prompt_forbids_adding_facts():
+    assert "never add facts, numbers, times or plans" in PROMPT.system

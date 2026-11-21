@@ -27,7 +27,8 @@ def test_repeated_successful_call_is_refused_and_ends_the_run(tmp_path):
     conn = open_db(tmp_path / "leo.db")
     tools = by_name(real_productivity_tools(conn))
     chat = FakeChat({"add_task": {"title": "milk"}})  # repeats forever
-    out = run_agent(state_for("add milk to my tasks", "add milk"), chat, tools, 4)
+    # "and" links two requests, so the run does not end in code after one add.
+    out = run_agent(state_for("add milk and eggs to my tasks", "add milk"), chat, tools, 4)
     titles = [r["title"] for r in conn.execute("SELECT title FROM tasks")]
     conn.close()
     assert titles == ["milk"]

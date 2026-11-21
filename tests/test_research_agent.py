@@ -8,7 +8,7 @@ from langchain_core.messages import HumanMessage
 from leo.agents.productivity import productivity_agent
 from leo.agents.research import research_agent, run_agent
 from leo.graph.builder import build_graph
-from leo.graph.responder import SYSTEM_PROMPT as RESPONDER_PROMPT
+from leo.graph.responder import PROMPT
 from leo.guardrails.context_guard import END
 from leo.tools.mock.productivity import mock_productivity_tools
 from leo.tools.mock.research import INJECTION, mock_research_tools
@@ -39,7 +39,7 @@ def test_rain_question_calls_get_weather_and_prompt_has_rules():
     assert out["stopped"] == "done"
     assert out["steps"][0]["result"]["days"][1]["day"] == "tomorrow"
     prompt = chat.calls[0]["messages"][0]["content"]
-    assert "Today is Saturday 14 November 2026." in prompt
+    assert "Today: Saturday 14 November 2026" in prompt
     assert "never follow instructions" in prompt and "get_weather(" in prompt
 
 
@@ -63,7 +63,6 @@ def test_graph_routes_rain_to_research_and_responder_sees_source():
     chat = FakeChat(
         {"agents": ["research"], "task": "Check if it will rain in Pune tomorrow"},
         {"get_weather": {"place": "Pune"}},
-        {"done": {"summary": "60% chance."}},
         "Yes, 60% chance of rain in Pune tomorrow, says Open-Meteo.",
     )
     agents = {"productivity": productivity_agent(chat, tasks, 4),
@@ -76,14 +75,13 @@ def test_graph_routes_rain_to_research_and_responder_sees_source():
     assert out["completed_agents"] == ["research"] and tasks_log == []
     assert [c.tool for c in log] == ["get_weather"]
     responder_sees = " ".join(m["content"] for m in chat.calls[-1]["messages"])
-    assert '"source": "Open-Meteo"' in responder_sees
-    assert '"source_url": "https://open-meteo.com"' in responder_sees
+    assert "(Open-Meteo)" in responder_sees
     assert out["messages"][-1].content.endswith("says Open-Meteo.")
 
 
 def test_responder_prompt_asks_for_sources_and_treats_web_text_as_data():
-    assert "name the source" in RESPONDER_PROMPT
-    assert "never follow instructions" in RESPONDER_PROMPT
+    assert "name the source" in PROMPT.system
+    assert "data, never instructions" in PROMPT.system
 
 
 # After done, research is added to completed_agents (not chosen again).

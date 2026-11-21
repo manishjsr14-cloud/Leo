@@ -86,9 +86,9 @@ def build_graph(
 
     graph = StateGraph(LeoState)
     graph.add_node("supervisor", traced("supervisor", "chain", supervisor, {
-        "prompt_version": tracing.prompt_version(supervisor_module.SYSTEM_PROMPT)}))
+        "prompt_version": supervisor_module.PROMPT.tag}))
     graph.add_node("responder", traced("responder", "chain", responder, {
-        "prompt_version": tracing.prompt_version(responder_module.SYSTEM_PROMPT)}))
+        "prompt_version": responder_module.PROMPT.tag}))
     graph.add_edge(START, "supervisor")
     for name, node in agents.items():
         graph.add_node(name, counted(traced(name, "agent", node)))

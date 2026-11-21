@@ -61,6 +61,7 @@ research:                          # research agent tools (section 9); public se
 
 language:                          # Indian time and number parser (section 15.2)
   timezone: Asia/Kolkata           # IST; dates and times from the parser are in this zone
+  hinglish_min_ratio: 0.2          # share of common Hindi words that tags a message "hinglish" (M1.8)
 
 calendar:                          # calendar agent (section 9.1); mock calendar until M2.6
   default_event_minutes: 60        # an event's length when the user gives no end
@@ -69,6 +70,7 @@ calendar:                          # calendar agent (section 9.1); mock calendar
     afternoon: [12, 16]            # dopahar
     evening: [16, 20]              # shaam
     night: [20, 24]                # raat (24 = midnight at the end of the day)
+  waking_hours: [6, 23]            # free time for a whole day is looked for only 06:00-23:00 (M1.8)
 
 machines:                          # check-script report headers: label <- text in the nvidia-smi GPU name
   laptop: GTX 1650                 # Dell G3, 4 GB; the target machine for all measurements

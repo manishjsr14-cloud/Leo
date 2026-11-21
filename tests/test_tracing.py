@@ -19,14 +19,13 @@ from tests.llm_fakes import FakeClient, connection_error
 from tests.tracing_fakes import FakeTracer
 
 QUESTION = "what is 18% of 2450"
-REPLY = "18% of 2450 is 441."
-# Planned local-model replies: supervisor, agent step 1, agent step 2, responder.
-# The supervisor plans once; it is not asked again after the agent.
+REPLY = "18% of 2450 = 441."
+# Planned local-model replies: supervisor, agent step 1. Since M1.8 a single
+# successful calculation ends the agent run and gets a code-written reply, so
+# there is no "done" step and no responder LLM call.
 PLAN = [
     json.dumps({"agents": ["productivity"], "task": "calculate 18% of 2450"}),
     json.dumps({"calculate": {"expression": "18% of 2450"}}),
-    json.dumps({"done": {"summary": REPLY}}),
-    REPLY,
 ]
 # Text that must never reach a span when include_text is off.
 FORBIDDEN = [QUESTION, "18% of 2450", "(18/100)", "is 441", '"441"', "You are", "calculate 18%"]
@@ -56,13 +55,12 @@ def test_one_trace_with_nodes_steps_llm_and_tool_spans():
         ("supervisor", [llm]),
         ("productivity", [
             ("step 1", [llm, ("tool:calculate", [])]),
-            ("step 2", [llm]),
         ]),
-        ("responder", [llm]),
+        ("responder", []),
     ])]
     kinds = {s["name"]: s["kind"] for s in tracer.spans}
     assert kinds == {"chat": "chain", "supervisor": "chain", "productivity": "agent",
-                     "step 1": "span", "step 2": "span", "tool:calculate": "tool",
+                     "step 1": "span", "tool:calculate": "tool",
                      "llm:ollama": "generation", "responder": "chain"}
 
 
@@ -79,7 +77,7 @@ def test_with_include_text_inputs_and_outputs_are_recorded():
     tool = tracer.named("tool:calculate")["fields"]
     assert tool["input"] == {"expression": "18% of 2450"}
     assert tool["output"]["result"] == "441"
-    assert tracer.spans[-1]["fields"]["output"] == REPLY  # the responder's LLM call
+    assert tracer.named("llm:ollama")["fields"]["input"]  # LLM text is recorded
 
 
 def test_trace_tags_models_prompt_versions_and_tokens():
@@ -88,7 +86,7 @@ def test_trace_tags_models_prompt_versions_and_tokens():
     assert root["session_id"] == "session-1"
     assert "model:leo-qwen3" in root["tags"]
     assert any(t.startswith("prompt:supervisor@") for t in root["tags"])
-    assert len(tracer.named("supervisor")["fields"]["metadata"]["prompt_version"]) == 8
+    assert tracer.named("supervisor")["fields"]["metadata"]["prompt_version"] == "supervisor@1"
     assert tracer.named("supervisor")["fields"]["metadata"]["plan"] == ["productivity"]
     assert tracer.named("step 1")["fields"]["metadata"]["action"] == "calculate"
     llm = tracer.named("llm:ollama")["fields"]

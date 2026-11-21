@@ -115,9 +115,10 @@ class ResearchConfig(Strict):
 
 
 class LanguageConfig(Strict):
-    """Indian time parser: the time zone used when no "now" is given."""
+    """Time parser zone, and the share of Hindi words that tags a message Hinglish."""
 
     timezone: str
+    hinglish_min_ratio: float = Field(gt=0, le=1)
 
 
 class CalendarConfig(Strict):
@@ -125,6 +126,7 @@ class CalendarConfig(Strict):
 
     default_event_minutes: int = Field(ge=1)
     day_parts: dict[Literal["morning", "afternoon", "evening", "night"], tuple[int, int]]
+    waking_hours: tuple[int, int]  # free time for a whole day is looked for only here
 
     # Each window must be whole hours inside the day, start before end.
     @field_validator("day_parts")
@@ -134,6 +136,14 @@ class CalendarConfig(Strict):
             if not 0 <= start < end <= 24:
                 raise ValueError(f"day_parts.{name} must be 0 <= start < end <= 24")
         return parts
+
+    # Waking hours are whole hours inside the day, start before end.
+    @field_validator("waking_hours")
+    @classmethod
+    def waking_inside_day(cls, hours: tuple[int, int]) -> tuple[int, int]:
+        if not 0 <= hours[0] < hours[1] <= 24:
+            raise ValueError("waking_hours must be 0 <= start < end <= 24")
+        return hours
 
 
 class LeoConfig(Strict):

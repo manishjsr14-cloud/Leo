@@ -99,3 +99,15 @@ def test_calendar_windows_are_loaded_and_checked(tmp_path: Path):
 
     with pytest.raises(ValidationError):
         load_config(broken)
+
+
+def test_waking_hours_and_hinglish_ratio_load_and_are_checked(tmp_path: Path):
+    config = load_config()
+    assert config.calendar.waking_hours == (6, 23)
+    assert config.language.hinglish_min_ratio == 0.2
+    text = Path("config.yaml").read_text(encoding="utf-8").replace(
+        "waking_hours: [6, 23]", "waking_hours: [23, 6]")
+    bad = tmp_path / "config.yaml"
+    bad.write_text(text, encoding="utf-8")
+    with pytest.raises(ValueError):
+        load_config(bad)

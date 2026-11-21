@@ -85,6 +85,7 @@ def test_responder_adds_reply_with_provider():
 # Calendar example lines appear only when the calendar agent is on offer.
 def test_calendar_examples_only_with_calendar():
     from leo.graph.supervisor import describe_agents
-    assert "Examples:" not in describe_agents(["productivity", "research"])
+    assert "Mera Wednesday" not in describe_agents(["productivity", "research"])
+    assert "Sabzi lena" not in describe_agents(["research", "calendar"])
     text = describe_agents(["research", "calendar"])
     assert '- "Mera Wednesday ka schedule batao" -> ["calendar"]' in text

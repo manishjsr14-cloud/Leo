@@ -19,7 +19,7 @@ from leo.language import time_words as w
 from leo.language.clock import find_clocks, to_24h
 from leo.language.time_parser import parse_time, split_words
 
-# Questions asked back (Hinglish; prompts move to prompts/ in M1.8).
+# Questions asked back (Hinglish; the responder rewrites them in the user's language).
 TOO_MANY_TIMES = "Message mein do se zyada time hain. Kaunsa time chahiye?"
 TWO_DAYS = "Do alag din likhe hain. Meeting abhi kis din hai, aur kis din le jaani hai?"
 
@@ -33,6 +33,7 @@ class CalendarTimes(BaseModel):
     move_from: datetime | None = None          # a move's current start (first of two times)
     window: tuple[datetime, datetime] | None = None   # part-of-day range, e.g. dopahar
     day: tuple[datetime, datetime] | None = None      # the whole day the words name
+    assumed_ampm: bool = False                 # am/pm of the (new) start was assumed (M1.8)
 
 
 # A key per day word in the text ("kal", "parso", a weekday number, ...).
@@ -78,10 +79,11 @@ def read_calendar_times(text: str, now: datetime, config: CalendarConfig) -> Cal
                           window=day_window(words, parsed.date, zone, config))
     if parsed.time is not None:
         found.start = datetime.combine(parsed.date, parsed.time, zone)
+        found.assumed_ampm = parsed.assumed_ampm
     if len(clocks) == 2:
         hours, minutes, ampm, index = clocks[1]
         first_period = next((w.PERIODS[x] for x in words if x in w.PERIODS), None)
-        new_hour = to_24h(hours, ampm, period_before(words, index, first_period))[0]
-        found.move_from = found.start
+        new_hour, assumed, _ = to_24h(hours, ampm, period_before(words, index, first_period))
+        found.move_from, found.assumed_ampm = found.start, assumed
         found.start = datetime.combine(parsed.date, time(new_hour, minutes), zone)
     return found

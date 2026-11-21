@@ -88,3 +88,13 @@ def test_llm_unavailable_keeps_loop_running():
 
     printed = run_cli(["hello", "exit"], failing_chat)
     assert printed[-1].startswith("Leo: sorry, no model could answer")
+
+
+# M1.8: run_turn fixes short spellings and tags the message's language.
+def test_run_turn_normalizes_and_tags_the_language():
+    chat = FakeChat("Theek hai.")
+    _, history = cli.run_turn(build_graph(chat), [], "kl kia plan hai?", False)
+    assert history[0].content == "kal kya plan hai?"
+    assert "Hinglish" in chat.calls[0]["messages"][0]["content"]
+    cli.run_turn(build_graph(chat), [], "What is the plan for tomorrow?", False)
+    assert "in English." in chat.calls[-1]["messages"][0]["content"]

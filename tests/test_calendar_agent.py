@@ -11,7 +11,7 @@ from leo.agents.calendar import calendar_agent, run_agent
 from leo.agents.calendar_guard import ASK_TIME
 from leo.config import load_config
 from leo.graph.builder import build_graph
-from leo.graph.responder import APPROVAL_NOTE, ASK_NOTE, tool_result_lines
+from leo.graph.responder import fact_lines
 from leo.language.calendar_words import ADD_OR_MOVE
 from leo.language.time_spans import TWO_DAYS
 from leo.tools.mock.calendar import mock_calendar_tools
@@ -55,7 +55,7 @@ def test_done_when_phrase_creates_the_right_event_with_code_filled_times():
     assert out["steps"][0]["args"] == full  # the step records the filled call
     prompt = chat.calls[0]["messages"][0]["content"]
     assert "- Event time: Tue 17 Nov, 10:00-11:00 am" in prompt
-    assert "you never write dates or times" in prompt
+    assert "Never write dates or times" in prompt
 
 
 # No date fields anywhere in the schema the model fills in, for any calendar message.
@@ -132,7 +132,8 @@ def test_create_with_date_but_no_time_asks_for_the_time():
     out = run("Thursday ko Rahul se milna hai",
               FakeChat({"create_event": {"title": "Meet Rahul"}}), tools)
     assert (out["stopped"], out["summary"], log) == ("ask", ASK_TIME, [])
-    assert f"- calendar: {ASK_NOTE}: {ASK_TIME}" in tool_result_lines({"calendar": out})
+    assert f"- calendar: ask the user this question: {ASK_TIME}" in fact_lines(
+        {"calendar": out})
 
 
 # Two different refused cancels in one run both reach call_tool; the responder
@@ -148,8 +149,9 @@ def test_two_different_refused_cancels_both_reach_call_tool():
                if s["result"].get("needs_approval") is True]
     assert refused == ["mock-evt-gym", "mock-evt-call"] and out["stopped"] == "done"
     assert [c.tool for c in log] == ["get_events"]
-    lines = tool_result_lines({"calendar": out})
-    assert f'- calendar: cancel_event({{"event_id": "mock-evt-call"}}) -> {APPROVAL_NOTE}.' in lines
+    lines = fact_lines({"calendar": out})
+    assert ("- calendar: cancel event 'Call', Sat 21 Nov, 10:00-10:30 am: NOT done, it "
+            "needs the user's approval first") in lines
 
 
 # Repeating the same refused cancel ends the run (it is not retried).
@@ -186,7 +188,6 @@ def test_graph_routes_to_calendar_and_responder_sees_event_in_words():
     log, tools = fresh()
     chat = FakeChat({"agents": ["calendar"], "task": "Add meeting with Rahul"},
                     {"create_event": {"title": "Meeting with Rahul"}},
-                    {"done": {"summary": "Added."}},
                     "Ho gaya! Kal 10 baje Rahul ke saath meeting daal di.")
     agents = {"calendar": calendar_agent(chat, tools, 6, CONFIG, now=lambda: NOW)}
     out = build_graph(chat, agents=agents).invoke(
@@ -194,5 +195,55 @@ def test_graph_routes_to_calendar_and_responder_sees_event_in_words():
     assert "- calendar: the user's own calendar" in chat.calls[0]["messages"][0]["content"]
     assert [c.tool for c in log] == ["create_event"]
     seen = " ".join(m["content"] for m in chat.calls[-1]["messages"])
-    assert "In words: Created 'Meeting with Rahul', Tue 17 Nov, 10:00-11:00 am" in seen
+    assert "Created 'Meeting with Rahul', Tue 17 Nov, 10:00-11:00 am" in seen
     assert out["messages"][-1].content.startswith("Ho gaya!")
+
+
+# M1.8: a single create ends the run in code; the outcome says the am/pm was assumed.
+def test_single_create_ends_without_done_call_and_reports_assumed_ampm():
+    log, tools = fresh()
+    chat = FakeChat({"create_event": {"title": "Dentist"}})
+    out = run("Kal 4 baje dentist appointment daal do", chat, tools)
+    assert len(chat.calls) == 1 and out["stopped"] == "done"
+    assert log[0].args["start"] == "2026-11-17T16:00:00+05:30"
+    assert out["assumed_ampm"] is True
+    assert run(DONE_WHEN, FakeChat({"create_event": {"title": "x"}}), fresh()[1])[
+        "assumed_ampm"] is False
+
+
+# M1.8: with "aur" (two requests), a create does not end the run: the cancels still come.
+def test_linked_requests_keep_asking_the_model():
+    _, tools = fresh()
+    chat = FakeChat({"create_event": {"title": "Lonavala trip"}},
+                    {"get_events": {"range": "window"}},
+                    {"cancel_event": {"event_id": "mock-evt-gym"}},
+                    {"cancel_event": {"event_id": "mock-evt-call"}},
+                    {"done": {"summary": "ok"}})
+    out = run("Saturday subah 7 baje Lonavala trip plan kar do, aur Saturday subah clear kar do",
+              chat, tools)
+    assert [s["tool"] for s in out["steps"]] == ["create_event", "get_events",
+                                                 "cancel_event", "cancel_event"]
+    assert len(chat.calls) == 5
+
+
+# M1.8: a read ends the run when nothing is to change; before a move it does not.
+def test_read_ends_the_run_only_when_nothing_changes():
+    chat = FakeChat({"get_events": DAY})
+    assert run("Saturday ko kya kya hai?", chat, fresh()[1])["stopped"] == "done"
+    assert len(chat.calls) == 1
+    chat = FakeChat({"get_events": DAY}, {"move_event": {"event_id": "mock-evt-team"}})
+    out = run("3 baje wali meeting 5 baje kar do", chat, fresh()[1])
+    assert [s["tool"] for s in out["steps"]] == ["get_events", "move_event"]
+    assert len(chat.calls) == 2
+
+
+# M1.8: free time for a whole day uses waking hours; get_events keeps the whole day.
+def test_free_slots_for_a_day_use_waking_hours_and_events_the_whole_day():
+    log, tools = fresh()
+    run("Saturday ko free time kab hai?", FakeChat({"find_free_slots": DAY}), tools)
+    assert log[0].args == {"start": "2026-11-21T06:00:00+05:30",
+                           "end": "2026-11-21T23:00:00+05:30"}
+    log, tools = fresh()
+    run("Saturday ko kya kya hai?", FakeChat({"get_events": DAY}), tools)
+    assert log[0].args == {"start": "2026-11-21T00:00:00+05:30",
+                           "end": "2026-11-22T00:00:00+05:30"}

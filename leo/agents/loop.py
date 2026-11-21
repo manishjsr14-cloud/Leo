@@ -15,6 +15,9 @@ refused here (call_tool without approved=True) and the step is marked
 needs_approval; approval arrives in M2.5. A tool that raises AskUser ends the
 run ("ask"), with the code's question as the summary.
 Each agent passes in its own system prompt and prompt version.
+An agent may also pass a finish rule (leo/agents/finish.py, M1.8): when it
+says so after a step that succeeded or was refused for approval, the run ends
+("done") with a summary written by code, without another LLM call.
 """
 
 import json
@@ -24,8 +27,10 @@ from typing import Any
 from langchain_core.runnables import RunnableConfig
 from pydantic import ValidationError
 
+from leo.agents.finish import Finish
 from leo.agents.step_schema import loose_call, read_action, step_model
 from leo.graph.builder import cloud_requested
+from leo.graph.result_words import result_in_words
 from leo.graph.state import LeoState, chat_messages
 from leo.ops import tracing
 from leo.tools.base import AskUser, Tool, ToolError, plain
@@ -84,7 +89,8 @@ def call_key(tool: str, args: dict) -> str:
 # argument error like any tool error; a second such reply ends the run.
 # Returns {"steps": [...], "summary": str, "stopped": why}.
 def run_steps(prompt: str, version: str, state: LeoState, chat: Callable,
-              tools: dict[str, Tool], max_steps: int, force_cloud: bool = False) -> dict:
+              tools: dict[str, Tool], max_steps: int, force_cloud: bool = False,
+              finish: Finish | None = None) -> dict:
     messages = chat_messages(prompt, state)
     first_step, later_steps = step_model(tools, first_step=True), step_model(tools)
     steps: list[dict] = []
@@ -120,6 +126,10 @@ def run_steps(prompt: str, version: str, state: LeoState, chat: Callable,
         steps.append({"tool": name, "args": args, "result": output})
         if isinstance(output, dict) and "ask" in output:
             return {"steps": steps, "summary": output["ask"], "stopped": "ask"}
+        ok = not failed or output.get("needs_approval") is True
+        if ok and finish is not None and finish(name):  # done in code, no LLM call
+            return {"steps": steps, "summary": result_in_words(name, output) or "",
+                    "stopped": "done"}
         messages += [
             {"role": "assistant", "content": result.text},
             {"role": "user", "content": f"Result of {name}: {json.dumps(output)}"},

@@ -1,12 +1,16 @@
 """Tool results written out as one short plain-English line, by code (M1.7 run4).
 
-The responder gets this line next to the raw result, with dates and times
-already in words, so it does not have to read ISO times itself (run3: a move
-to 17:00-18:00 was reported as "5:00 to 7:00 pm"). Example:
+The responder gets these lines instead of the raw results (M1.8), with dates
+and times already in words, so it does not have to read ISO times itself (run3:
+a move to 17:00-18:00 was reported as "5:00 to 7:00 pm"). Example:
   move_event -> "Moved 'Team meeting' to Mon 16 Nov, 5:00-6:00 pm"
-A result with an unexpected shape gets no line (the raw result is still sent).
+A result with an unexpected shape, and web search or page text, gets no line
+(the responder then passes the raw result).
+Also here: refused 🔴 calls named by event, and the events still on the
+calendar after a cancel or clear request (M1.7 t10 left one out).
 """
 
+import json
 from typing import Any
 
 from leo.language.say_time import say_iso_span
@@ -48,7 +52,7 @@ def productivity_words(tool: str, result: Any) -> str | None:
     if tool == "add_note":
         return "Saved the note"
     if tool == "list_notes":
-        return f"{len(result)} note(s)"
+        return f"{len(result)} note(s): " + "; ".join(f"'{n['text']}'" for n in result)
     if tool == "start_timer":
         return f"Timer '{result['label']}' set for {result['minutes']} minute(s)"
     if tool == "calculate":
@@ -56,16 +60,12 @@ def productivity_words(tool: str, result: Any) -> str | None:
     return None
 
 
-# The research tools.
+# The weather tool (web search and page text keep their raw, wrapped text).
 def research_words(tool: str, result: Any) -> str | None:
     if tool == "get_weather":
         days = "; ".join(f"{d['day']} {d['date']}: {d['rain_chance_pct']}% chance of rain, "
                          f"{d['rain_mm']} mm" for d in result["days"])
         return f"Weather for {result['place']} ({result['source']}): {days}"
-    if tool == "web_search":
-        return f"{len(result['results'])} search result(s) from {result['source']}"
-    if tool == "read_page":
-        return f"Read the page {result['url']}"
     return None
 
 
@@ -79,3 +79,38 @@ def result_in_words(tool: str, result: Any) -> str | None:
     except (KeyError, TypeError, ValueError):
         return None
     return None
+
+
+# Events listed by get_events in these steps, by id.
+def listed_events(steps: list[dict]) -> dict[str, dict]:
+    events = {}
+    for step in steps:
+        if step["tool"] == "get_events" and isinstance(step.get("result"), list):
+            events.update({e["id"]: e for e in step["result"] if "id" in e})
+    return events
+
+
+# One line per call refused for lack of approval, naming the event when known.
+def refused_words(steps: list[dict]) -> list[str]:
+    events, lines = listed_events(steps), []
+    for step in steps:
+        result, args = step.get("result"), step.get("args", {})
+        if not (isinstance(result, dict) and result.get("needs_approval") is True):
+            continue
+        event = events.get(args.get("event_id"))
+        what = (f"{step['tool'].replace('_', ' ')} {event_words(event)}" if event
+                else f"{step['tool']}({json.dumps(args, ensure_ascii=False)})")
+        lines.append(f"{what}: NOT done, it needs the user's approval first")
+    return lines
+
+
+# After a cancel or clear request: the listed events not cancelled, as one line.
+def still_on_calendar(steps: list[dict], asked_cancel: bool) -> str | None:
+    if not (asked_cancel or any(s["tool"] == "cancel_event" for s in steps)):
+        return None
+    gone = {s["args"].get("event_id") for s in steps if s["tool"] == "cancel_event"
+            and isinstance(s.get("result"), dict) and "cancelled" in s["result"]}
+    created = {s["result"].get("id") for s in steps if s["tool"] == "create_event"
+               and isinstance(s.get("result"), dict)}
+    left = [e for i, e in listed_events(steps).items() if i not in gone | created]
+    return "Still on the calendar: " + "; ".join(map(event_words, left)) if left else None

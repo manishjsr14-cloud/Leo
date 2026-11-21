@@ -23,7 +23,7 @@ from datetime import datetime, timedelta
 from leo.language.time_spans import CalendarTimes
 from leo.tools.base import AskUser, Tool, ToolError
 
-# Questions asked back (Hinglish; prompts move to prompts/ in M1.8).
+# Questions asked back (Hinglish; the responder rewrites them in the user's language).
 ASK_TIME = "Kis time pe?"
 ASK_DAY = "Kis din ka?"
 ASK_DAY_TIME = "Kis din aur kis time pe?"
@@ -33,21 +33,26 @@ ASK_MOVE = "Meeting abhi kis time pe hai, aur kis time pe le jaani hai?"
 # Copies of the calendar tools whose functions first run the checks above.
 def guard_calendar_tools(tools: dict[str, Tool], times: CalendarTimes, event_minutes: int,
                          ranges: dict[str, tuple[datetime, datetime]] | None = None,
+                         free_ranges: dict[str, tuple[datetime, datetime]] | None = None,
                          ) -> dict[str, Tool]:
     length = timedelta(minutes=event_minutes)
     seen: dict[str, datetime] = {}  # event id -> current start, from get_events
 
-    # Refuse a range that is not one of the allowed ranges.
-    def check_range(args) -> None:
-        if ranges is not None:
-            allowed = list(ranges.values())
-        elif times.day is None:
-            raise AskUser(ASK_DAY)
-        else:
-            allowed = [r for r in (times.window, times.day) if r is not None]
-        if (args.start, args.end) not in allowed:
-            text = " or ".join(f"{a.isoformat()} to {b.isoformat()}" for a, b in allowed)
-            raise ToolError(f"use exactly this range: {text}")
+    # A check that refuses a range not in `named` (find_free_slots: the ranges
+    # cut to waking hours, M1.8).
+    def range_check(named: dict | None) -> Callable:
+        # Refuse a range that is not one of the allowed ranges.
+        def check_range(args) -> None:
+            if named is not None:
+                allowed = list(named.values())
+            elif times.day is None:
+                raise AskUser(ASK_DAY)
+            else:
+                allowed = [r for r in (times.window, times.day) if r is not None]
+            if (args.start, args.end) not in allowed:
+                text = " or ".join(f"{a.isoformat()} to {b.isoformat()}" for a, b in allowed)
+                raise ToolError(f"use exactly this range: {text}")
+        return check_range
 
     # Refuse a start or end that is not the parsed time and the default end.
     def check_start(args) -> None:
@@ -80,8 +85,8 @@ def guard_calendar_tools(tools: dict[str, Tool], times: CalendarTimes, event_min
             seen[event["id"]] = datetime.fromisoformat(event["start"])
 
     checks: dict[str, tuple[Callable, Callable | None]] = {
-        "get_events": (check_range, remember),
-        "find_free_slots": (check_range, None),
+        "get_events": (range_check(ranges), remember),
+        "find_free_slots": (range_check(free_ranges or ranges), None),
         "create_event": (check_start, None),
         "move_event": (check_move, None),
         "cancel_event": (check_cancel, None),

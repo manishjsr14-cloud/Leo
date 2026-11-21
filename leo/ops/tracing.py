@@ -16,7 +16,6 @@ replies never reach a span. Error messages count as text: only the error's
 type name is recorded.
 """
 
-import hashlib
 import logging
 from contextlib import contextmanager
 from typing import Any
@@ -124,8 +123,3 @@ def flush() -> None:
     except Exception as error:  # noqa: BLE001 - tracing must never break Leo
         warn_once("tracing flush failed: %s", type(error).__name__)
 
-
-# A short version id for a prompt: the first 8 hex digits of its SHA-256.
-# Stays the same until the text changes (versioned prompt files come in M1.8).
-def prompt_version(prompt: str) -> str:
-    return hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:8]

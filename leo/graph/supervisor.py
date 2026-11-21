@@ -15,50 +15,22 @@ from typing import Literal
 from pydantic import BaseModel, Field, create_model, field_validator
 
 from leo.graph.state import LeoState, chat_messages
+from leo.llm.prompts import load_prompt
 
 log = logging.getLogger("leo.graph")
 
 MAX_PLANNED_AGENTS = 2
-
-# Kept here until versioned prompt files arrive in M1.8.
-SYSTEM_PROMPT = (
-    "You are the supervisor of Leo, a personal assistant. Plan which agents must "
-    "act on the user's latest request, in order. Use one agent unless the request "
-    "clearly needs two. Use an empty list when no agent is needed (plain chat).\n"
-    "Agents:\n{agents}\n"
-    'Reply only with JSON: {{"agents": [<agent names in order>], "task": "<one '
-    'short instruction for the agents>"}}.'
-)
-
-
-# One short line per agent for the prompt (agents without a line show by name only).
-AGENT_DESCRIPTIONS = {
-    "productivity": "tasks, notes, timers, calculations",
-    "research": "web search, reading web pages, weather",
-    "calendar": ("the user's own calendar: what is on a day, whether the user is "
-                 "free, adding, planning or scheduling an event, meeting or trip at "
-                 "a time, moving it, cancelling or clearing events"),
-}
-
-
-# Example requests per agent, shown only when that agent is on offer. None of
-# them is a phrase from an eval turn file.
-AGENT_EXAMPLES = {
-    "calendar": [
-        "Mera Wednesday ka schedule batao",
-        "Friday ko 11 baje bank jaana hai, calendar mein daal do",
-        "Doctor wali meeting hata do",
-    ],
-}
+PROMPT = load_prompt("supervisor")  # prompts/supervisor.yaml: text, agents and examples
 
 
 # The agent list for the prompt: "- name: what it does", one per line, then
-# example requests for the agents that have them.
+# example requests for the agents on offer (agents not in the file show by name).
 def describe_agents(agents: list[str]) -> str:
-    lines = [f"- {name}: {AGENT_DESCRIPTIONS[name]}" if name in AGENT_DESCRIPTIONS
-             else f"- {name}" for name in agents]
+    known = PROMPT.extra("agents", {})
+    lines = [f"- {name}: {known[name]['does']}" if name in known else f"- {name}"
+             for name in agents]
     examples = [f'- "{text}" -> ["{name}"]' for name in agents
-                for text in AGENT_EXAMPLES.get(name, [])]
+                for text in known.get(name, {}).get("examples", [])]
     return "\n".join(lines + (["Examples:", *examples] if examples else []))
 
 
@@ -96,7 +68,7 @@ def supervisor_node(
 ) -> dict:
     if not agents:
         return {"agent_queue": [], "hops": 0}
-    prompt = SYSTEM_PROMPT.format(agents=describe_agents(agents))
+    prompt = PROMPT.render(agents=describe_agents(agents))
     result = chat(chat_messages(prompt, state), plan_model(agents), force_cloud)
     if not result.valid:
         log.warning("supervisor plan invalid, answering directly: text=%r", result.text)

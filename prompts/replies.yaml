@@ -1,0 +1,24 @@
+# Replies written by code, without an LLM call, for a single successful write
+# (leo/graph/quick_reply.py). Chosen by the language tag: en or hinglish.
+# {when} is written by code, e.g. "Tue 17 Nov, 10:00-11:00 am".
+# "assumed" is added when the am/pm of the time was assumed: it asks about it.
+name: replies
+version: 1
+en:
+  create_event: "Done! Added '{title}' on {when}."
+  move_event: "Done! Moved '{title}' to {when}."
+  add_task: "Added '{title}' to your tasks."
+  complete_task: "Marked '{title}' as done."
+  add_note: "Saved the note."
+  start_timer: "Timer '{label}' set for {minutes} minutes."
+  calculate: "{expression} = {result}."
+  assumed: " Did you mean {clock}?"
+hinglish:
+  create_event: "Ho gaya! '{title}' {when} calendar mein daal diya."
+  move_event: "Ho gaya! '{title}' ko {when} pe shift kar diya."
+  add_task: "'{title}' aapki tasks list mein daal diya."
+  complete_task: "'{title}' task complete mark kar diya."
+  add_note: "Note save kar diya."
+  start_timer: "'{label}' ka timer {minutes} minute ke liye laga diya."
+  calculate: "{expression} ka jawab {result} hai."
+  assumed: " {clock} hi chahiye tha na?"
