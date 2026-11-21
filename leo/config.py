@@ -149,6 +149,7 @@ class LeoConfig(Strict):
     research: ResearchConfig
     language: LanguageConfig
     calendar: CalendarConfig
+    machines: dict[str, str]  # machine label -> text found in its nvidia-smi GPU name
 
 
 class Secrets(BaseSettings):

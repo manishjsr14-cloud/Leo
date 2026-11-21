@@ -69,3 +69,7 @@ calendar:                          # calendar agent (section 9.1); mock calendar
     afternoon: [12, 16]            # dopahar
     evening: [16, 20]              # shaam
     night: [20, 24]                # raat (24 = midnight at the end of the day)
+
+machines:                          # check-script report headers: label <- text in the nvidia-smi GPU name
+  laptop: GTX 1650                 # Dell G3, 4 GB; the target machine for all measurements
+  desktop: RTX 3060                # gaming desktop, 12 GB; never compare its figures with the laptop's

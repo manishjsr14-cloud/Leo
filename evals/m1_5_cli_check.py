@@ -19,6 +19,7 @@ from pathlib import Path
 from evals.m1_4_check_helpers import CountingChat, logged
 from evals.m1_5_check_helpers import chosen, tagged, turn_details
 from evals.m1_5_pass_rules import RULES, cell, verdict_v1, verdict_v2
+from evals.machine import machine_line
 from leo import cli
 from leo.agents.productivity import productivity_agent
 from leo.agents.research import research_agent
@@ -96,7 +97,7 @@ def main() -> None:
         conn.close()
     overall = {rule: "PASS" if len(verdicts[rule]) == len(turns) and all(verdicts[rule])
                else "FAIL" for rule, turns in RULES.items()}
-    header = [f"# M1.5 research check — {stamp}",
+    header = [f"# M1.5 research check — {stamp}", machine_line(),
               (f"Local model: {config.llm.primary.model}. "
                f"Fallback: {config.llm.fallback.model}. max_hops: {config.graph.max_hops}. "
                f"agent.max_steps: {config.agent.max_steps}. Agents: productivity (real "

@@ -17,6 +17,7 @@ from openai import OpenAI
 from pydantic import ValidationError
 
 from evals.m1_1_schemas import SCHEMAS
+from evals.machine import machine_line
 from leo.config import load_config
 from leo.llm import clients, gateway
 
@@ -124,13 +125,14 @@ def main() -> None:
     model = load_config().llm.primary.model
     stamp = datetime.now().strftime("%Y-%m-%d %H:%M")
     if part == "local":
-        header = [f"# M1.1 model check — {stamp}", (f"Model: {model}. "
+        header = [f"# M1.1 model check — {stamp}", machine_line(), (f"Model: {model}. "
                   f"{run(['ollama', '--version'])}."), ""]
         lines = header + speed_section(model) + [""] + gpu_section() + [""] + check_set_section()
         report.write_text("\n".join(lines) + "\n", encoding="utf-8")
     else:
         with report.open("a", encoding="utf-8") as f:
-            f.write("\n" + "\n".join([f"<!-- run {stamp} -->", *groq_section()]) + "\n")
+            f.write("\n" + "\n".join([f"<!-- run {stamp}; {machine_line()} -->",
+                                       *groq_section()]) + "\n")
     print(report.read_text(encoding="utf-8"))
 
 

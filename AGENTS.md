@@ -25,6 +25,7 @@ Instructions for Claude Code (and any other coding agent) working in this reposi
 - Test sets and eval scenarios are committed **before** the code that uses them, and are never edited afterwards to improve a score. A better version is a separate, logged change with a fresh test set.
 - Report failed checks, skipped work and deviations plainly. Do not tune test cases, labels or thresholds to make results look better.
 - Do not regenerate or rewrite earlier reports. New runs write new files.
+- Every real-run report records the machine it ran on (the "Machine:" header line from `evals/machine.py`). Timings and VRAM figures from the gaming desktop (RTX 3060 12 GB) are never compared with or quoted as laptop results. Reports without a machine line predate this rule and ran on the laptop.
 - Do not relax dependency pins in `requirements.txt` without asking.
 
 ## Fixed design decisions

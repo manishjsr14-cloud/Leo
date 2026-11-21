@@ -25,6 +25,7 @@ from evals.m1_4_check_helpers import (
     task_rows,
     tasks_table,
 )
+from evals.machine import machine_line
 from leo import cli
 from leo.agents.productivity import NAME, productivity_agent
 from leo.config import load_config
@@ -123,7 +124,7 @@ def main() -> None:
         conn.close()
     milk_ok, milk_text = milk_verdict(rows)
     passed = all(verdicts) and milk_ok
-    header = [f"# M1.4 productivity check — {stamp}",
+    header = [f"# M1.4 productivity check — {stamp}", machine_line(),
               (f"Local model: {config.llm.primary.model}. "
                f"Fallback: {config.llm.fallback.model}. max_hops: {config.graph.max_hops}. "
                f"agent.max_steps: {config.agent.max_steps}. "

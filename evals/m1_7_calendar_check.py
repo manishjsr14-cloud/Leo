@@ -30,6 +30,7 @@ import yaml
 from evals.m1_4_check_helpers import CountingChat, call_label
 from evals.m1_5_check_helpers import chosen, tagged
 from evals.m1_7_scoring import score_turn
+from evals.machine import machine_line
 from leo import cli
 from leo.agents.calendar import calendar_agent
 from leo.agents.productivity import productivity_agent
@@ -123,6 +124,7 @@ def main() -> None:
     results = [run_one(turn, data, config, now) for turn in data["turns"]]
     passed = sum(1 for ok, _, _ in results if ok)
     header = [f"# M1.7 calendar check — {datetime.now().strftime('%Y-%m-%d %H:%M')}",
+              machine_line(),
               f"Commit: {git_state()}. Turn file: {TURNS_FILE} (version {data['version']}).",
               (f"Local model: {config.llm.primary.model}. Fallback: "
                f"{config.llm.fallback.model}. agent.max_steps: {config.agent.max_steps}. "

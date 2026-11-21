@@ -12,6 +12,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+from evals.machine import machine_line
 from leo import cli
 from leo.config import load_config
 from leo.graph.builder import build_graph
@@ -71,7 +72,7 @@ def main() -> None:
         sys.exit(f"{report} already exists; earlier reports are never rewritten.")
     config = load_config()
     stamp = datetime.now().strftime("%Y-%m-%d %H:%M")
-    header = [f"# M1.2 CLI chat check — {stamp}",
+    header = [f"# M1.2 CLI chat check — {stamp}", machine_line(),
               (f"Local model: {config.llm.primary.model}. "
                f"Fallback: {config.llm.fallback.model}. "
                f"max_hops: {config.graph.max_hops}. Agents registered: none."), ""]

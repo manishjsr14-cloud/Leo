@@ -24,6 +24,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+from evals.machine import machine_line
 from leo import cli
 from leo.agents.productivity import NAME, productivity_agent
 from leo.config import load_config, load_secrets
@@ -125,6 +126,7 @@ def main() -> None:
     s_ok, s_why = structure(items, trace_id)
     p_ok, p_why = privacy(items, reply.content)
     lines = [f"# M1.9 tracing check — {datetime.now().strftime('%Y-%m-%d %H:%M')}",
+             machine_line(),
              (f"include_text: {config.tracing.include_text}. Local model: "
              f"{config.llm.primary.model}. Turn time: {wall:.2f} s."), "",
              f"**STRUCTURE: {'PASS' if s_ok else 'FAIL'}** ({s_why})",

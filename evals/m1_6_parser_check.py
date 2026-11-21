@@ -12,6 +12,7 @@ from datetime import datetime
 from pathlib import Path
 
 from evals.m1_6_scoring import AMBIGUOUS, FIELDS, accuracy, load_set, score_set
+from evals.machine import machine_line
 
 TARGET = 0.95
 SECTIONS = {"t": "day words, clock, kal, midnight", "w": "weekdays", "r": "relative times",
@@ -92,7 +93,7 @@ def main() -> None:
     report = Path(sys.argv[1])
     if report.exists():
         sys.exit(f"{report} already exists; earlier reports are never rewritten.")
-    lines = [f"# M1.6 parser check — {datetime.now():%Y-%m-%d %H:%M}",
+    lines = [f"# M1.6 parser check — {datetime.now():%Y-%m-%d %H:%M}", machine_line(),
              (f"Commit: {git_state()}. Parser: rules only (no LLM). "
              "A time case passes only when status, date, time, assumed_ampm, "
              "remind_before_min and ask_about all match."), ""]

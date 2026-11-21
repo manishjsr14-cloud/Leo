@@ -82,6 +82,11 @@ def test_research_section_loads_and_rejects_unknown_keys(tmp_path: Path):
         load_config(broken)
 
 
+# The machines section names the laptop and desktop GPUs for report headers.
+def test_machines_section_loads():
+    assert load_config().machines == {"laptop": "GTX 1650", "desktop": "RTX 3060"}
+
+
 # Calendar settings load, and a part-of-day window must lie inside the day.
 def test_calendar_windows_are_loaded_and_checked(tmp_path: Path):
     calendar = load_config().calendar
