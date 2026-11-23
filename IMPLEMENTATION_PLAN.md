@@ -69,7 +69,7 @@ Read: §4, §6, §9 (tool table), §15.
 | M1.7 | **Calendar agent on mock calendar** (real Radicale comes in M2): get events, free slots, create, move, cancel. | `leo/agents/calendar.py` | "Kal subah 10 baje Rahul ke saath meeting daal do" creates the right mock event |
 | M1.8 | **Hinglish prompts and language mirroring.** Prompts in `prompts/*.yaml` with a version field; few-shot Hinglish examples per agent; simple token-ratio language tag (the trained detector is Phase 6). | `prompts/`, `leo/language/normalize.py` | Hinglish in → Hinglish reply; English in → English reply, on 10 fixed examples |
 | M1.9 | **Tracing.** One Langfuse trace per request with spans per node, LLM call and tool call; prompt and model version tags. | `leo/ops/tracing.py` | A CLI request shows as one trace in Langfuse |
-| M1.10 | **First eval set.** 12 scenarios in `evals/scenarios/` (routing + tool name + key args), run on mock tools. Commit scenarios before running. | `evals/run_eval.py` | Report file written to `evals/reports/`; numbers reported as they are |
+| M1.10 | **First eval set.** One runner for every scored turn file in `evals/scenarios/` (M1.7 and M1.8 turns, plus a regression file of known-failing cases; list in `evals/scenarios/m1_10_suite.yaml`): routing, tool name + key args, reply checks, refused calls, LLM calls and time, Hinglish vs English; comparison with an earlier report. Run on mock tools. Commit scenarios before running. | `evals/run_eval.py` | Report file written to `evals/reports/`; numbers reported as they are |
 
 **Order change (2026-11-13):** M1.9 (tracing) is done right after M1.4 and before M1.5, on purpose, so every later task is traced from the start. The task numbers stay as they are.
 
@@ -106,6 +106,8 @@ Also done in the M1.8 session as separate commits: "at <hour>" read by the time 
 - "Thursday dopahar free hoon?" (calendar as in the M1.8 turn file): the reply names both free slots, 12-1 pm and 2-4 pm.
 - "Aaj shaam 5 baje kya hai?": plan `calendar`, `get_events`, the reply names the 5 pm event.
 - The §4.5 example (already carried over from M1.7): `create_event` 7-8 am is attempted, and the reply names every event still on the calendar.
+
+**M1.10 scope change (2026-11-23, agreed before any M1.10 code):** the "12 scenarios" in the M1.10 row are replaced by the suite in `evals/scenarios/m1_10_suite.yaml`: every turn of `m1_7_calendar_turns.yaml` and `m1_8_language_turns.yaml`, and the regression file `evals/scenarios/m1_10_known_failing.yaml` (K01-K07: the M1.4 "already complete" wording and every known limit and carried-over case of M1.7 and M1.8, each marked known_failing with its task). The M1.1 and M1.6 files are not chat turns and are skipped, with the reason in the suite file. The run1 → run2 comparison is a noise check (no code change between them).
 
 **M1 exit check:** the cross-agent example in §4.5 (weather → calendar) runs end to end in the CLI on mock calendar, on the local model.
 

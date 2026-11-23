@@ -1,0 +1,37 @@
+# M1.10 eval suite: which scenario files evals/run_eval.py runs, and which it
+# skips and why. Committed BEFORE evals/run_eval.py first runs; never edited
+# to improve a score (a change is a new version, logged).
+#
+# Only files whose cases are chat turns for the graph (a `turns:` list with
+# `text` and `expect`) are run. Each run file gives `now`, `mock_weather` and
+# either `mock_calendar` or named `calendars`.
+#
+# m1_7_calendar_turns.yaml has no `lang` field; its turns are tagged here
+# (by a person, from the message text) so every metric can be split into
+# Hinglish and English. The file itself is not changed.
+
+version: 1
+
+run:
+  - file: evals/scenarios/m1_7_calendar_turns.yaml
+    lang:
+      t01: hinglish   # Kal subah 10 baje Rahul ke saath meeting daal do
+      t02: en         # Add a dentist appointment on Thursday at 4:30 pm
+      t03: hinglish   # Thursday dopahar free hoon?
+      t04: en         # Am I free tomorrow evening?
+      t05: hinglish   # 3 baje wali meeting 5 baje kar do
+      t06: en         # Move my 3 pm meeting to 5 pm
+      t07: hinglish   # Saturday ko kya kya hai?
+      t08: hinglish   # Saturday ka gym cancel kar do
+      t09: hinglish   # Kal Rahul ke saath meeting
+      t10: hinglish   # section 4.5 example
+  - file: evals/scenarios/m1_8_language_turns.yaml
+  - file: evals/scenarios/m1_10_known_failing.yaml
+
+skip:
+  - file: evals/scenarios/m1_1_schema_check.yaml
+    why: single model prompts checked for JSON validity, not chat turns for the graph
+  - file: evals/scenarios/m1_6_indian_phrases.yaml
+    why: time and number parser phrases, no graph or LLM (checked by evals/m1_6_parser_check.py)
+  - file: evals/scenarios/m1_6_heldout_phrases.yaml
+    why: time and number parser phrases, no graph or LLM (checked by evals/m1_6_parser_check.py)

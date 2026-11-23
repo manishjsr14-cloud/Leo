@@ -1,0 +1,141 @@
+# M1.10 regression cases: every known limit and failing case recorded for
+# M1.4, M1.7 and M1.8 (IMPLEMENTATION_PLAN.md closure notes, and for M1.4 the
+# "already complete" wording seen in evals/reports/m1.4_cli_check_2026-11-16*.md
+# and noted on L05/L06 of m1_8_language_turns.yaml).
+# Committed BEFORE evals/run_eval.py first runs. Never edited to improve a
+# score; a better version is a new file, logged.
+#
+# How it runs (evals/run_eval.py): each case runs ALONE, as a new conversation,
+# through the real graph and the real LLM gateway, on MOCK tools only: the
+# named calendar below, the weather under mock_weather, and the fixed mock
+# tasks (1 "Buy milk", 2 "Pay electricity bill"). "now" is fixed below.
+#
+# Every case is known_failing: it is reported apart from other turns and is
+# not a new failure when it fails. A known_failing case that passes is
+# reported as "fixed". `from` is the task the case came from. `same_as` lists
+# the original turns (file stem:id) that this case repeats; while they fail,
+# they are counted as known failing too.
+#
+# Checks (scored by evals/eval_scoring.py):
+#   expect: plan, calls, refused, executed_none, no_writes  - as in M1.7
+#           (evals/m1_7_scoring.py; times compared as moments in time).
+#   forbid_tools:  these tools must never be attempted.
+#   no_refused:    true -> no attempted call came back with an error of any kind
+#                  (guard, bad arguments, approval). Use only where nothing
+#                  needs approval.
+#   calc_numbers:  the FIRST attempted calculate call succeeded and the numbers
+#                  in its expression are exactly these (as a set).
+#   reply_forbid, reply_must_mention, reply_times_required  - as in M1.8
+#           (evals/m1_8_scoring.py), plus the M1.8 reply rules on every turn.
+
+version: 1
+now: "2026-11-16T09:00:00+05:30"   # Monday, as in M1.7 and M1.8
+
+calendars:
+  m1_7:   # exactly the calendar of m1_7_calendar_turns.yaml
+    - {id: mock-evt-team,  title: "Team meeting",    start: "2026-11-16T15:00:00+05:30", end: "2026-11-16T16:00:00+05:30"}
+    - {id: mock-evt-lunch, title: "Lunch with Neha", start: "2026-11-19T13:00:00+05:30", end: "2026-11-19T14:00:00+05:30"}
+    - {id: mock-evt-gym,   title: "Gym",             start: "2026-11-21T08:00:00+05:30", end: "2026-11-21T09:00:00+05:30"}
+    - {id: mock-evt-call,  title: "Call",            start: "2026-11-21T10:00:00+05:30", end: "2026-11-21T10:30:00+05:30"}
+  m1_8:   # exactly the calendar of m1_8_language_turns.yaml
+    - {id: mock-evt-team,   title: "Team meeting",    start: "2026-11-16T15:00:00+05:30", end: "2026-11-16T16:00:00+05:30"}
+    - {id: mock-evt-review, title: "Review call",     start: "2026-11-16T17:00:00+05:30", end: "2026-11-16T18:00:00+05:30"}
+    - {id: mock-evt-lunch,  title: "Lunch with Neha", start: "2026-11-19T13:00:00+05:30", end: "2026-11-19T14:00:00+05:30"}
+    - {id: mock-evt-gym,    title: "Gym",             start: "2026-11-21T08:00:00+05:30", end: "2026-11-21T09:00:00+05:30"}
+    - {id: mock-evt-call,   title: "Call",            start: "2026-11-21T10:00:00+05:30", end: "2026-11-21T10:30:00+05:30"}
+
+mock_weather:   # as in m1_8_language_turns.yaml
+  - {date: "2026-11-16", day: "today",    rain_chance_pct: 10, rain_mm: 0.0}
+  - {date: "2026-11-17", day: "tomorrow", rain_chance_pct: 70, rain_mm: 6.2}
+  - {date: "2026-11-21", day: "Saturday", rain_chance_pct: 5,  rain_mm: 0.0}
+
+turns:
+  - id: K01   # M1.4: the reply said "already complete" right after completing the task
+    from: M1.4
+    known_failing: true
+    lang: en
+    calendar: m1_8
+    text: "complete my milk task"
+    reply_forbid: ["already", "pehle se", "pehle hi"]
+    expect: {plan: [productivity], calls: [{tool: complete_task}]}
+
+  - id: K02   # M1.7 t05: move_event first tried with an invented id (refused by the guard)
+    from: M1.7
+    known_failing: true
+    same_as: ["m1_7_calendar_turns:t05"]
+    lang: hinglish
+    calendar: m1_7   # the M1.8 calendar has a 5 pm event, which would clash
+    text: "3 baje wali meeting 5 baje kar do"
+    no_refused: true
+    expect:
+      plan: [calendar]
+      calls:
+        - {tool: get_events}
+        - {tool: move_event, event_id: mock-evt-team, start: "2026-11-16T17:00:00+05:30", end: "2026-11-16T18:00:00+05:30"}
+
+  - id: K03   # M1.7 t07: find_free_slots called instead of get_events
+    from: M1.7
+    known_failing: true
+    same_as: ["m1_7_calendar_turns:t07"]
+    lang: hinglish
+    calendar: m1_8
+    text: "Saturday ko kya kya hai?"
+    forbid_tools: [find_free_slots]
+    expect:
+      plan: [calendar]
+      no_writes: true
+      calls:
+        - {tool: get_events, start: "2026-11-21T00:00:00+05:30", end: "2026-11-22T00:00:00+05:30"}
+
+  - id: K04   # M1.7 t10 and M1.8 I02 (section 4.5): create_event not attempted, one cancel missing, reply left out events
+    from: M1.7, M1.8
+    known_failing: true
+    same_as: ["m1_7_calendar_turns:t10", "m1_8_language_turns:I02"]
+    lang: hinglish
+    calendar: m1_8
+    text: "Agar Saturday ko baarish nahi hogi to subah 7 baje Lonavala trip plan kar do, aur Saturday subah clear kar do."
+    reply_must_mention: ["Gym", "Call"]
+    expect:
+      plan: [research, calendar]
+      calls:
+        - {tool: get_weather}
+        - {tool: create_event, start: "2026-11-21T07:00:00+05:30", end: "2026-11-21T08:00:00+05:30", title_contains: "lonavala"}
+        - {tool: cancel_event, event_id: mock-evt-gym}
+        - {tool: cancel_event, event_id: mock-evt-call}
+      refused: [cancel_event]
+      executed_none: [cancel_event]
+
+  - id: K05   # M1.8 L08: the expression was miscopied ("15% of 320 tqdm"), refused, then retried
+    from: M1.8
+    known_failing: true
+    same_as: ["m1_8_language_turns:L08"]
+    lang: en
+    calendar: m1_8
+    text: "What is 15% of 3200?"
+    calc_numbers: [15, 3200]
+    reply_must_mention: ["480"]
+    expect: {plan: [productivity], calls: [{tool: calculate}]}
+
+  - id: K06   # M1.8 L13: the reply named only 2-4 pm and left out 12-1 pm
+    from: M1.8
+    known_failing: true
+    same_as: ["m1_8_language_turns:L13"]
+    lang: hinglish
+    calendar: m1_8
+    text: "Thursday dopahar free hoon?"
+    reply_times_required: ["13:00", "14:00"]
+    expect:
+      plan: [calendar]
+      no_writes: true
+      calls:
+        - {tool: find_free_slots, start: "2026-11-19T12:00:00+05:30", end: "2026-11-19T16:00:00+05:30"}
+
+  - id: K07   # M1.8 L17: planned research instead of calendar
+    from: M1.8
+    known_failing: true
+    same_as: ["m1_8_language_turns:L17"]
+    lang: hinglish
+    calendar: m1_8
+    text: "Aaj shaam 5 baje kya hai?"
+    reply_must_mention: ["Review"]
+    expect: {plan: [calendar], no_writes: true, calls: [{tool: get_events}]}
