@@ -4,8 +4,10 @@
 # "assumed" is added when the am/pm of the time was assumed: it asks about it.
 # Version 2 (M1 exit check): held_* for an event held back by its condition and
 # needs_approval for cancels waiting for approval (leo/graph/held_reply.py).
+# Version 3 (M1 exit check, K06): free_on_day, free_at and no_free for a single
+# find_free_slots, listing every slot.
 name: replies
-version: 2
+version: 3
 en:
   create_event: "Done! Added '{title}' on {when}."
   move_event: "Done! Moved '{title}' to {when}."
@@ -20,6 +22,9 @@ en:
   held_condition: "Your request has a condition I can't check, so I haven't added anything yet. Should I add it on {day} at {clock}?"
   needs_approval: "Cancelling {events} needs your approval first; nothing was cancelled yet."
   and: "and"
+  free_on_day: "You're free on {day}: {slots}."
+  free_at: "You're free at these times: {slots}."
+  no_free: "You have no free time in {span}."
 hinglish:
   create_event: "Ho gaya! '{title}' {when} calendar mein daal diya."
   move_event: "Ho gaya! '{title}' ko {when} pe shift kar diya."
@@ -34,3 +39,6 @@ hinglish:
   held_condition: "Aapki request mein ek shart hai jo main check nahi kar sakta, isliye abhi kuch nahi daala. {day} ko {clock} pe daal doon?"
   needs_approval: "{events} cancel karne ke liye pehle aapki approval chahiye; abhi kuch cancel nahi hua."
   and: "aur"
+  free_on_day: "{day} ko aap free ho: {slots}."
+  free_at: "Aap in times pe free ho: {slots}."
+  no_free: "{span} mein aapka koi free time nahi hai."

@@ -7,19 +7,37 @@ templates in prompts/replies.yaml, in English or Hinglish by the language tag.
 This saves the responder's LLM call and keeps the wording exact (M1.4 runs
 said "already complete" after a task was completed). When the am/pm of the
 event time was assumed ("4 baje" -> 4 pm), the reply asks about it.
-Reads, questions, refusals, Hindi (Devanagari) messages and multi-step
+M1 exit check (K06): a single find_free_slots also gets a code reply that
+lists every free slot ("12:00-1:00 pm and 2:00-4:00 pm"), or says there is none.
+Other reads, questions, refusals, Hindi (Devanagari) messages and multi-step
 requests still go to the LLM responder.
 """
 
 from datetime import datetime
 
 from leo.graph.state import LeoState
-from leo.language.say_time import say_clock, say_iso_span
+from leo.language.say_time import say_clock, say_clock_span, say_day, say_iso_span
 from leo.llm.prompts import load_prompt
 
 WRITES = {"create_event", "move_event", "add_task", "complete_task", "add_note",
           "start_timer", "calculate"}
 EVENT_WRITES = {"create_event", "move_event"}
+
+
+# The reply for a find_free_slots result: every slot, on one day or with their days.
+def free_reply(step: dict, templates: dict) -> str:
+    slots = [(datetime.fromisoformat(s["start"]), datetime.fromisoformat(s["end"]))
+             for s in step["result"]]
+    if not slots:
+        args = step.get("args", {})
+        return templates["no_free"].format(span=say_iso_span(args["start"], args["end"]))
+    one_day = len({start.date() for start, _ in slots}) == 1
+    said = [say_clock_span(a, b) if one_day else f"{say_day(a)}, {say_clock_span(a, b)}"
+            for a, b in slots]
+    listed = said[0] if len(said) == 1 else f"{', '.join(said[:-1])} {templates['and']} {said[-1]}"
+    if one_day:
+        return templates["free_on_day"].format(day=say_day(slots[0][0]), slots=listed)
+    return templates["free_at"].format(slots=listed)
 
 
 # The template values for one tool result.
@@ -52,9 +70,14 @@ def quick_reply(state: LeoState) -> str | None:
         return None
     step, outcome = found
     result = step.get("result")
+    templates = load_prompt("replies").extra(language)
+    if step["tool"] == "find_free_slots" and isinstance(result, list):
+        try:
+            return free_reply(step, templates)
+        except (KeyError, TypeError, ValueError):
+            return None
     if step["tool"] not in WRITES or not isinstance(result, dict) or "error" in result:
         return None
-    templates = load_prompt("replies").extra(language)
     try:
         text = templates[step["tool"]].format(**template_values(step["tool"], result))
         if outcome.get("assumed_ampm") and step["tool"] in EVENT_WRITES:

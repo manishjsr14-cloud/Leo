@@ -67,3 +67,42 @@ def test_responder_makes_no_llm_call_for_a_quick_reply():
     out = responder_node(state("create_event", EVENT), chat)
     assert chat.calls == []
     assert out["messages"][0].response_metadata["provider"] == "code"
+
+
+# M1 exit check (K06): a single find_free_slots gets a code reply naming every slot.
+THU_FREE = [{"start": "2026-11-19T12:00:00+05:30", "end": "2026-11-19T13:00:00+05:30"},
+            {"start": "2026-11-19T14:00:00+05:30", "end": "2026-11-19T16:00:00+05:30"}]
+
+
+def test_free_slots_reply_lists_every_slot():
+    assert quick_reply(state("find_free_slots", THU_FREE, "hinglish")) == (
+        "Thu 19 Nov ko aap free ho: 12:00-1:00 pm aur 2:00-4:00 pm.")
+    assert quick_reply(state("find_free_slots", THU_FREE)) == (
+        "You're free on Thu 19 Nov: 12:00-1:00 pm and 2:00-4:00 pm.")
+    three = [*THU_FREE, {"start": "2026-11-19T17:00:00+05:30", "end": "2026-11-19T18:00:00+05:30"}]
+    assert quick_reply(state("find_free_slots", three)).endswith(
+        "12:00-1:00 pm, 2:00-4:00 pm and 5:00-6:00 pm.")
+
+
+def test_free_slots_on_several_days_and_none():
+    days = [THU_FREE[0], {"start": "2026-11-20T09:00:00+05:30", "end": "2026-11-20T10:00:00+05:30"}]
+    assert quick_reply(state("find_free_slots", days)) == (
+        "You're free at these times: Thu 19 Nov, 12:00-1:00 pm and Fri 20 Nov, 9:00-10:00 am.")
+    empty = state("find_free_slots", [], "hinglish")
+    empty["agent_results"]["calendar"]["steps"][0]["args"] = {
+        "start": "2026-11-19T12:00:00+05:30", "end": "2026-11-19T16:00:00+05:30"}
+    assert quick_reply(empty) == "Thu 19 Nov, 12:00-4:00 pm mein aapka koi free time nahi hai."
+    assert quick_reply(state("find_free_slots", THU_FREE, "hi")) is None
+
+
+# The K06 reply passes the M1.8 reply rules the eval scores (both times, Hinglish).
+def test_free_slots_reply_passes_the_eval_reply_rules():
+    from evals.m1_8_scoring import language_ok, reply_fails
+
+    text = quick_reply(state("find_free_slots", THU_FREE, "hinglish"))
+    steps = [{"tool": "find_free_slots", "args": {"start": "2026-11-19T12:00:00+05:30",
+                                                  "end": "2026-11-19T16:00:00+05:30"},
+              "result": THU_FREE}]
+    turn = {"text": "Thursday dopahar free hoon?", "reply_times_required": ["13:00", "14:00"]}
+    assert reply_fails(text, turn, steps) == []
+    assert language_ok(text, "hinglish")[0]

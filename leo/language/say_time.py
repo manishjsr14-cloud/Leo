@@ -33,9 +33,13 @@ def say_span(start: datetime, end: datetime) -> str:
         return f"{say_day(start)} to {say_day(datetime.fromordinal(end.toordinal() - 1))}"
     if start.date() != end.date():
         return f"{say_day(start)}, {say_clock(start)} to {say_day(end)}, {say_clock(end)}"
+    return f"{say_day(start)}, {say_clock_span(start, end)}"
+
+
+# "5:00-6:00 pm" or "11:00 am-1:00 pm": two times on one day, without the day.
+def say_clock_span(start: datetime, end: datetime) -> str:
     (a, a_half), (b, b_half) = clock_parts(start), clock_parts(end)
-    times = f"{a}-{b} {b_half}" if a_half == b_half else f"{a} {a_half}-{b} {b_half}"
-    return f"{say_day(start)}, {times}"
+    return f"{a}-{b} {b_half}" if a_half == b_half else f"{a} {a_half}-{b} {b_half}"
 
 
 # say_span for two ISO strings (tool results carry times as text).
