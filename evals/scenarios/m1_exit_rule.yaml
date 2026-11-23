@@ -1,0 +1,25 @@
+# M1 exit check: the rule, decided and committed BEFORE any exit run (2026-11-23).
+# Never edited to improve a result; a changed rule is a new file, logged.
+#
+# The M1 exit check (IMPLEMENTATION_PLAN.md): the cross-agent example in
+# architecture section 4.5 (weather -> calendar) runs end to end on the mock
+# calendar on the local model. Its eval case is K04 of
+# evals/scenarios/m1_10_known_failing.yaml (same input as m1_7 t10 and m1_8 I02).
+#
+# Runs: the frozen M1.10 suite (evals/scenarios/m1_10_suite.yaml, unchanged),
+# run twice with evals/run_eval.py on the LAPTOP (GTX 1650), each compared with
+# the baseline below. Checked by evals/m1_exit_check.py.
+#
+# The rule passes when BOTH hold:
+#   1. K04 has verdict "fixed" (all its checks pass) in run1 AND in run2;
+#   2. in each run, no turn is newly failing against the baseline: no turn has
+#      verdict "fail" that did not have verdict "fail" in the baseline.
+# If it is missed: one fix round (new runs, new report files), then M1 closes
+# with known limits, as for M1.7 and M1.8.
+
+version: 1
+case: "m1_10_known_failing:K04"
+runs: 2
+machine: laptop
+baseline: evals/reports/m1.10_eval_2026-11-23_run1.json
+fix_rounds: 1
