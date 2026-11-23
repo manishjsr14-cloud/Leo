@@ -18,7 +18,7 @@ from pathlib import Path
 
 import yaml
 
-from evals.m1_5_check_helpers import chosen, tagged
+from evals.m1_5_check_helpers import tagged
 from evals.m1_7_calendar_check import git_state
 from evals.m1_8_check_helpers import (
     TimedChat,
@@ -64,7 +64,10 @@ def run_one(turn: dict, data: dict, config, now: datetime) -> dict:
     except LLMUnavailable as error:  # both models failed: report it
         reply = f"FAILED: {error!r}"
     wall = time.perf_counter() - start
-    plans = chosen(chat.calls)
+    # The plan is the agents that actually ran, in order, read from the graph
+    # run (M1 exit check runner fix): a plan made by code has no supervisor LLM
+    # reply, so reading only that reply (chosen) recorded [] for those turns.
+    plans = [[name for name, _ in runs]]
     attempted = [s for _, outcome in runs for s in outcome["steps"]]
     stops = {name: outcome["stopped"] for name, outcome in runs}
     tool_text = " ".join(str(s.get("result")) for s in attempted)
