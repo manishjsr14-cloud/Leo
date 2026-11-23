@@ -35,9 +35,10 @@ def test_the_check_refuses_before_the_calculator_runs():
 
 def test_agent_sees_the_refusal_and_tries_again():
     log = []
-    chat = FakeChat({"calculate": {"expression": "15% of 320-0"}},
-                    {"calculate": {"expression": "15% of 3200"}})
-    state = {"messages": [HumanMessage("What is 15% of 3200?")], "plan": ["x"],
+    # Not an "X% of Y" question, which code calculates itself (M1 exit check).
+    chat = FakeChat({"calculate": {"expression": "3200 * 15 / 10"}},
+                    {"calculate": {"expression": "3200 * 15 / 100"}})
+    state = {"messages": [HumanMessage("What is 3200 * 15 / 100?")], "plan": ["x"],
              "agent_results": {}}
     out = run_agent(state, chat, by_name(mock_productivity_tools(log)), 4)
     assert "error" in out["steps"][0]["result"]

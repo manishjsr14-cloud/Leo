@@ -78,6 +78,13 @@ def full_args(tools: dict[str, Tool], name: str, args: dict) -> tuple[dict, dict
         return args, {"error": str(error)}
 
 
+# One step run by code, not the model (M1 exit check): the tool runs with
+# code-filled arguments and is recorded like a model step.
+def code_step(tools: dict[str, Tool], name: str, args: dict) -> dict:
+    full, refused = full_args(tools, name, args)
+    return {"tool": name, "args": full, "result": refused or run_tool(tools, name, full)}
+
+
 # One string per call, the same for the same tool and arguments in any key order.
 def call_key(tool: str, args: dict) -> str:
     return json.dumps([tool, args], sort_keys=True)

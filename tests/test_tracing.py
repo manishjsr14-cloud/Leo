@@ -18,17 +18,18 @@ from leo.tools.registry import by_name, call_tool
 from tests.llm_fakes import FakeClient, connection_error
 from tests.tracing_fakes import FakeTracer
 
-QUESTION = "what is 18% of 2450"
-REPLY = "18% of 2450 = 441."
+# Not an "X% of Y" question: those are calculated by code since the M1 exit check.
+QUESTION = "what is 2450 * 18"
+REPLY = "2450 * 18 = 44100."
 # Planned local-model replies: supervisor, agent step 1. Since M1.8 a single
 # successful calculation ends the agent run and gets a code-written reply, so
 # there is no "done" step and no responder LLM call.
 PLAN = [
-    json.dumps({"agents": ["productivity"], "task": "calculate 18% of 2450"}),
-    json.dumps({"calculate": {"expression": "18% of 2450"}}),
+    json.dumps({"agents": ["productivity"], "task": "calculate 2450 * 18"}),
+    json.dumps({"calculate": {"expression": "2450 * 18"}}),
 ]
 # Text that must never reach a span when include_text is off.
-FORBIDDEN = [QUESTION, "18% of 2450", "(18/100)", "is 441", '"441"', "You are", "calculate 18%"]
+FORBIDDEN = [QUESTION, "2450 * 18", "is 44100", '"44100"', "You are", "calculate 2450"]
 
 
 # Run one traced request through the real graph, gateway and mock tools.
@@ -75,8 +76,8 @@ def test_without_include_text_no_text_reaches_any_span():
 def test_with_include_text_inputs_and_outputs_are_recorded():
     tracer = traced_run(include_text=True)
     tool = tracer.named("tool:calculate")["fields"]
-    assert tool["input"] == {"expression": "18% of 2450"}
-    assert tool["output"]["result"] == "441"
+    assert tool["input"] == {"expression": "2450 * 18"}
+    assert tool["output"]["result"] == "44100"
     assert tracer.named("llm:ollama")["fields"]["input"]  # LLM text is recorded
 
 

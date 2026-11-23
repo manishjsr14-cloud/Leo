@@ -15,15 +15,9 @@ the model had made them.
 
 from leo.agents.calendar_fill import Range
 from leo.agents.calendar_guard import ASK_DAY
-from leo.agents.loop import full_args, run_tool
+from leo.agents.loop import code_step
 from leo.ops import tracing
 from leo.tools.base import Tool
-
-
-# One step: run the tool with code-filled arguments and record it like the loop does.
-def code_step(tools: dict[str, Tool], name: str, args: dict) -> dict:
-    full, refused = full_args(tools, name, args)
-    return {"tool": name, "args": full, "result": refused or run_tool(tools, name, full)}
 
 
 # True when a step was refused only because it needs the user's approval.
