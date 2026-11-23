@@ -1,6 +1,6 @@
 """Tests for the code clear and the code condition check (M1 exit check, section 4.5).
 Fake LLM and mock tools only: leo/agents/calendar_clear.py, calendar_condition.py,
-leo/graph/held_reply.py."""
+leo/graph/calendar_reply.py."""
 
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -143,3 +143,47 @@ def test_rain_condition_without_a_forecast_asks():
                    FakeChat(None))
     assert log == [] and out["held"]["why"] == "no_forecast"
     assert reply("x", out, {}, "en").endswith("?")
+
+
+# Fix round: the section 4.5 reply on a dry Saturday is written by code, with the
+# forecast, the trip and its time, and the events waiting for approval by name.
+def test_section_4_5_reply_is_written_by_code_in_hinglish_and_english():
+    results = weather(5)
+    out, _ = run(SECTION_4_5, FakeChat({"create_event": {"title": "Lonavala trip"}}), results)
+    assert reply(SECTION_4_5, out, results, "hinglish") == (
+        "Sat 21 Nov ka forecast check kiya: 5% baarish ka chance hai. "
+        "'Lonavala trip' Sat 21 Nov, 7:00-8:00 am calendar mein daal diya. "
+        "'Gym' (Sat 21 Nov, 8:00-9:00 am) aur 'Call' (Sat 21 Nov, 10:00-10:30 am) cancel "
+        "karne ke liye pehle aapki approval chahiye; abhi kuch cancel nahi hua.")
+    english = ("If it won't rain on Saturday, plan a Lonavala trip at 7 am, "
+               "and clear my Saturday morning.")
+    out, _ = run(english, FakeChat({"create_event": {"title": "Lonavala trip"}}), results)
+    assert reply(english, out, results, "en") == (
+        "I checked the forecast for Sat 21 Nov: 5% chance of rain. "
+        "Added 'Lonavala trip' on Sat 21 Nov, 7:00-8:00 am. "
+        "Cancelling 'Gym' (Sat 21 Nov, 8:00-9:00 am) and 'Call' (Sat 21 Nov, 10:00-10:30 am) "
+        "needs your approval first; nothing was cancelled yet.")
+
+
+# The code reply passes the reply rules the eval scores for K04 (scorers unchanged).
+def test_section_4_5_reply_passes_the_eval_reply_rules():
+    from evals.m1_8_scoring import language_ok, reply_fails
+
+    results = weather(5)
+    out, _ = run(SECTION_4_5, FakeChat({"create_event": {"title": "Lonavala trip"}}), results)
+    text = reply(SECTION_4_5, out, results, "hinglish")
+    steps = results["research"]["steps"] + out["steps"]
+    turn = {"text": SECTION_4_5, "reply_must_mention": ["Gym", "Call"]}
+    assert reply_fails(text, turn, steps) == []
+    assert language_ok(text, "hinglish", " ".join(str(s["result"]) for s in steps))[0]
+
+
+# Rainy case: no forecast line twice, no trip; the rain and the waiting cancels are named.
+def test_rainy_reply_names_the_forecast_once_and_adds_nothing():
+    results = weather(70)
+    out, _ = run(SECTION_4_5, FakeChat(None), results)
+    text = reply(SECTION_4_5, out, results, "en")
+    assert text == ("Cancelling 'Gym' (Sat 21 Nov, 8:00-9:00 am) and 'Call' (Sat 21 Nov, "
+                    "10:00-10:30 am) needs your approval first; nothing was cancelled yet. "
+                    "The forecast for Sat 21 Nov shows 70% chance of rain, so I did not add "
+                    "the plan to your calendar.")

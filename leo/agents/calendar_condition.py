@@ -10,7 +10,7 @@ the event is added only if the condition holds. Code decides, not the model:
   - any other "agar"/"if" condition: code cannot check it, so nothing is
     added and the user is asked to confirm ("condition").
 The hold goes in the calendar outcome as "held"; the reply is written by code
-(leo/graph/held_reply.py).
+(leo/graph/calendar_reply.py).
 """
 
 from datetime import date, datetime
