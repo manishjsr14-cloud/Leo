@@ -8,8 +8,10 @@ Agent summaries (written by the LLM) and failed calls are left out. If an agent
 ran but no tool call succeeded, the code adds NO_ACTION_NOTE, so the reply
 cannot claim that something was done.
 Also written by code: a question the agent must ask (stopped "ask"), every 🔴
-call refused for lack of approval, named by event, and after a cancel or
-clear request, the events still on the calendar (M1.7 t10).
+call refused for lack of approval, named by event (several asked together),
+after a cancel or clear request the events still on the calendar (M1.7 t10),
+and an event held back by its condition (M1 exit check), whose reply is
+then written by code (leo/graph/held_reply.py).
 The reply language comes from the language tag in the state (M1.8), as the
 last line the model reads; today's date is written in by code. A
 Devanagari reply to a Roman-script message is asked for again once, in Roman
@@ -24,6 +26,8 @@ from datetime import date
 
 from langchain_core.messages import AIMessage, convert_to_openai_messages
 
+from leo.agents.calendar_condition import hold_words
+from leo.graph.held_reply import held_reply
 from leo.graph.quick_reply import quick_reply
 from leo.graph.result_words import refused_words, result_in_words, still_on_calendar
 from leo.graph.state import LeoState, latest_user_text
@@ -70,6 +74,8 @@ def fact_lines(agent_results: dict, asked_cancel: bool = False) -> list[str]:
         still = still_on_calendar(steps, asked_cancel) if agent == "calendar" else None
         if still:
             lines.append(f"- {agent}: {still}")
+        if isinstance(outcome, dict) and outcome.get("held"):
+            lines.append(f"- {agent}: {hold_words(outcome['held'])}")
         if isinstance(outcome, dict) and outcome.get("stopped") == "ask":
             lines.append(f"- {agent}: ask the user this question: {outcome.get('summary', '')}")
     return lines
@@ -113,7 +119,7 @@ def reply_message(text: str, result=None) -> AIMessage:
 # The reply: code-written for a single successful write, else from the LLM,
 # asked once more in Roman letters if it came back in Devanagari for Roman text.
 def responder_node(state: LeoState, chat: Callable, force_cloud: bool = False) -> dict:
-    text = quick_reply(state)
+    text = quick_reply(state) or held_reply(state)
     if text is not None:
         return {"messages": [reply_message(text)]}
     messages = responder_messages(state)

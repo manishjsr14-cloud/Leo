@@ -5,23 +5,39 @@ alphabetical order), so with cancel_event on offer it often began
 {"args": {"event_id": ...}} and invented an id (first M1.7 report). Code now
 offers cancel_event only when the user asked to cancel, and move_event only
 when the user asked to move (or two times were found).
+M1 exit check: only a command ("clear kar do", "clear my ...") is a clear;
+"Saturday subah khaali hai?" and "Is my Saturday morning clear?" ask about
+free time, so they never offer cancel_event.
 """
 
 from leo.language.time_parser import split_words
 
 # Words (and two-word phrases) that ask to cancel. Lowercase Roman spellings.
-CANCEL_WORDS = {"cancel", "hatao", "clear", "delete", "remove"}
+CANCEL_WORDS = {"cancel", "hatao", "delete", "remove"}
 CANCEL_PHRASES = {"hata do"}
+# Commands that clear a range (every event in it); questions are not clears.
+CLEAR_PHRASES = {"clear kar do", "clear kardo", "clear karo", "clear kar dena", "clear my",
+                 "clear out", "khaali kar do", "khali kar do", "khaali karo", "khali karo"}
 
 # Words that ask to move an event.
 MOVE_WORDS = {"move", "shift", "badal", "change"}
 
 
-# True when the text asks to cancel something.
+# True when the text holds one of these phrases as whole words.
+def has_phrase(text: str, phrases: set[str]) -> bool:
+    joined = f" {' '.join(split_words(text))} "
+    return any(f" {p} " in joined for p in phrases)
+
+
+# True when the text commands a clear ("Saturday subah clear kar do").
+def asks_to_clear(text: str) -> bool:
+    return has_phrase(text, CLEAR_PHRASES)
+
+
+# True when the text asks to cancel something (a clear is a cancel too).
 def asks_to_cancel(text: str) -> bool:
-    words = split_words(text)
-    joined = " ".join(words)
-    return bool(set(words) & CANCEL_WORDS) or any(p in joined for p in CANCEL_PHRASES)
+    return (bool(set(split_words(text)) & CANCEL_WORDS) or has_phrase(text, CANCEL_PHRASES)
+            or asks_to_clear(text))
 
 
 # True when the text asks to move something.

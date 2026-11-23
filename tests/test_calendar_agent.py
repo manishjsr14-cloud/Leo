@@ -60,7 +60,7 @@ def test_done_when_phrase_creates_the_right_event_with_code_filled_times():
 
 # No date fields anywhere in the schema the model fills in, for any calendar message.
 def test_model_schema_has_no_date_fields():
-    for text in (DONE_WHEN, "3 baje wali meeting 5 baje kar do", "Saturday subah clear kar do",
+    for text in (DONE_WHEN, "3 baje wali meeting 5 baje kar do", "Saturday ka gym cancel kar do",
                  "Thursday dopahar free hoon?", "What is on my calendar?"):
         _, tools = fresh()
         chat = FakeChat(None)  # invalid reply: stops after step 1
@@ -146,22 +146,20 @@ def test_create_with_date_but_no_time_asks_for_the_time():
         {"calendar": out})
 
 
-# Two different refused cancels in one run both reach call_tool; the responder
-# is told neither was done.
+# A clear is done by code (M1 exit check): both cancels reach call_tool and are
+# refused together; the responder is told neither was done. No LLM call.
 def test_two_different_refused_cancels_both_reach_call_tool():
     log, tools = fresh()
-    chat = FakeChat({"get_events": {"range": "window"}},
-                    {"cancel_event": {"event_id": "mock-evt-gym"}},
-                    {"cancel_event": {"event_id": "mock-evt-call"}},
-                    {"done": {"summary": "Asked."}})
+    chat = FakeChat(None)
     out = run("Saturday subah clear kar do", chat, tools)
     refused = [s["args"]["event_id"] for s in out["steps"][1:]
                if s["result"].get("needs_approval") is True]
     assert refused == ["mock-evt-gym", "mock-evt-call"] and out["stopped"] == "done"
-    assert [c.tool for c in log] == ["get_events"]
+    assert [c.tool for c in log] == ["get_events"] and chat.calls == []
     lines = fact_lines({"calendar": out})
-    assert ("- calendar: cancel event 'Call', Sat 21 Nov, 10:00-10:30 am: NOT done, it "
-            "needs the user's approval first") in lines
+    assert ("- calendar: cancel event 'Gym', Sat 21 Nov, 8:00-9:00 am and 'Call', Sat 21 Nov, "
+            "10:00-10:30 am: NOT done, asked together, they need the user's approval first"
+            ) in lines
 
 
 # Repeating the same refused cancel ends the run (it is not retried).
@@ -182,10 +180,10 @@ def test_add_message_never_offers_cancel_or_move():
         assert "cancel_event(" not in chat.calls[0]["messages"][0]["content"]
 
 
-def test_clear_message_offers_cancel_and_two_times_offer_move():
+def test_cancel_message_offers_cancel_and_two_times_offer_move():
     _, tools = fresh()
     chat = FakeChat(None)
-    run("Saturday subah clear kar do", chat, tools)
+    run("Saturday ka gym cancel kar do", chat, tools)
     assert "cancel_event" in offered(chat) and "move_event" not in offered(chat)
     chat = FakeChat(None)
     run("3 baje wali meeting 5 baje kar do", chat, tools)
@@ -221,19 +219,18 @@ def test_single_create_ends_without_done_call_and_reports_assumed_ampm():
         "assumed_ampm"] is False
 
 
-# M1.8: with "aur" (two requests), a create does not end the run: the cancels still come.
-def test_linked_requests_keep_asking_the_model():
+# M1 exit check: with "aur" (two requests), code clears first, then the model
+# only adds the event, and the run ends after that add (one LLM call).
+def test_linked_requests_clear_in_code_then_add():
     _, tools = fresh()
-    chat = FakeChat({"create_event": {"title": "Lonavala trip"}},
-                    {"get_events": {"range": "window"}},
-                    {"cancel_event": {"event_id": "mock-evt-gym"}},
-                    {"cancel_event": {"event_id": "mock-evt-call"}},
-                    {"done": {"summary": "ok"}})
+    chat = FakeChat({"create_event": {"title": "Lonavala trip"}})
     out = run("Saturday subah 7 baje Lonavala trip plan kar do, aur Saturday subah clear kar do",
               chat, tools)
-    assert [s["tool"] for s in out["steps"]] == ["create_event", "get_events",
-                                                 "cancel_event", "cancel_event"]
-    assert len(chat.calls) == 5
+    assert [s["tool"] for s in out["steps"]] == ["get_events", "cancel_event",
+                                                 "cancel_event", "create_event"]
+    prompt = chat.calls[0]["messages"][0]["content"]
+    assert len(chat.calls) == 1 and "create_event(" in prompt
+    assert "cancel_event(" not in prompt and "get_events(" not in prompt
 
 
 # M1.8: a read ends the run when nothing is to change; before a move it does not.

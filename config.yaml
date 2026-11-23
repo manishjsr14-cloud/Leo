@@ -73,6 +73,7 @@ calendar:                          # calendar agent (section 9.1); mock calendar
     evening: [16, 20]              # shaam
     night: [20, 24]                # raat (24 = midnight at the end of the day)
   waking_hours: [6, 23]            # free time for a whole day is looked for only 06:00-23:00 (M1.8)
+  rain_skip_percent: 40            # "agar baarish nahi hogi": no event above this rain chance (M1 exit check)
 
 machines:                          # check-script report headers: label <- text in the nvidia-smi GPU name
   laptop: GTX 1650                 # Dell G3, 4 GB; the target machine for all measurements

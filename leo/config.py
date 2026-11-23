@@ -128,6 +128,7 @@ class CalendarConfig(Strict):
     default_event_minutes: int = Field(ge=1)
     day_parts: dict[Literal["morning", "afternoon", "evening", "night"], tuple[int, int]]
     waking_hours: tuple[int, int]  # free time for a whole day is looked for only here
+    rain_skip_percent: int = Field(ge=0, le=100)  # "if it won't rain": no event above this
 
     # Each window must be whole hours inside the day, start before end.
     @field_validator("day_parts")

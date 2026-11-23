@@ -90,18 +90,20 @@ def listed_events(steps: list[dict]) -> dict[str, dict]:
     return events
 
 
-# One line per call refused for lack of approval, naming the event when known.
+# One line per tool for the calls refused for lack of approval, naming each
+# event when known; several calls of one tool are asked about together (M1 exit check).
 def refused_words(steps: list[dict]) -> list[str]:
-    events, lines = listed_events(steps), []
+    events, groups = listed_events(steps), {}
     for step in steps:
         result, args = step.get("result"), step.get("args", {})
         if not (isinstance(result, dict) and result.get("needs_approval") is True):
             continue
         event = events.get(args.get("event_id"))
-        what = (f"{step['tool'].replace('_', ' ')} {event_words(event)}" if event
-                else f"{step['tool']}({json.dumps(args, ensure_ascii=False)})")
-        lines.append(f"{what}: NOT done, it needs the user's approval first")
-    return lines
+        what = event_words(event) if event else json.dumps(args, ensure_ascii=False)
+        groups.setdefault(step["tool"].replace("_", " "), []).append(what)
+    return [f"{tool} {whats[0]}: NOT done, it needs the user's approval first" if len(whats) == 1
+            else f"{tool} {' and '.join(whats)}: NOT done, asked together, they need the "
+                 "user's approval first" for tool, whats in groups.items()]
 
 
 # After a cancel or clear request: the listed events not cancelled, as one line.

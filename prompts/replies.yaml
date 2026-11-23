@@ -2,8 +2,10 @@
 # (leo/graph/quick_reply.py). Chosen by the language tag: en or hinglish.
 # {when} is written by code, e.g. "Tue 17 Nov, 10:00-11:00 am".
 # "assumed" is added when the am/pm of the time was assumed: it asks about it.
+# Version 2 (M1 exit check): held_* for an event held back by its condition and
+# needs_approval for cancels waiting for approval (leo/graph/held_reply.py).
 name: replies
-version: 1
+version: 2
 en:
   create_event: "Done! Added '{title}' on {when}."
   move_event: "Done! Moved '{title}' to {when}."
@@ -13,6 +15,11 @@ en:
   start_timer: "Timer '{label}' set for {minutes} minutes."
   calculate: "{expression} = {result}."
   assumed: " Did you mean {clock}?"
+  held_rain: "The forecast for {day} shows {pct}% chance of rain, so I did not add the plan to your calendar."
+  held_no_forecast: "I couldn't get the forecast for {day}, so I did not add the plan. Should I add it anyway at {clock}?"
+  held_condition: "Your request has a condition I can't check, so I haven't added anything yet. Should I add it on {day} at {clock}?"
+  needs_approval: "Cancelling {events} needs your approval first; nothing was cancelled yet."
+  and: "and"
 hinglish:
   create_event: "Ho gaya! '{title}' {when} calendar mein daal diya."
   move_event: "Ho gaya! '{title}' ko {when} pe shift kar diya."
@@ -22,3 +29,8 @@ hinglish:
   start_timer: "'{label}' ka timer {minutes} minute ke liye laga diya."
   calculate: "{expression} ka jawab {result} hai."
   assumed: " {clock} hi chahiye tha na?"
+  held_rain: "{day} ke forecast mein {pct}% baarish ka chance hai, isliye plan calendar mein nahi daala."
+  held_no_forecast: "{day} ka forecast nahi mil paaya, isliye plan nahi daala. Phir bhi {clock} pe daal doon?"
+  held_condition: "Aapki request mein ek shart hai jo main check nahi kar sakta, isliye abhi kuch nahi daala. {day} ko {clock} pe daal doon?"
+  needs_approval: "{events} cancel karne ke liye pehle aapki approval chahiye; abhi kuch cancel nahi hua."
+  and: "aur"
