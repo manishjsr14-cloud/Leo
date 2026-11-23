@@ -89,3 +89,29 @@ def test_calendar_examples_only_with_calendar():
     assert "Sabzi lena" not in describe_agents(["research", "calendar"])
     text = describe_agents(["research", "calendar"])
     assert '- "Mera Wednesday ka schedule batao" -> ["calendar"]' in text
+
+
+# M1 exit check (K07): "what is on my calendar then?" goes to calendar by code, no LLM call.
+def test_calendar_queries_are_planned_by_code():
+    for text in ("Aaj shaam 5 baje kya hai?", "Saturday ko kya kya hai?", "What's on Saturday?",
+                 "What do I have tomorrow at 5 pm?", "What's on my calendar on Thursday?",
+                 "Kal subah 10:30 kya hai?"):
+        chat = FakeChat({"agents": ["research"], "task": "x"})
+        state = {"messages": [HumanMessage(text)], "hops": 0, "plan": []}
+        update = supervisor_node(state, chat, ["research", "calendar"])
+        assert update["agent_queue"] == ["calendar"] and chat.calls == [], text
+
+
+# Other questions, and any question when calendar is not on offer, still go to the LLM.
+def test_other_questions_still_go_to_the_llm():
+    for text in ("Kal Pune mein mausam kya hai?", "What is 15% of 3200?", "Aaj kya date hai?",
+                 "15 ka 20% kya hai?", "What's on Netflix tonight?", "kya hai?",
+                 "Saturday subah khaali hai?"):
+        chat = FakeChat({"agents": ["research"], "task": "x"})
+        state = {"messages": [HumanMessage(text)], "hops": 0, "plan": []}
+        supervisor_node(state, chat, ["research", "calendar", "productivity"])
+        assert len(chat.calls) == 1, text
+    chat = FakeChat({"agents": ["research"], "task": "x"})
+    state = {"messages": [HumanMessage("Aaj shaam 5 baje kya hai?")], "hops": 0, "plan": []}
+    supervisor_node(state, chat, ["research", "productivity"])
+    assert len(chat.calls) == 1

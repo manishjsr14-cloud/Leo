@@ -6,6 +6,9 @@ The graph then runs those agents in order and goes to the responder; the
 supervisor is not asked again (architecture section 4.3, decision M1.5: the
 4B model kept choosing the remaining agent when asked after each agent).
 graph.max_hops still caps how many agents run.
+M1 exit check (K07): a plain "what is on my calendar then?" question
+(leo/language/query_words.py) is planned to the calendar agent by code, with
+no LLM call, whenever the calendar agent is on offer.
 """
 
 import logging
@@ -14,12 +17,14 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, create_model, field_validator
 
-from leo.graph.state import LeoState, chat_messages
+from leo.graph.state import LeoState, chat_messages, latest_user_text
+from leo.language.query_words import is_calendar_query
 from leo.llm.prompts import load_prompt
 
 log = logging.getLogger("leo.graph")
 
 MAX_PLANNED_AGENTS = 2
+CALENDAR_QUERY_TASK = "List the user's calendar events for the time in the message."
 PROMPT = load_prompt("supervisor")  # prompts/supervisor.yaml: text, agents and examples
 
 
@@ -68,6 +73,10 @@ def supervisor_node(
 ) -> dict:
     if not agents:
         return {"agent_queue": [], "hops": 0}
+    if "calendar" in agents and is_calendar_query(latest_user_text(state)):
+        log.info("supervisor: calendar query planned by code")
+        return {"agent_queue": ["calendar"], "hops": 0,
+                "plan": [*state.get("plan", []), CALENDAR_QUERY_TASK]}
     prompt = PROMPT.render(agents=describe_agents(agents))
     result = chat(chat_messages(prompt, state), plan_model(agents), force_cloud)
     if not result.valid:
