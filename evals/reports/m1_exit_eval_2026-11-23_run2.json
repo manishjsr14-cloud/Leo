@@ -1,0 +1,3584 @@
+{
+ "label": "M1 exit run2",
+ "machine": "Machine: laptop (GPU: NVIDIA GeForce GTX 1650, 4096 MiB)",
+ "commit": "e75f4fa",
+ "dirty": false,
+ "model": "leo-qwen3",
+ "sampling": "Sampling: Leo's requests set temperature 0.7 (config.yaml) and no seed. leo-qwen3 parameters reported by Ollama: temperature 0.7, top_k 20, top_p 0.8; seed: none set. Groq fallback: provider default temperature, no seed.",
+ "metrics": {
+  "rates": {
+   "routing accuracy": {
+    "all": [
+     36,
+     42
+    ],
+    "hinglish": [
+     22,
+     27
+    ],
+    "en": [
+     14,
+     15
+    ]
+   },
+   "tool-call accuracy": {
+    "all": [
+     41,
+     41
+    ],
+    "hinglish": [
+     26,
+     26
+    ],
+    "en": [
+     15,
+     15
+    ]
+   },
+   "reply checks (all)": {
+    "all": [
+     42,
+     42
+    ],
+    "hinglish": [
+     27,
+     27
+    ],
+    "en": [
+     15,
+     15
+    ]
+   },
+   "reply: language": {
+    "all": [
+     42,
+     42
+    ],
+    "hinglish": [
+     27,
+     27
+    ],
+    "en": [
+     15,
+     15
+    ]
+   },
+   "reply: clock times match tools": {
+    "all": [
+     42,
+     42
+    ],
+    "hinglish": [
+     27,
+     27
+    ],
+    "en": [
+     15,
+     15
+    ]
+   },
+   "reply: no JSON": {
+    "all": [
+     42,
+     42
+    ],
+    "hinglish": [
+     27,
+     27
+    ],
+    "en": [
+     15,
+     15
+    ]
+   },
+   "reply: no invented results": {
+    "all": [
+     42,
+     42
+    ],
+    "hinglish": [
+     27,
+     27
+    ],
+    "en": [
+     15,
+     15
+    ]
+   },
+   "turn passed (all checks)": {
+    "all": [
+     36,
+     42
+    ],
+    "hinglish": [
+     22,
+     27
+    ],
+    "en": [
+     14,
+     15
+    ]
+   }
+  },
+  "numbers": {
+   "LLM calls per turn": {
+    "all": {
+     "avg": 2.5,
+     "p50": 2,
+     "p95": 5,
+     "max": 5,
+     "n": 42,
+     "total": 105
+    },
+    "hinglish": {
+     "avg": 2.6666666666666665,
+     "p50": 2,
+     "p95": 5,
+     "max": 5,
+     "n": 27,
+     "total": 72
+    },
+    "en": {
+     "avg": 2.2,
+     "p50": 2,
+     "p95": 4,
+     "max": 4,
+     "n": 15,
+     "total": 33
+    }
+   },
+   "refused calls per turn": {
+    "all": {
+     "avg": 0.16666666666666666,
+     "p50": 0,
+     "p95": 2,
+     "max": 2,
+     "n": 42,
+     "total": 7
+    },
+    "hinglish": {
+     "avg": 0.25925925925925924,
+     "p50": 0,
+     "p95": 2,
+     "max": 2,
+     "n": 27,
+     "total": 7
+    },
+    "en": {
+     "avg": 0.0,
+     "p50": 0,
+     "p95": 0,
+     "max": 0,
+     "n": 15,
+     "total": 0
+    }
+   },
+   "fallback (Groq) calls per turn": {
+    "all": {
+     "avg": 0.0,
+     "p50": 0,
+     "p95": 0,
+     "max": 0,
+     "n": 42,
+     "total": 0
+    },
+    "hinglish": {
+     "avg": 0.0,
+     "p50": 0,
+     "p95": 0,
+     "max": 0,
+     "n": 27,
+     "total": 0
+    },
+    "en": {
+     "avg": 0.0,
+     "p50": 0,
+     "p95": 0,
+     "max": 0,
+     "n": 15,
+     "total": 0
+    }
+   },
+   "turn seconds": {
+    "all": {
+     "avg": 9.415019419132953,
+     "p50": 6.9909050995483994,
+     "p95": 22.923735699616373,
+     "max": 33.75649160053581,
+     "n": 42,
+     "total": 395.43081560358405
+    },
+    "hinglish": {
+     "avg": 10.504373451901806,
+     "p50": 7.520223800092936,
+     "p95": 23.248521899804473,
+     "max": 33.75649160053581,
+     "n": 27,
+     "total": 283.6180832013488
+    },
+    "en": {
+     "avg": 7.454182160149018,
+     "p50": 6.637313399463892,
+     "p95": 15.205706399865448,
+     "max": 15.205706399865448,
+     "n": 15,
+     "total": 111.81273240223527
+    }
+   }
+  }
+ },
+ "turns": [
+  {
+   "key": "m1_7_calendar_turns:t01",
+   "lang": "hinglish",
+   "text": "Kal subah 10 baje Rahul ke saath meeting daal do",
+   "reply": "Ho gaya! 'Meeting with Rahul' Tue 17 Nov, 10:00-11:00 am calendar mein daal diya.",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "create_event",
+     "args": {
+      "title": "Meeting with Rahul",
+      "start": "2026-11-17T10:00:00+05:30",
+      "end": "2026-11-17T11:00:00+05:30"
+     },
+     "result": {
+      "id": "mock-evt-1",
+      "start": "2026-11-17T10:00:00+05:30",
+      "end": "2026-11-17T11:00:00+05:30",
+      "title": "Meeting with Rahul"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a meeting with Rahul at 10 AM tomorrow morning\"}",
+     "prompt_tokens": 250,
+     "first_token_s": 2.985000000335276,
+     "total_s": 3.718999999575317
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"create_event\": {\"title\": \"Meeting with Rahul\"}}",
+     "prompt_tokens": 399,
+     "first_token_s": 3.328999999910593,
+     "total_s": 3.718999999575317
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 8.1012156996876,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['ho', 'gaya', 'mein', 'daal', 'diya']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_7_calendar_turns:t02",
+   "lang": "en",
+   "text": "Add a dentist appointment on Thursday at 4:30 pm",
+   "reply": "Done! Added 'Dentist Appointment' on Thu 19 Nov, 4:30-5:30 pm.",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "create_event",
+     "args": {
+      "title": "Dentist Appointment",
+      "start": "2026-11-19T16:30:00+05:30",
+      "end": "2026-11-19T17:30:00+05:30"
+     },
+     "result": {
+      "id": "mock-evt-1",
+      "start": "2026-11-19T16:30:00+05:30",
+      "end": "2026-11-19T17:30:00+05:30",
+      "title": "Dentist Appointment"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a dentist appointment on Thursday at 4:30 pm\"}",
+     "prompt_tokens": 247,
+     "first_token_s": 2.468999999575317,
+     "total_s": 3.25
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"create_event\": {\"title\": \"Dentist Appointment\"}}",
+     "prompt_tokens": 370,
+     "first_token_s": 3.343999999575317,
+     "total_s": 3.7819999996572733
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 7.055047400295734,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers outside tool data: []",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_7_calendar_turns:t03",
+   "lang": "hinglish",
+   "text": "Thursday dopahar free hoon?",
+   "reply": "Thu 19 Nov ko aap free ho: 12:00-1:00 pm aur 2:00-4:00 pm.",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "find_free_slots",
+     "args": {
+      "start": "2026-11-19T12:00:00+05:30",
+      "end": "2026-11-19T16:00:00+05:30"
+     },
+     "result": [
+      {
+       "start": "2026-11-19T12:00:00+05:30",
+       "end": "2026-11-19T13:00:00+05:30"
+      },
+      {
+       "start": "2026-11-19T14:00:00+05:30",
+       "end": "2026-11-19T16:00:00+05:30"
+      }
+     ]
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Check if Thursday afternoon is free in the user's schedule\"}",
+     "prompt_tokens": 242,
+     "first_token_s": 2.4220000002533197,
+     "total_s": 3.1400000005960464
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"find_free_slots\": {\"range\": \"window\"}}",
+     "prompt_tokens": 375,
+     "first_token_s": 3.4220000002533197,
+     "total_s": 3.7809999994933605
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.93851020000875,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['ko', 'aap', 'ho', 'aur']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_7_calendar_turns:t04",
+   "lang": "en",
+   "text": "Am I free tomorrow evening?",
+   "reply": "You're free on Tue 17 Nov: 4:00-8:00 pm.",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "find_free_slots",
+     "args": {
+      "start": "2026-11-17T16:00:00+05:30",
+      "end": "2026-11-17T20:00:00+05:30"
+     },
+     "result": [
+      {
+       "start": "2026-11-17T16:00:00+05:30",
+       "end": "2026-11-17T20:00:00+05:30"
+      }
+     ]
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Check if the user is free tomorrow evening\"}",
+     "prompt_tokens": 240,
+     "first_token_s": 2.468999999575317,
+     "total_s": 3.093999999575317
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"find_free_slots\": {\"range\": \"window\"}}",
+     "prompt_tokens": 369,
+     "first_token_s": 3.141000000759959,
+     "total_s": 3.516000000759959
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.637313399463892,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers outside tool data: []",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_7_calendar_turns:t05",
+   "lang": "hinglish",
+   "text": "3 baje wali meeting 5 baje kar do",
+   "reply": "3 baje ke baad ka meeting 5 baje tak kar diya.",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "get_events",
+     "args": {
+      "start": "2026-11-16T00:00:00+05:30",
+      "end": "2026-11-17T00:00:00+05:30"
+     },
+     "result": [
+      {
+       "id": "mock-evt-team",
+       "title": "Team meeting",
+       "start": "2026-11-16T15:00:00+05:30",
+       "end": "2026-11-16T16:00:00+05:30"
+      }
+     ]
+    },
+    {
+     "tool": "move_event",
+     "args": {
+      "event_id": "mock-evt-team",
+      "start": "2026-11-16T17:00:00+05:30",
+      "end": "2026-11-16T18:00:00+05:30"
+     },
+     "result": {
+      "id": "mock-evt-team",
+      "title": "Team meeting",
+      "start": "2026-11-16T17:00:00+05:30",
+      "end": "2026-11-16T18:00:00+05:30"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Move the 3 PM meeting to 5 PM in the calendar.\"}",
+     "prompt_tokens": 246,
+     "first_token_s": 2.5,
+     "total_s": 3.3279999997466803
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_events\": {\"range\": \"day\"}}",
+     "prompt_tokens": 399,
+     "first_token_s": 2.9059999994933605,
+     "total_s": 3.233999999240041
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"move_event\": {\"event_id\": \"mock-evt-team”, \"\n   }}",
+     "prompt_tokens": 501,
+     "first_token_s": 3.0,
+     "total_s": 3.889999999664724
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "3 baje ke baad ka meeting 5 baje tak kar diya.",
+     "prompt_tokens": 394,
+     "first_token_s": 3.078999999910593,
+     "total_s": 3.6569999996572733
+    }
+   ],
+   "llm_calls": 4,
+   "turn_s": 14.159765100106597,
+   "fallback_calls": 0,
+   "from": "M1.7",
+   "known": true,
+   "verdict": "fixed",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['baje', 'ke', 'ka', 'baje', 'tak', 'kar', 'diya']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_7_calendar_turns:t06",
+   "lang": "en",
+   "text": "Move my 3 pm meeting to 5 pm",
+   "reply": "Got it! Your meeting is now at 5:00 pm.",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "get_events",
+     "args": {
+      "start": "2026-11-16T00:00:00+05:30",
+      "end": "2026-11-17T00:00:00+05:30"
+     },
+     "result": [
+      {
+       "id": "mock-evt-team",
+       "title": "Team meeting",
+       "start": "2026-11-16T15:00:00+05:30",
+       "end": "2026-11-16T16:00:00+05:30"
+      }
+     ]
+    },
+    {
+     "tool": "move_event",
+     "args": {
+      "event_id": "mock-evt-team",
+      "start": "2026-11-16T17:00:00+05:30",
+      "end": "2026-11-16T18:00:00+05:30"
+     },
+     "result": {
+      "id": "mock-evt-team",
+      "title": "Team meeting",
+      "start": "2026-11-16T17:00:00+05:30",
+      "end": "2026-11-16T18:00:00+05:30"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Move the 3 pm meeting to 5 pm\"}",
+     "prompt_tokens": 244,
+     "first_token_s": 2.4069999996572733,
+     "total_s": 3.1099999994039536
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_events\": {\"range\": \"day\"}}",
+     "prompt_tokens": 394,
+     "first_token_s": 3.0,
+     "total_s": 3.343999999575317
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"move_event\": {\"event_id\": \"mock-evt-team”, \"\n \t} }",
+     "prompt_tokens": 496,
+     "first_token_s": 2.8909999998286366,
+     "total_s": 3.921999999321997
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Got it! Your meeting is now at 5:00 pm.",
+     "prompt_tokens": 372,
+     "first_token_s": 2.5,
+     "total_s": 3.0
+    }
+   ],
+   "llm_calls": 4,
+   "turn_s": 13.457220000214875,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers outside tool data: []",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_7_calendar_turns:t07",
+   "lang": "hinglish",
+   "text": "Saturday ko kya kya hai?",
+   "reply": "Saturday ko gym 8 baje se 9 baje tak hai aur call 10 baje se 10:30 baje tak hai.",
+   "plan": [],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "get_events",
+     "args": {
+      "start": "2026-11-21T00:00:00+05:30",
+      "end": "2026-11-22T00:00:00+05:30"
+     },
+     "result": [
+      {
+       "id": "mock-evt-gym",
+       "title": "Gym",
+       "start": "2026-11-21T08:00:00+05:30",
+       "end": "2026-11-21T09:00:00+05:30"
+      },
+      {
+       "id": "mock-evt-call",
+       "title": "Call",
+       "start": "2026-11-21T10:00:00+05:30",
+       "end": "2026-11-21T10:30:00+05:30"
+      }
+     ]
+    }
+   ],
+   "calls": [
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_events\": {\"range\": \"day\"}}",
+     "prompt_tokens": 352,
+     "first_token_s": 3.0159999998286366,
+     "total_s": 3.3599999994039536
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Saturday ko gym 8 baje se 9 baje tak hai aur call 10 baje se 10:30 baje tak hai.",
+     "prompt_tokens": 386,
+     "first_token_s": 2.9680000003427267,
+     "total_s": 4.109000000171363
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 7.520223800092936,
+   "fallback_calls": 0,
+   "from": "M1.7",
+   "known": true,
+   "verdict": "known_failing",
+   "routing_ok": false,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['ko', 'baje', 'se', 'baje', 'tak', 'hai', 'aur', 'baje', 'se', 'baje', 'tak', 'hai']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": false
+  },
+  {
+   "key": "m1_7_calendar_turns:t08",
+   "lang": "hinglish",
+   "text": "Saturday ka gym cancel kar do",
+   "reply": "Gym cancel karne ka request na kiya gaya, user ke sanad par karna padega.",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "get_events",
+     "args": {
+      "start": "2026-11-21T00:00:00+05:30",
+      "end": "2026-11-22T00:00:00+05:30"
+     },
+     "result": [
+      {
+       "id": "mock-evt-gym",
+       "title": "Gym",
+       "start": "2026-11-21T08:00:00+05:30",
+       "end": "2026-11-21T09:00:00+05:30"
+      },
+      {
+       "id": "mock-evt-call",
+       "title": "Call",
+       "start": "2026-11-21T10:00:00+05:30",
+       "end": "2026-11-21T10:30:00+05:30"
+      }
+     ]
+    },
+    {
+     "tool": "cancel_event",
+     "args": {
+      "event_id": "mock-evt-gym"
+     },
+     "result": {
+      "error": "cancel_event needs human approval",
+      "needs_approval": true
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Cancel the gym event for Saturday\"}",
+     "prompt_tokens": 240,
+     "first_token_s": 2.3590000001713634,
+     "total_s": 2.9220000002533197
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_events\": {\"range\": \"day\"}}",
+     "prompt_tokens": 360,
+     "first_token_s": 2.203000000678003,
+     "total_s": 2.625
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"cancel_event\": {\"event_id\": \"mock-evt-gym\"}}",
+     "prompt_tokens": 538,
+     "first_token_s": 3.5940000005066395,
+     "total_s": 4.125
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"done\": {\"summary\": \"The gym event on Saturday was identified and requires human approval to cancel.\"}}",
+     "prompt_tokens": 584,
+     "first_token_s": 2.610000000335276,
+     "total_s": 3.375
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Gym cancel karne ka request na kiya gaya, user ke sanad par karna padega.",
+     "prompt_tokens": 475,
+     "first_token_s": 3.296999999321997,
+     "total_s": 4.093999999575317
+    }
+   ],
+   "llm_calls": 5,
+   "turn_s": 17.185474800877273,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['ka', 'kiya', 'gaya', 'ke', 'karna']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [
+    "cancel_event (needs approval)"
+   ],
+   "passed": true
+  },
+  {
+   "key": "m1_7_calendar_turns:t09",
+   "lang": "hinglish",
+   "text": "Kal Rahul ke saath meeting",
+   "reply": "Kal kya hai? Aane wala kal ya beeta hua kal?",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "ask"
+   },
+   "steps": [],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a meeting with Rahul for yesterday\"}",
+     "prompt_tokens": 240,
+     "first_token_s": 2.421999999321997,
+     "total_s": 3.0309999994933605
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Kal kya hai? Aane wala kal ya beeta hua kal?",
+     "prompt_tokens": 374,
+     "first_token_s": 3.031000000424683,
+     "total_s": 3.6400000005960464
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.700932700186968,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['kal', 'kya', 'hai', 'wala', 'kal', 'hua', 'kal']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_7_calendar_turns:t10",
+   "lang": "hinglish",
+   "text": "Agar Saturday ko baarish nahi hogi to subah 7 baje Lonavala trip plan kar do, aur Saturday subah clear kar do.",
+   "reply": "Saturday ko baarish nahi hogi, to 7 baje Lonavala trip plan kar diya gaya hai. Gym aur Call event Saturday ko clear nahi kiya gaya, user ke saath approval chahiye.",
+   "plan": [
+    [
+     "research",
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "research": "done",
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "get_weather",
+     "args": {
+      "place": "Lonavala"
+     },
+     "result": {
+      "place": "Lonavala, Maharashtra, India",
+      "days": [
+       {
+        "date": "2026-11-21",
+        "day": "Saturday",
+        "rain_chance_pct": 5,
+        "rain_mm": 0.0
+       }
+      ],
+      "source": "Open-Meteo",
+      "source_url": "https://open-meteo.com"
+     }
+    },
+    {
+     "tool": "get_events",
+     "args": {
+      "start": "2026-11-21T06:00:00+05:30",
+      "end": "2026-11-21T12:00:00+05:30"
+     },
+     "result": [
+      {
+       "id": "mock-evt-gym",
+       "title": "Gym",
+       "start": "2026-11-21T08:00:00+05:30",
+       "end": "2026-11-21T09:00:00+05:30"
+      },
+      {
+       "id": "mock-evt-call",
+       "title": "Call",
+       "start": "2026-11-21T10:00:00+05:30",
+       "end": "2026-11-21T10:30:00+05:30"
+      }
+     ]
+    },
+    {
+     "tool": "cancel_event",
+     "args": {
+      "event_id": "mock-evt-gym"
+     },
+     "result": {
+      "error": "cancel_event needs human approval",
+      "needs_approval": true
+     }
+    },
+    {
+     "tool": "cancel_event",
+     "args": {
+      "event_id": "mock-evt-call"
+     },
+     "result": {
+      "error": "cancel_event needs human approval",
+      "needs_approval": true
+     }
+    },
+    {
+     "tool": "create_event",
+     "args": {
+      "title": "Trip to Lonavala Saturday Morning 7 AM",
+      "start": "2026-11-21T07:00:00+05:30",
+      "end": "2026-11-21T08:00:00+05:30"
+     },
+     "result": {
+      "id": "mock-evt-1",
+      "start": "2026-11-21T07:00:00+05:30",
+      "end": "2026-11-21T08:00:00+05:30",
+      "title": "Trip to Lonavala Saturday Morning 7 AM"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"research\", \"calendar\"], \"task\": \"Check if it will rain in Lonavala on Saturday and if not, plan a Saturday morning 7 AM trip and clear Saturday's schedule.\"}",
+     "prompt_tokens": 268,
+     "first_token_s": 2.5619999999180436,
+     "total_s": 4.061999999918044
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_weather\": {\"place\": \"Lonavala\"}}",
+     "prompt_tokens": 302,
+     "first_token_s": 2.218999999575317,
+     "total_s": 2.735000000335276
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"done\": {\"summary\": \"Rain chance in Lonavala on Saturday is 5%, with 0.0 mm of rain expected. This indicates no significant rainfall. Therefore, a Saturday morning 7 AM trip to Lonavala is feasible. The schedule for Saturday should be cleared to allow for a smooth and enjoyable trip. Source: Open-Meteo (https://open-meteo.com)\"}}",
+     "prompt_tokens": 404,
+     "first_token_s": 2.9380000000819564,
+     "total_s": 5.813000000081956
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"create_event\": {\"title\": \"Trip to Lonavala Saturday Morning 7 AM\"}}",
+     "prompt_tokens": 452,
+     "first_token_s": 2.8590000001713634,
+     "total_s": 3.6869999999180436
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Saturday ko baarish nahi hogi, to 7 baje Lonavala trip plan kar diya gaya hai. Gym aur Call event Saturday ko clear nahi kiya gaya, user ke saath approval chahiye.",
+     "prompt_tokens": 607,
+     "first_token_s": 4.7650000005960464,
+     "total_s": 6.561999999918044
+    }
+   ],
+   "llm_calls": 5,
+   "turn_s": 22.923735699616373,
+   "fallback_calls": 0,
+   "from": "M1.7, M1.8",
+   "known": true,
+   "verdict": "fixed",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['ko', 'nahi', 'hogi', 'baje', 'kar', 'diya', 'gaya', 'hai', 'aur', 'ko', 'nahi', 'kiya', 'gaya', 'ke', 'chahiye']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [
+    "cancel_event (needs approval)",
+    "cancel_event (needs approval)"
+   ],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:L01",
+   "lang": "hinglish",
+   "text": "Kal Pune mein baarish hogi?",
+   "reply": "No, kal Pune mein baarish nahi hogi. 70% chance of rain tomorrow (Open-Meteo).",
+   "plan": [
+    [
+     "research"
+    ]
+   ],
+   "stops": {
+    "research": "done"
+   },
+   "steps": [
+    {
+     "tool": "get_weather",
+     "args": {
+      "place": "Pune"
+     },
+     "result": {
+      "place": "Pune, Maharashtra, India",
+      "days": [
+       {
+        "date": "2026-11-16",
+        "day": "today",
+        "rain_chance_pct": 10,
+        "rain_mm": 0.0
+       },
+       {
+        "date": "2026-11-17",
+        "day": "tomorrow",
+        "rain_chance_pct": 70,
+        "rain_mm": 6.2
+       },
+       {
+        "date": "2026-11-21",
+        "day": "Saturday",
+        "rain_chance_pct": 5,
+        "rain_mm": 0.0
+       }
+      ],
+      "source": "Open-Meteo",
+      "source_url": "https://open-meteo.com"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"research\"], \"task\": \"Check weather in Pune for yesterday\"}",
+     "prompt_tokens": 243,
+     "first_token_s": 2.3909999998286366,
+     "total_s": 2.968999999575317
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_weather\": {\"place\": \"Pune\"}}",
+     "prompt_tokens": 255,
+     "first_token_s": 2.733999999240041,
+     "total_s": 3.125
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "No, kal Pune mein baarish nahi hogi. 70% chance of rain tomorrow (Open-Meteo).",
+     "prompt_tokens": 430,
+     "first_token_s": 3.4529999997466803,
+     "total_s": 4.4059999994933605
+    }
+   ],
+   "llm_calls": 3,
+   "turn_s": 10.54239649977535,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['kal', 'mein', 'nahi', 'hogi']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:L02",
+   "lang": "en",
+   "text": "Will it rain in Pune tomorrow?",
+   "reply": "Yes, it is likely to rain in Pune tomorrow, with a 70% chance (Open-Meteo).",
+   "plan": [
+    [
+     "research"
+    ]
+   ],
+   "stops": {
+    "research": "done"
+   },
+   "steps": [
+    {
+     "tool": "get_weather",
+     "args": {
+      "place": "Pune"
+     },
+     "result": {
+      "place": "Pune, Maharashtra, India",
+      "days": [
+       {
+        "date": "2026-11-16",
+        "day": "today",
+        "rain_chance_pct": 10,
+        "rain_mm": 0.0
+       },
+       {
+        "date": "2026-11-17",
+        "day": "tomorrow",
+        "rain_chance_pct": 70,
+        "rain_mm": 6.2
+       },
+       {
+        "date": "2026-11-21",
+        "day": "Saturday",
+        "rain_chance_pct": 5,
+        "rain_mm": 0.0
+       }
+      ],
+      "source": "Open-Meteo",
+      "source_url": "https://open-meteo.com"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"research\"], \"task\": \"Check the weather in Pune for tomorrow\"}",
+     "prompt_tokens": 241,
+     "first_token_s": 2.468999999575317,
+     "total_s": 3.0779999997466803
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_weather\": {\"place\": \"Pune\"}}",
+     "prompt_tokens": 254,
+     "first_token_s": 2.7180000003427267,
+     "total_s": 3.125
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Yes, it is likely to rain in Pune tomorrow, with a 70% chance (Open-Meteo).",
+     "prompt_tokens": 408,
+     "first_token_s": 2.546999999321997,
+     "total_s": 3.375
+    }
+   ],
+   "llm_calls": 3,
+   "turn_s": 9.653594800271094,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers outside tool data: []",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:L03",
+   "lang": "hinglish",
+   "text": "Doodh ko meri tasks list mein daal do",
+   "reply": "'Doodh' aapki tasks list mein daal diya.",
+   "plan": [
+    [
+     "productivity"
+    ]
+   ],
+   "stops": {
+    "productivity": "done"
+   },
+   "steps": [
+    {
+     "tool": "add_task",
+     "args": {
+      "title": "Doodh"
+     },
+     "result": {
+      "id": 3,
+      "title": "Doodh",
+      "done": false
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Add 'Doodh' to your tasks list\"}",
+     "prompt_tokens": 246,
+     "first_token_s": 2.514999999664724,
+     "total_s": 3.281000000424683
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"add_task\": {\"title\": \"Doodh\"}}",
+     "prompt_tokens": 343,
+     "first_token_s": 2.968999999575317,
+     "total_s": 3.3909999998286366
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.712292299605906,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['aapki', 'mein', 'daal', 'diya']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:L04",
+   "lang": "en",
+   "text": "Add bread to my tasks",
+   "reply": "Added 'bread' to your tasks.",
+   "plan": [
+    [
+     "productivity"
+    ]
+   ],
+   "stops": {
+    "productivity": "done"
+   },
+   "steps": [
+    {
+     "tool": "add_task",
+     "args": {
+      "title": "bread"
+     },
+     "result": {
+      "id": 3,
+      "title": "bread",
+      "done": false
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Add 'bread' to my tasks list\"}",
+     "prompt_tokens": 239,
+     "first_token_s": 2.421999999321997,
+     "total_s": 3.1099999994039536
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"add_task\": {\"title\": \"bread\"}}",
+     "prompt_tokens": 334,
+     "first_token_s": 2.9069999996572733,
+     "total_s": 3.2659999998286366
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.402374000288546,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers outside tool data: []",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:L05",
+   "lang": "hinglish",
+   "text": "Milk wala task complete kar do",
+   "reply": "'Buy milk' task complete mark kar diya.",
+   "plan": [
+    [
+     "productivity"
+    ]
+   ],
+   "stops": {
+    "productivity": "done"
+   },
+   "steps": [
+    {
+     "tool": "complete_task",
+     "args": {
+      "title": "milk"
+     },
+     "result": {
+      "id": 1,
+      "title": "Buy milk",
+      "done": true
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Mark the milk task as complete in my list.\"}",
+     "prompt_tokens": 242,
+     "first_token_s": 2.4369999999180436,
+     "total_s": 3.1869999999180436
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"complete_task\": {\"title\": \"milk\"}}",
+     "prompt_tokens": 338,
+     "first_token_s": 2.8279999997466803,
+     "total_s": 3.218999999575317
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.521003199741244,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['kar', 'diya']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:L06",
+   "lang": "en",
+   "text": "Mark the electricity bill task as done",
+   "reply": "Marked 'Pay electricity bill' as done.",
+   "plan": [
+    [
+     "productivity"
+    ]
+   ],
+   "stops": {
+    "productivity": "done"
+   },
+   "steps": [
+    {
+     "tool": "complete_task",
+     "args": {
+      "title": "electricity bill"
+     },
+     "result": {
+      "id": 2,
+      "title": "Pay electricity bill",
+      "done": true
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Mark the electricity bill task as done in the productivity list\"}",
+     "prompt_tokens": 241,
+     "first_token_s": 2.375,
+     "total_s": 3.171999999321997
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"complete_task\": {\"title\": \"electricity bill\"}}",
+     "prompt_tokens": 339,
+     "first_token_s": 2.8590000001713634,
+     "total_s": 3.281000000424683
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.471114500425756,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers outside tool data: []",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:L07",
+   "lang": "hinglish",
+   "text": "2450 ka 18 percent kitna hai?",
+   "reply": "18% of 2450 ka jawab 441 hai.",
+   "plan": [
+    [
+     "productivity"
+    ]
+   ],
+   "stops": {
+    "productivity": "done"
+   },
+   "steps": [
+    {
+     "tool": "calculate",
+     "args": {
+      "expression": "18% of 2450"
+     },
+     "result": {
+      "expression": "18% of 2450",
+      "computed": "(18/100)*2450",
+      "result": "441"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Calculate 18 percent of 2450\"}",
+     "prompt_tokens": 247,
+     "first_token_s": 2.546000000089407,
+     "total_s": 3.3279999997466803
+    }
+   ],
+   "llm_calls": 1,
+   "turn_s": 3.5380091005936265,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['ka', 'hai']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:L08",
+   "lang": "en",
+   "text": "What is 15% of 3200?",
+   "reply": "15% of 3200 = 480.",
+   "plan": [
+    [
+     "productivity"
+    ]
+   ],
+   "stops": {
+    "productivity": "done"
+   },
+   "steps": [
+    {
+     "tool": "calculate",
+     "args": {
+      "expression": "15% of 3200"
+     },
+     "result": {
+      "expression": "15% of 3200",
+      "computed": "(15/100)*3200",
+      "result": "480"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Calculate 15% of 3200\"}",
+     "prompt_tokens": 247,
+     "first_token_s": 2.468999999575317,
+     "total_s": 3.264999999664724
+    }
+   ],
+   "llm_calls": 1,
+   "turn_s": 3.2796181002631783,
+   "fallback_calls": 0,
+   "from": "M1.8",
+   "known": true,
+   "verdict": "fixed",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers outside tool data: []",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:L09",
+   "lang": "hinglish",
+   "text": "Chai ke liye 10 minute ka timer laga do",
+   "reply": "'chai' ka timer 10 minute ke liye laga diya.",
+   "plan": [
+    [
+     "productivity"
+    ]
+   ],
+   "stops": {
+    "productivity": "done"
+   },
+   "steps": [
+    {
+     "tool": "start_timer",
+     "args": {
+      "minutes": 10.0,
+      "label": "chai"
+     },
+     "result": {
+      "label": "chai",
+      "minutes": 10.0,
+      "ends_at": "2026-11-14T08:10:00+05:30"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Set a 10-minute timer for chai.\"}",
+     "prompt_tokens": 248,
+     "first_token_s": 2.4220000002533197,
+     "total_s": 3.1720000002533197
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"start_timer\": {\"minutes\": 10, \"label\": \"chai\"}}",
+     "prompt_tokens": 344,
+     "first_token_s": 2.9220000002533197,
+     "total_s": 3.531000000424683
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.734525599516928,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['ka', 'ke', 'liye', 'diya']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:L10",
+   "lang": "en",
+   "text": "Set a 5 minute timer for the eggs",
+   "reply": "Timer 'eggs' set for 5 minutes.",
+   "plan": [
+    [
+     "productivity"
+    ]
+   ],
+   "stops": {
+    "productivity": "done"
+   },
+   "steps": [
+    {
+     "tool": "start_timer",
+     "args": {
+      "minutes": 5.0,
+      "label": "eggs"
+     },
+     "result": {
+      "label": "eggs",
+      "minutes": 5.0,
+      "ends_at": "2026-11-14T08:05:00+05:30"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Set a 5-minute timer for the eggs\"}",
+     "prompt_tokens": 243,
+     "first_token_s": 2.4529999997466803,
+     "total_s": 3.1720000002533197
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"start_timer\": {\"minutes\": 5, \"label\": \"eggs\"}}",
+     "prompt_tokens": 339,
+     "first_token_s": 2.906000000424683,
+     "total_s": 3.5
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.7008190006017685,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers outside tool data: []",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:L11",
+   "lang": "hinglish",
+   "text": "Kal subah 10 baje Rahul ke saath meeting daal do",
+   "reply": "Ho gaya! 'Meeting with Rahul' Tue 17 Nov, 10:00-11:00 am calendar mein daal diya.",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "create_event",
+     "args": {
+      "title": "Meeting with Rahul",
+      "start": "2026-11-17T10:00:00+05:30",
+      "end": "2026-11-17T11:00:00+05:30"
+     },
+     "result": {
+      "id": "mock-evt-1",
+      "start": "2026-11-17T10:00:00+05:30",
+      "end": "2026-11-17T11:00:00+05:30",
+      "title": "Meeting with Rahul"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a meeting with Rahul at 10 AM tomorrow morning\"}",
+     "prompt_tokens": 250,
+     "first_token_s": 2.453000000678003,
+     "total_s": 3.25
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"create_event\": {\"title\": \"Meeting with Rahul\"}}",
+     "prompt_tokens": 399,
+     "first_token_s": 3.6569999996572733,
+     "total_s": 4.078999999910593
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 7.371554600074887,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['ho', 'gaya', 'mein', 'daal', 'diya']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:L12",
+   "lang": "en",
+   "text": "Add a dentist appointment on Thursday at 4:30 pm",
+   "reply": "Done! Added 'Dentist Appointment' on Thu 19 Nov, 4:30-5:30 pm.",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "create_event",
+     "args": {
+      "title": "Dentist Appointment",
+      "start": "2026-11-19T16:30:00+05:30",
+      "end": "2026-11-19T17:30:00+05:30"
+     },
+     "result": {
+      "id": "mock-evt-1",
+      "start": "2026-11-19T16:30:00+05:30",
+      "end": "2026-11-19T17:30:00+05:30",
+      "title": "Dentist Appointment"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a dentist appointment on Thursday at 4:30 pm\"}",
+     "prompt_tokens": 247,
+     "first_token_s": 2.483999999240041,
+     "total_s": 3.3119999999180436
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"create_event\": {\"title\": \"Dentist Appointment\"}}",
+     "prompt_tokens": 370,
+     "first_token_s": 3.421000000089407,
+     "total_s": 3.889999999664724
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 7.252512000501156,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers outside tool data: []",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:L13",
+   "lang": "hinglish",
+   "text": "Thursday dopahar free hoon?",
+   "reply": "Thu 19 Nov ko aap free ho: 12:00-1:00 pm aur 2:00-4:00 pm.",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "find_free_slots",
+     "args": {
+      "start": "2026-11-19T12:00:00+05:30",
+      "end": "2026-11-19T16:00:00+05:30"
+     },
+     "result": [
+      {
+       "start": "2026-11-19T12:00:00+05:30",
+       "end": "2026-11-19T13:00:00+05:30"
+      },
+      {
+       "start": "2026-11-19T14:00:00+05:30",
+       "end": "2026-11-19T16:00:00+05:30"
+      }
+     ]
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Check if Thursday afternoon is free in the user's schedule\"}",
+     "prompt_tokens": 242,
+     "first_token_s": 2.4059999994933605,
+     "total_s": 3.171999999321997
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"find_free_slots\": {\"range\": \"window\"}}",
+     "prompt_tokens": 375,
+     "first_token_s": 3.375,
+     "total_s": 3.7659999998286366
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.9909050995483994,
+   "fallback_calls": 0,
+   "from": "M1.8",
+   "known": true,
+   "verdict": "fixed",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['ko', 'aap', 'ho', 'aur']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:L14",
+   "lang": "en",
+   "text": "Am I free tomorrow evening?",
+   "reply": "You're free on Tue 17 Nov: 4:00-8:00 pm.",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "find_free_slots",
+     "args": {
+      "start": "2026-11-17T16:00:00+05:30",
+      "end": "2026-11-17T20:00:00+05:30"
+     },
+     "result": [
+      {
+       "start": "2026-11-17T16:00:00+05:30",
+       "end": "2026-11-17T20:00:00+05:30"
+      }
+     ]
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Check if the user is free tomorrow evening\"}",
+     "prompt_tokens": 240,
+     "first_token_s": 2.4529999997466803,
+     "total_s": 3.108999999240041
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"find_free_slots\": {\"range\": \"window\"}}",
+     "prompt_tokens": 369,
+     "first_token_s": 3.078999999910593,
+     "total_s": 3.468999999575317
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.626465800218284,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers outside tool data: []",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:L15",
+   "lang": "hinglish",
+   "text": "Saturday ko kya kya hai?",
+   "reply": "Saturday ko gym 8 baje se 9 baje tak hai aur call 10 baje se 10:30 baje tak hai.",
+   "plan": [],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "get_events",
+     "args": {
+      "start": "2026-11-21T00:00:00+05:30",
+      "end": "2026-11-22T00:00:00+05:30"
+     },
+     "result": [
+      {
+       "id": "mock-evt-gym",
+       "title": "Gym",
+       "start": "2026-11-21T08:00:00+05:30",
+       "end": "2026-11-21T09:00:00+05:30"
+      },
+      {
+       "id": "mock-evt-call",
+       "title": "Call",
+       "start": "2026-11-21T10:00:00+05:30",
+       "end": "2026-11-21T10:30:00+05:30"
+      }
+     ]
+    }
+   ],
+   "calls": [
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_events\": {\"range\": \"day\"}}",
+     "prompt_tokens": 352,
+     "first_token_s": 3.0470000002533197,
+     "total_s": 3.4069999996572733
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Saturday ko gym 8 baje se 9 baje tak hai aur call 10 baje se 10:30 baje tak hai.",
+     "prompt_tokens": 386,
+     "first_token_s": 3.0779999997466803,
+     "total_s": 4.25
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 7.694398200139403,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "fail",
+   "routing_ok": false,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['ko', 'baje', 'se', 'baje', 'tak', 'hai', 'aur', 'baje', 'se', 'baje', 'tak', 'hai']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": false
+  },
+  {
+   "key": "m1_8_language_turns:L16",
+   "lang": "en",
+   "text": "What's on my calendar on Thursday?",
+   "reply": "Lunch with Neha on Thursday 19 Nov, 1:00-2:00 pm.",
+   "plan": [],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "get_events",
+     "args": {
+      "start": "2026-11-19T00:00:00+05:30",
+      "end": "2026-11-20T00:00:00+05:30"
+     },
+     "result": [
+      {
+       "id": "mock-evt-lunch",
+       "title": "Lunch with Neha",
+       "start": "2026-11-19T13:00:00+05:30",
+       "end": "2026-11-19T14:00:00+05:30"
+      }
+     ]
+    }
+   ],
+   "calls": [
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_events\": {\"range\": \"day\"}}",
+     "prompt_tokens": 352,
+     "first_token_s": 3.016000000759959,
+     "total_s": 3.375
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Lunch with Neha on Thursday 19 Nov, 1:00-2:00 pm.",
+     "prompt_tokens": 346,
+     "first_token_s": 2.735000000335276,
+     "total_s": 3.578000000678003
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.99252840038389,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "fail",
+   "routing_ok": false,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers outside tool data: []",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": false
+  },
+  {
+   "key": "m1_8_language_turns:L17",
+   "lang": "hinglish",
+   "text": "Aaj shaam 5 baje kya hai?",
+   "reply": "Aaj shaam 5 baje hai, 5:00 pm. Calendar mein 'Review call' hai, 5:00-6:00 pm.",
+   "plan": [],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "get_events",
+     "args": {
+      "start": "2026-11-16T16:00:00+05:30",
+      "end": "2026-11-16T20:00:00+05:30"
+     },
+     "result": [
+      {
+       "id": "mock-evt-review",
+       "title": "Review call",
+       "start": "2026-11-16T17:00:00+05:30",
+       "end": "2026-11-16T18:00:00+05:30"
+      }
+     ]
+    }
+   ],
+   "calls": [
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_events\": {\"range\": \"window\"}}",
+     "prompt_tokens": 391,
+     "first_token_s": 3.389999999664724,
+     "total_s": 3.75
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Aaj shaam 5 baje hai, 5:00 pm. Calendar mein 'Review call' hai, 5:00-6:00 pm.",
+     "prompt_tokens": 367,
+     "first_token_s": 2.906000000424683,
+     "total_s": 4.188000000081956
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 7.990526500158012,
+   "fallback_calls": 0,
+   "from": "M1.8",
+   "known": true,
+   "verdict": "known_failing",
+   "routing_ok": false,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['aaj', 'baje', 'hai', 'mein', 'hai']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": false
+  },
+  {
+   "key": "m1_8_language_turns:L18",
+   "lang": "en",
+   "text": "Move my 5 pm call to 6 pm",
+   "reply": "Your 5 pm review call has been moved to 6 pm. Calendar updated.",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "get_events",
+     "args": {
+      "start": "2026-11-16T00:00:00+05:30",
+      "end": "2026-11-17T00:00:00+05:30"
+     },
+     "result": [
+      {
+       "id": "mock-evt-team",
+       "title": "Team meeting",
+       "start": "2026-11-16T15:00:00+05:30",
+       "end": "2026-11-16T16:00:00+05:30"
+      },
+      {
+       "id": "mock-evt-review",
+       "title": "Review call",
+       "start": "2026-11-16T17:00:00+05:30",
+       "end": "2026-11-16T18:00:00+05:30"
+      }
+     ]
+    },
+    {
+     "tool": "move_event",
+     "args": {
+      "event_id": "mock-evt-review",
+      "start": "2026-11-16T18:00:00+05:30",
+      "end": "2026-11-16T19:00:00+05:30"
+     },
+     "result": {
+      "id": "mock-evt-review",
+      "title": "Review call",
+      "start": "2026-11-16T18:00:00+05:30",
+      "end": "2026-11-16T19:00:00+05:30"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Move the 5 pm call to 6 pm\"}",
+     "prompt_tokens": 244,
+     "first_token_s": 2.4849999994039536,
+     "total_s": 3.1880000000819564
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_events\": {\"range\": \"day\"}}",
+     "prompt_tokens": 394,
+     "first_token_s": 3.453999999910593,
+     "total_s": 3.8130000000819564
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"move_event\": {\"event_id\": \"mock-evt-team”, \"\n \t} }",
+     "prompt_tokens": 572,
+     "first_token_s": 3.514999999664724,
+     "total_s": 4.531000000424683
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Your 5 pm review call has been moved to 6 pm. Calendar updated.",
+     "prompt_tokens": 394,
+     "first_token_s": 3.0319999996572733,
+     "total_s": 3.625
+    }
+   ],
+   "llm_calls": 4,
+   "turn_s": 15.205706399865448,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers outside tool data: []",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:L19",
+   "lang": "hinglish",
+   "text": "Ek note likh lo: gas cylinder book karna hai",
+   "reply": "Note save kar diya.",
+   "plan": [
+    [
+     "productivity"
+    ]
+   ],
+   "stops": {
+    "productivity": "done"
+   },
+   "steps": [
+    {
+     "tool": "add_note",
+     "args": {
+      "text": "gas cylinder book karna hai"
+     },
+     "result": {
+      "id": 2,
+      "text": "gas cylinder book karna hai"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Note: Gas cylinder book karna hai\"}",
+     "prompt_tokens": 246,
+     "first_token_s": 2.4529999997466803,
+     "total_s": 3.125
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"add_note\": {\"text\": \"gas cylinder book karna hai\"}}",
+     "prompt_tokens": 341,
+     "first_token_s": 3.031000000424683,
+     "total_s": 3.5470000002533197
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.694659600034356,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['kar', 'diya']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:L20",
+   "lang": "hinglish",
+   "text": "Hi Leo, kaise ho?",
+   "reply": "Hi! Baat karo, kaise ho? 😊",
+   "plan": [
+    []
+   ],
+   "stops": {},
+   "steps": [],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [], \"task\": \"Acknowledge the greeting with a friendly response\"}",
+     "prompt_tokens": 241,
+     "first_token_s": 2.4690000005066395,
+     "total_s": 3.0470000002533197
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Hi! Baat karo, kaise ho? 😊",
+     "prompt_tokens": 325,
+     "first_token_s": 2.7970000002533197,
+     "total_s": 3.25
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.332566799595952,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": null,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['karo', 'ho']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:I01",
+   "lang": "hinglish",
+   "text": "Saturday ko free time kab hai?",
+   "reply": "Sat 21 Nov ko aap free ho: 6:00-8:00 am, 9:00-10:00 am aur 10:30 am-11:00 pm.",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "find_free_slots",
+     "args": {
+      "start": "2026-11-21T06:00:00+05:30",
+      "end": "2026-11-21T23:00:00+05:30"
+     },
+     "result": [
+      {
+       "start": "2026-11-21T06:00:00+05:30",
+       "end": "2026-11-21T08:00:00+05:30"
+      },
+      {
+       "start": "2026-11-21T09:00:00+05:30",
+       "end": "2026-11-21T10:00:00+05:30"
+      },
+      {
+       "start": "2026-11-21T10:30:00+05:30",
+       "end": "2026-11-21T23:00:00+05:30"
+      }
+     ]
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Show Saturday's free time in the user's calendar.\"}",
+     "prompt_tokens": 241,
+     "first_token_s": 2.468999999575317,
+     "total_s": 3.218999999575317
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"find_free_slots\": {\"range\": \"day\"}}",
+     "prompt_tokens": 349,
+     "first_token_s": 3.1400000005960464,
+     "total_s": 3.5150000005960464
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.768031400628388,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['ko', 'aap', 'ho', 'aur']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:I02",
+   "lang": "hinglish",
+   "text": "Agar Saturday ko baarish nahi hogi to subah 7 baje Lonavala trip plan kar do, aur Saturday subah clear kar do.",
+   "reply": "Agar Saturday ko baarish nahi hogi to 7 baje Lonavala trip plan kar do, lekin gym aur call event ko clear karne ka koi plan nahi hai, kyunki woh karna padega user ke saath approval ke liye.",
+   "plan": [
+    [
+     "research",
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "research": "done",
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "get_weather",
+     "args": {
+      "place": "Lonavala"
+     },
+     "result": {
+      "place": "Lonavala, Maharashtra, India",
+      "days": [
+       {
+        "date": "2026-11-16",
+        "day": "today",
+        "rain_chance_pct": 10,
+        "rain_mm": 0.0
+       },
+       {
+        "date": "2026-11-17",
+        "day": "tomorrow",
+        "rain_chance_pct": 70,
+        "rain_mm": 6.2
+       },
+       {
+        "date": "2026-11-21",
+        "day": "Saturday",
+        "rain_chance_pct": 5,
+        "rain_mm": 0.0
+       }
+      ],
+      "source": "Open-Meteo",
+      "source_url": "https://open-meteo.com"
+     }
+    },
+    {
+     "tool": "get_events",
+     "args": {
+      "start": "2026-11-21T06:00:00+05:30",
+      "end": "2026-11-21T12:00:00+05:30"
+     },
+     "result": [
+      {
+       "id": "mock-evt-gym",
+       "title": "Gym",
+       "start": "2026-11-21T08:00:00+05:30",
+       "end": "2026-11-21T09:00:00+05:30"
+      },
+      {
+       "id": "mock-evt-call",
+       "title": "Call",
+       "start": "2026-11-21T10:00:00+05:30",
+       "end": "2026-11-21T10:30:00+05:30"
+      }
+     ]
+    },
+    {
+     "tool": "cancel_event",
+     "args": {
+      "event_id": "mock-evt-gym"
+     },
+     "result": {
+      "error": "cancel_event needs human approval",
+      "needs_approval": true
+     }
+    },
+    {
+     "tool": "cancel_event",
+     "args": {
+      "event_id": "mock-evt-call"
+     },
+     "result": {
+      "error": "cancel_event needs human approval",
+      "needs_approval": true
+     }
+    },
+    {
+     "tool": "create_event",
+     "args": {
+      "title": "Lonavala Trip Plan - Saturday 7 AM",
+      "start": "2026-11-21T07:00:00+05:30",
+      "end": "2026-11-21T08:00:00+05:30"
+     },
+     "result": {
+      "id": "mock-evt-1",
+      "start": "2026-11-21T07:00:00+05:30",
+      "end": "2026-11-21T08:00:00+05:30",
+      "title": "Lonavala Trip Plan - Saturday 7 AM"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"research\", \"calendar\"], \"task\": \"Check weather for Saturday and if no rain, create a Saturday morning 7 AM trip plan to Lonavala and clear all Saturday morning events.\"}",
+     "prompt_tokens": 268,
+     "first_token_s": 2.6409999998286366,
+     "total_s": 4.125
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_weather\": {\"place\": \"Lonavala\"}}",
+     "prompt_tokens": 302,
+     "first_token_s": 3.014999999664724,
+     "total_s": 3.4369999999180436
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"done\": {\"summary\": \"The weather in Lonavala on Saturday (2026-11-21) has a 5% chance of rain and 0.0 mm of expected rainfall, indicating no rain is likely. Therefore, a Saturday morning 7 AM trip plan to Lonavala can be created, and all Saturday morning events can be cleared. The trip plan is as follows:\\n\\n- 6:30 AM: Wake up and prepare for the trip.\\n- 7:00 AM: Depart from your location with a packed bag, including water, snacks, and essentials.\\n- 7:30 AM: Travel to Lonavala via car or taxi (approx. 1.5 to 2 hours depending on traffic).\\n- 8:30 AM: Arrive in Lonavala and check into your accommodation or meet up with a friend.\\n- 9:00 AM: Explore the scenic viewpoints like Panchganga Temple or Khandala Hills.\\n- 11:00 AM: Enjoy a local breakfast at a nearby café.\\n- 12:30 PM: Return to your accommodation or head back to your home.\\n\\nAll Saturday morning events are cleared to ensure a smooth and enjoyable trip to Lonavala. Source: Open-Meteo (https://open-meteo.com)\"}}",
+     "prompt_tokens": 483,
+     "first_token_s": 3.5159999998286366,
+     "total_s": 13.82799999974668
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"create_event\": {\"title\": \"Lonavala Trip Plan - Saturday 7 AM\"}}",
+     "prompt_tokens": 506,
+     "first_token_s": 4.0309999994933605,
+     "total_s": 4.811999999918044
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Agar Saturday ko baarish nahi hogi to 7 baje Lonavala trip plan kar do, lekin gym aur call event ko clear karne ka koi plan nahi hai, kyunki woh karna padega user ke saath approval ke liye.",
+     "prompt_tokens": 661,
+     "first_token_s": 5.375,
+     "total_s": 7.515999999828637
+    }
+   ],
+   "llm_calls": 5,
+   "turn_s": 33.75649160053581,
+   "fallback_calls": 0,
+   "from": "M1.7, M1.8",
+   "known": true,
+   "verdict": "fixed",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['agar', 'ko', 'nahi', 'hogi', 'baje', 'kar', 'lekin', 'aur', 'ko', 'ka', 'koi', 'nahi', 'hai', 'woh', 'karna', 'ke', 'ke', 'liye']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [
+    "cancel_event (needs approval)",
+    "cancel_event (needs approval)"
+   ],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:I03",
+   "lang": "hinglish",
+   "text": "3 baje wali meeting 4 baje kar do",
+   "reply": "3 baje wali meeting 4 baje kar di gayi. Calendar mein update kiya gaya.",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "get_events",
+     "args": {
+      "start": "2026-11-16T00:00:00+05:30",
+      "end": "2026-11-17T00:00:00+05:30"
+     },
+     "result": [
+      {
+       "id": "mock-evt-team",
+       "title": "Team meeting",
+       "start": "2026-11-16T15:00:00+05:30",
+       "end": "2026-11-16T16:00:00+05:30"
+      },
+      {
+       "id": "mock-evt-review",
+       "title": "Review call",
+       "start": "2026-11-16T17:00:00+05:30",
+       "end": "2026-11-16T18:00:00+05:30"
+      }
+     ]
+    },
+    {
+     "tool": "move_event",
+     "args": {
+      "event_id": "mock-evt-team",
+      "start": "2026-11-16T16:00:00+05:30",
+      "end": "2026-11-16T17:00:00+05:30"
+     },
+     "result": {
+      "id": "mock-evt-team",
+      "title": "Team meeting",
+      "start": "2026-11-16T16:00:00+05:30",
+      "end": "2026-11-16T17:00:00+05:30"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Move the 3 PM meeting to 4 PM in the calendar.\"}",
+     "prompt_tokens": 246,
+     "first_token_s": 2.531000000424683,
+     "total_s": 3.375
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_events\": {\"range\": \"day\"}}",
+     "prompt_tokens": 399,
+     "first_token_s": 3.4220000002533197,
+     "total_s": 3.766000000759959
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"move_event\": {\"event_id\": \"mock-evt-team”, \"} }",
+     "prompt_tokens": 577,
+     "first_token_s": 3.6409999998286366,
+     "total_s": 4.406999999657273
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "3 baje wali meeting 4 baje kar di gayi. Calendar mein update kiya gaya.",
+     "prompt_tokens": 416,
+     "first_token_s": 3.2340000001713634,
+     "total_s": 4.031000000424683
+    }
+   ],
+   "llm_calls": 4,
+   "turn_s": 15.62182530015707,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['baje', 'wali', 'baje', 'kar', 'di', 'gayi', 'mein', 'kiya', 'gaya']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:I04",
+   "lang": "hinglish",
+   "text": "Kal 4 baje dentist appointment daal do",
+   "reply": "Ho gaya! 'Dentist Appointment' Tue 17 Nov, 4:00-5:00 pm calendar mein daal diya. 4:00 pm hi chahiye tha na?",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "create_event",
+     "args": {
+      "title": "Dentist Appointment",
+      "start": "2026-11-17T16:00:00+05:30",
+      "end": "2026-11-17T17:00:00+05:30"
+     },
+     "result": {
+      "id": "mock-evt-1",
+      "start": "2026-11-17T16:00:00+05:30",
+      "end": "2026-11-17T17:00:00+05:30",
+      "title": "Dentist Appointment"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a dentist appointment at 4 PM tomorrow\"}",
+     "prompt_tokens": 244,
+     "first_token_s": 2.4369999999180436,
+     "total_s": 3.1090000001713634
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"create_event\": {\"title\": \"Dentist Appointment\"}}",
+     "prompt_tokens": 363,
+     "first_token_s": 3.110000000335276,
+     "total_s": 3.5940000005066395
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.75335490051657,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['ho', 'gaya', 'mein', 'daal', 'diya', 'chahiye']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_8_language_turns:I05",
+   "lang": "en",
+   "text": "Add a haircut tomorrow at 4",
+   "reply": "Done! Added 'Haircut' on Tue 17 Nov, 4:00-5:00 pm. Did you mean 4:00 pm?",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "create_event",
+     "args": {
+      "title": "Haircut",
+      "start": "2026-11-17T16:00:00+05:30",
+      "end": "2026-11-17T17:00:00+05:30"
+     },
+     "result": {
+      "id": "mock-evt-1",
+      "start": "2026-11-17T16:00:00+05:30",
+      "end": "2026-11-17T17:00:00+05:30",
+      "title": "Haircut"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a haircut at 4 PM tomorrow\"}",
+     "prompt_tokens": 241,
+     "first_token_s": 2.360000000335276,
+     "total_s": 2.985000000335276
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"create_event\": {\"title\": \"Haircut\"}}",
+     "prompt_tokens": 359,
+     "first_token_s": 2.906000000424683,
+     "total_s": 3.328000000678003
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.337722400203347,
+   "fallback_calls": 0,
+   "from": null,
+   "known": false,
+   "verdict": "pass",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers outside tool data: []",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_10_known_failing:K01",
+   "lang": "en",
+   "text": "complete my milk task",
+   "reply": "Marked 'Buy milk' as done.",
+   "plan": [
+    [
+     "productivity"
+    ]
+   ],
+   "stops": {
+    "productivity": "done"
+   },
+   "steps": [
+    {
+     "tool": "complete_task",
+     "args": {
+      "title": "milk"
+     },
+     "result": {
+      "id": 1,
+      "title": "Buy milk",
+      "done": true
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Complete the milk task in your to-do list\"}",
+     "prompt_tokens": 238,
+     "first_token_s": 2.4220000002533197,
+     "total_s": 3.125
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"complete_task\": {\"title\": \"milk\"}}",
+     "prompt_tokens": 334,
+     "first_token_s": 2.875,
+     "total_s": 3.25
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.4030062993988395,
+   "fallback_calls": 0,
+   "from": "M1.4",
+   "known": true,
+   "verdict": "fixed",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers outside tool data: []",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_10_known_failing:K02",
+   "lang": "hinglish",
+   "text": "3 baje wali meeting 5 baje kar do",
+   "reply": "3 baje ke meeting ko 5 baje par shift kiya gaya hai.",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "get_events",
+     "args": {
+      "start": "2026-11-16T00:00:00+05:30",
+      "end": "2026-11-17T00:00:00+05:30"
+     },
+     "result": [
+      {
+       "id": "mock-evt-team",
+       "title": "Team meeting",
+       "start": "2026-11-16T15:00:00+05:30",
+       "end": "2026-11-16T16:00:00+05:30"
+      }
+     ]
+    },
+    {
+     "tool": "move_event",
+     "args": {
+      "event_id": "mock-evt-team",
+      "start": "2026-11-16T17:00:00+05:30",
+      "end": "2026-11-16T18:00:00+05:30"
+     },
+     "result": {
+      "id": "mock-evt-team",
+      "title": "Team meeting",
+      "start": "2026-11-16T17:00:00+05:30",
+      "end": "2026-11-16T18:00:00+05:30"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Move the 3 PM meeting to 5 PM.\"}",
+     "prompt_tokens": 246,
+     "first_token_s": 2.5,
+     "total_s": 3.235000000335276
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_events\": {\"range\": \"day\"}}",
+     "prompt_tokens": 396,
+     "first_token_s": 3.375,
+     "total_s": 3.7190000005066395
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"move_event\": {\"event_id\": \"mock-evt-team”, \"\n \t} }",
+     "prompt_tokens": 498,
+     "first_token_s": 2.9840000001713634,
+     "total_s": 3.8430000003427267
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "3 baje ke meeting ko 5 baje par shift kiya gaya hai.",
+     "prompt_tokens": 394,
+     "first_token_s": 3.093999999575317,
+     "total_s": 3.7029999997466803
+    }
+   ],
+   "llm_calls": 4,
+   "turn_s": 14.558097099885345,
+   "fallback_calls": 0,
+   "from": "M1.7",
+   "known": true,
+   "verdict": "fixed",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['baje', 'ke', 'ko', 'baje', 'kiya', 'gaya', 'hai']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_10_known_failing:K03",
+   "lang": "hinglish",
+   "text": "Saturday ko kya kya hai?",
+   "reply": "Saturday ko gym 8 baje se 9 baje tak hai aur call 10 baje se 10:30 baje tak hai.",
+   "plan": [],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "get_events",
+     "args": {
+      "start": "2026-11-21T00:00:00+05:30",
+      "end": "2026-11-22T00:00:00+05:30"
+     },
+     "result": [
+      {
+       "id": "mock-evt-gym",
+       "title": "Gym",
+       "start": "2026-11-21T08:00:00+05:30",
+       "end": "2026-11-21T09:00:00+05:30"
+      },
+      {
+       "id": "mock-evt-call",
+       "title": "Call",
+       "start": "2026-11-21T10:00:00+05:30",
+       "end": "2026-11-21T10:30:00+05:30"
+      }
+     ]
+    }
+   ],
+   "calls": [
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_events\": {\"range\": \"day\"}}",
+     "prompt_tokens": 352,
+     "first_token_s": 3.1090000001713634,
+     "total_s": 3.453000000678003
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Saturday ko gym 8 baje se 9 baje tak hai aur call 10 baje se 10:30 baje tak hai.",
+     "prompt_tokens": 386,
+     "first_token_s": 3.0159999998286366,
+     "total_s": 4.140999999828637
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 7.620954100042582,
+   "fallback_calls": 0,
+   "from": "M1.7",
+   "known": true,
+   "verdict": "known_failing",
+   "routing_ok": false,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['ko', 'baje', 'se', 'baje', 'tak', 'hai', 'aur', 'baje', 'se', 'baje', 'tak', 'hai']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": false
+  },
+  {
+   "key": "m1_10_known_failing:K04",
+   "lang": "hinglish",
+   "text": "Agar Saturday ko baarish nahi hogi to subah 7 baje Lonavala trip plan kar do, aur Saturday subah clear kar do.",
+   "reply": "Agar Saturday ko baarish nahi hogi to, 7 baje Lonavala trip plan kar do. Lekin gym aur call events ko clear karne ka kamaal nahi kiya gaya, user ke saman mein hai.",
+   "plan": [
+    [
+     "research",
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "research": "done",
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "get_weather",
+     "args": {
+      "place": "Lonavala"
+     },
+     "result": {
+      "place": "Lonavala, Maharashtra, India",
+      "days": [
+       {
+        "date": "2026-11-16",
+        "day": "today",
+        "rain_chance_pct": 10,
+        "rain_mm": 0.0
+       },
+       {
+        "date": "2026-11-17",
+        "day": "tomorrow",
+        "rain_chance_pct": 70,
+        "rain_mm": 6.2
+       },
+       {
+        "date": "2026-11-21",
+        "day": "Saturday",
+        "rain_chance_pct": 5,
+        "rain_mm": 0.0
+       }
+      ],
+      "source": "Open-Meteo",
+      "source_url": "https://open-meteo.com"
+     }
+    },
+    {
+     "tool": "get_events",
+     "args": {
+      "start": "2026-11-21T06:00:00+05:30",
+      "end": "2026-11-21T12:00:00+05:30"
+     },
+     "result": [
+      {
+       "id": "mock-evt-gym",
+       "title": "Gym",
+       "start": "2026-11-21T08:00:00+05:30",
+       "end": "2026-11-21T09:00:00+05:30"
+      },
+      {
+       "id": "mock-evt-call",
+       "title": "Call",
+       "start": "2026-11-21T10:00:00+05:30",
+       "end": "2026-11-21T10:30:00+05:30"
+      }
+     ]
+    },
+    {
+     "tool": "cancel_event",
+     "args": {
+      "event_id": "mock-evt-gym"
+     },
+     "result": {
+      "error": "cancel_event needs human approval",
+      "needs_approval": true
+     }
+    },
+    {
+     "tool": "cancel_event",
+     "args": {
+      "event_id": "mock-evt-call"
+     },
+     "result": {
+      "error": "cancel_event needs human approval",
+      "needs_approval": true
+     }
+    },
+    {
+     "tool": "create_event",
+     "args": {
+      "title": "Lonavala Trip - Saturday Morning 7 AM",
+      "start": "2026-11-21T07:00:00+05:30",
+      "end": "2026-11-21T08:00:00+05:30"
+     },
+     "result": {
+      "id": "mock-evt-1",
+      "start": "2026-11-21T07:00:00+05:30",
+      "end": "2026-11-21T08:00:00+05:30",
+      "title": "Lonavala Trip - Saturday Morning 7 AM"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"research\", \"calendar\"], \"task\": \"Check weather for Saturday and if no rain, create a Saturday morning 7 AM trip plan to Lonavala and clear all Saturday morning events.\"}",
+     "prompt_tokens": 268,
+     "first_token_s": 2.578000000678003,
+     "total_s": 4.031000000424683
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_weather\": {\"place\": \"Lonavala\"}}",
+     "prompt_tokens": 302,
+     "first_token_s": 2.2029999997466803,
+     "total_s": 2.656000000424683
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"done\": {\"summary\": \"Weather in Lonavala on Saturday (2026-11-21) has a 5% chance of rain and 0.0 mm of rainfall, indicating no rain is expected. Therefore, a Saturday morning 7 AM trip plan to Lonavala can be created, and all Saturday morning events can be cleared. Source: Open-Meteo (https://open-meteo.com)\"}}",
+     "prompt_tokens": 483,
+     "first_token_s": 3.5,
+     "total_s": 6.70299999974668
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"create_event\": {\"title\": \"Lonavala Trip - Saturday Morning 7 AM\"}}",
+     "prompt_tokens": 506,
+     "first_token_s": 2.218999999575317,
+     "total_s": 3.0779999997466803
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Agar Saturday ko baarish nahi hogi to, 7 baje Lonavala trip plan kar do. Lekin gym aur call events ko clear karne ka kamaal nahi kiya gaya, user ke saman mein hai.",
+     "prompt_tokens": 661,
+     "first_token_s": 4.843000000342727,
+     "total_s": 6.734000000171363
+    }
+   ],
+   "llm_calls": 5,
+   "turn_s": 23.248521899804473,
+   "fallback_calls": 0,
+   "from": "M1.7, M1.8",
+   "known": true,
+   "verdict": "fixed",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['agar', 'ko', 'nahi', 'hogi', 'baje', 'kar', 'lekin', 'aur', 'ko', 'ka', 'nahi', 'kiya', 'gaya', 'ke', 'mein', 'hai']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [
+    "cancel_event (needs approval)",
+    "cancel_event (needs approval)"
+   ],
+   "passed": true
+  },
+  {
+   "key": "m1_10_known_failing:K05",
+   "lang": "en",
+   "text": "What is 15% of 3200?",
+   "reply": "15% of 3200 = 480.",
+   "plan": [
+    [
+     "productivity"
+    ]
+   ],
+   "stops": {
+    "productivity": "done"
+   },
+   "steps": [
+    {
+     "tool": "calculate",
+     "args": {
+      "expression": "15% of 3200"
+     },
+     "result": {
+      "expression": "15% of 3200",
+      "computed": "(15/100)*3200",
+      "result": "480"
+     }
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Calculate 15% of 320-0\"}",
+     "prompt_tokens": 247,
+     "first_token_s": 2.5150000005960464,
+     "total_s": 3.328000000678003
+    }
+   ],
+   "llm_calls": 1,
+   "turn_s": 3.337689899839461,
+   "fallback_calls": 0,
+   "from": "M1.8",
+   "known": true,
+   "verdict": "fixed",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers outside tool data: []",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_10_known_failing:K06",
+   "lang": "hinglish",
+   "text": "Thursday dopahar free hoon?",
+   "reply": "Thu 19 Nov ko aap free ho: 12:00-1:00 pm aur 2:00-4:00 pm.",
+   "plan": [
+    [
+     "calendar"
+    ]
+   ],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "find_free_slots",
+     "args": {
+      "start": "2026-11-19T12:00:00+05:30",
+      "end": "2026-11-19T16:00:00+05:30"
+     },
+     "result": [
+      {
+       "start": "2026-11-19T12:00:00+05:30",
+       "end": "2026-11-19T13:00:00+05:30"
+      },
+      {
+       "start": "2026-11-19T14:00:00+05:30",
+       "end": "2026-11-19T16:00:00+05:30"
+      }
+     ]
+    }
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Check if Thursday afternoon is free in the user's schedule\"}",
+     "prompt_tokens": 242,
+     "first_token_s": 2.3909999998286366,
+     "total_s": 3.125
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"find_free_slots\": {\"range\": \"window\"}}",
+     "prompt_tokens": 375,
+     "first_token_s": 3.203999999910593,
+     "total_s": 3.578999999910593
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 6.711087900213897,
+   "fallback_calls": 0,
+   "from": "M1.8",
+   "known": true,
+   "verdict": "fixed",
+   "routing_ok": true,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['ko', 'aap', 'ho', 'aur']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": true
+  },
+  {
+   "key": "m1_10_known_failing:K07",
+   "lang": "hinglish",
+   "text": "Aaj shaam 5 baje kya hai?",
+   "reply": "Aaj shaam 5 baje hai, Mon 16 Nov 2026, 5:00 pm. Calendar mein 'Review call' hai.",
+   "plan": [],
+   "stops": {
+    "calendar": "done"
+   },
+   "steps": [
+    {
+     "tool": "get_events",
+     "args": {
+      "start": "2026-11-16T16:00:00+05:30",
+      "end": "2026-11-16T20:00:00+05:30"
+     },
+     "result": [
+      {
+       "id": "mock-evt-review",
+       "title": "Review call",
+       "start": "2026-11-16T17:00:00+05:30",
+       "end": "2026-11-16T18:00:00+05:30"
+      }
+     ]
+    }
+   ],
+   "calls": [
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_events\": {\"range\": \"window\"}}",
+     "prompt_tokens": 391,
+     "first_token_s": 3.4059999994933605,
+     "total_s": 3.75
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Aaj shaam 5 baje hai, Mon 16 Nov 2026, 5:00 pm. Calendar mein 'Review call' hai.",
+     "prompt_tokens": 367,
+     "first_token_s": 2.921999999321997,
+     "total_s": 4.139999999664724
+    }
+   ],
+   "llm_calls": 2,
+   "turn_s": 7.927023500204086,
+   "fallback_calls": 0,
+   "from": "M1.8",
+   "known": true,
+   "verdict": "known_failing",
+   "routing_ok": false,
+   "tools_ok": true,
+   "lang_ok": true,
+   "lang_why": "Hindi markers: ['aaj', 'baje', 'hai', 'mein', 'hai']",
+   "clock_ok": true,
+   "json_ok": true,
+   "invented_ok": true,
+   "reply_ok": true,
+   "tool_fails": [],
+   "reply_fails": [],
+   "refused": [],
+   "passed": false
+  }
+ ]
+}
