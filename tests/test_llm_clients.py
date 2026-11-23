@@ -51,6 +51,13 @@ def test_groq_request_uses_reasoning_effort():
     request = clients.groq_request(load_config().llm.fallback, MESSAGES, None)
     assert request["reasoning_effort"] == "low"
     assert "extra_body" not in request
+    assert "temperature" not in request
+
+
+# Every Ollama request carries the temperature from config.yaml (0.7, M1 exit check).
+def test_ollama_request_sends_config_temperature():
+    request = clients.ollama_request(load_config().llm.primary, MESSAGES, None)
+    assert request["temperature"] == 0.7
 
 
 # Reading a stream joins the text, keeps token counts and notices reasoning text.

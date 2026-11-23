@@ -26,11 +26,13 @@ def ollama_parameters(base_url: str, model: str) -> str:
                      if k in SAMPLING_KEYS)
 
 
-# The header line on temperature and seed. Leo sends neither (leo/llm/clients.py).
+# The header line on temperature and seed. Leo sends the temperature from
+# config.yaml (M1 exit check) and no seed (leo/llm/clients.py).
 def sampling_line(config) -> str:
     params = ollama_parameters(config.llm.primary.base_url, config.llm.primary.model)
     seed = "set" if "seed" in params else "none set"
-    return (f"Sampling: Leo's requests set no temperature and no seed. "
+    return (f"Sampling: Leo's requests set temperature {config.llm.primary.temperature} "
+            f"(config.yaml) and no seed. "
             f"{config.llm.primary.model} parameters reported by Ollama: "
             f"{params or 'could not be read'}; seed: {seed}. "
             f"Groq fallback: provider default temperature, no seed.")

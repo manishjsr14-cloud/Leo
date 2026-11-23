@@ -30,6 +30,7 @@ class PrimaryLLM(Strict):
     base_url: str
     num_ctx: int = Field(gt=0)
     think: bool
+    temperature: float = Field(ge=0, le=2)   # sent on every request (M1 exit check)
     first_token_timeout_s: float = Field(gt=0)
     total_timeout_s: float = Field(gt=0)
     max_bad_outputs: int = Field(ge=1)

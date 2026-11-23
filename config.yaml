@@ -7,6 +7,8 @@ llm:
     base_url: http://localhost:11434
     num_ctx: 8192
     think: false
+    temperature: 0.7                 # sent on every request; 0.7 is the value the model's
+                                   # Ollama parameters gave before (M1.10 runs), so nothing changes
     first_token_timeout_s: 20
     total_timeout_s: 60
     max_bad_outputs: 2             # schema failures before falling back to Groq (6.1)

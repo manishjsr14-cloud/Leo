@@ -91,11 +91,13 @@ def _base_request(
     return request
 
 
-# Request settings for Ollama. "think" is sent on every call to keep thinking off.
+# Request settings for Ollama. "think" is sent on every call to keep thinking off,
+# and the temperature from config.yaml (the Groq request sends none: provider default).
 def ollama_request(
     cfg: PrimaryLLM, messages: list[dict], output_model: type[BaseModel] | None
 ) -> dict[str, Any]:
     request = _base_request(cfg.model, messages, output_model)
+    request["temperature"] = cfg.temperature
     request["extra_body"] = {"think": cfg.think}
     return request
 
