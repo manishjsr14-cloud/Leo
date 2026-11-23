@@ -84,7 +84,8 @@ def header(label: str, machine: str, commit: str, config, suite: dict,
 # Run the suite and write the new report files.
 def main() -> None:
     stem, label = Path(sys.argv[1]), sys.argv[2]
-    md, js = stem.with_suffix(".md"), stem.with_suffix(".json")
+    # Not with_suffix: "m1.10_eval_..." would lose everything after "m1".
+    md, js = stem.parent / f"{stem.name}.md", stem.parent / f"{stem.name}.json"
     if md.exists() or js.exists():
         sys.exit(f"{stem}.md/.json already exists; earlier reports are never rewritten.")
     baseline = Path(sys.argv[3]) if len(sys.argv) > 3 else None

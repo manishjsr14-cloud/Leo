@@ -72,8 +72,8 @@ def rate_text(cell: list[int]) -> str:
 def number_text(cell: dict | None) -> str:
     if cell is None:
         return "-"
-    return (f"avg {cell['avg']:.1f}, p50 {cell['p50']:g}, p95 {cell['p95']:g}, "
-            f"max {cell['max']:g}")
+    return (f"avg {cell['avg']:.1f}, p50 {cell['p50']:.1f}, p95 {cell['p95']:.1f}, "
+            f"max {cell['max']:.1f}")
 
 
 # Markdown table of all metrics, one column per group.
