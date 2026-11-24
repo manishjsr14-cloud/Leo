@@ -1,0 +1,87 @@
+# M1 cleanup item 1: check set for the reply language scorer (v1 and v2).
+# Committed BEFORE evals/language_scoring_v2.py exists. Never edited to improve
+# a score; a better set is a new file with a change log.
+#
+# Each case is one Leo reply with its human label:
+#   en        English
+#   hinglish  Hindi and English in Roman script
+#   hi        Hindi in Devanagari
+# tool_data: words from the turn's tool results (titles, places, sources). They
+# are not counted as Hindi markers. Empty when the reply quotes no tool data.
+#
+# Labels written by Claude and checked by the user (2026-11-24); r44-r48 added
+# by the user. At most 3 greetings like L20 (r01, r02, r18). Replies that mix
+# Devanagari and Roman script evenly are left out (their label is unclear).
+# r48 quotes the user's own words ("kal wali PDF"), not tool data; it is kept
+# whatever v2 does with it, and its result is reported as it is.
+#
+# Report: v1 (evals/m1_8_scoring.py language_ok, which has no "hi" class) and
+# v2 side by side, written by evals/m1_cleanup_scorer_check.py.
+
+version: 1
+
+cases:
+  - {id: r01, label: hinglish, tool_data: "", reply: "Hi! Baat karein, kaise ho? 😊"}
+  - {id: r02, label: hinglish, tool_data: "", reply: "Main theek hoon, aap batao?"}
+  - {id: r03, label: hinglish, tool_data: "", reply: "Ho gaya!"}
+  - {id: r04, label: hinglish, tool_data: "", reply: "Theek hai, kar diya."}
+  - {id: r05, label: hinglish, tool_data: "", reply: "Haan, 4 baje free ho."}
+  - {id: r06, label: hinglish, tool_data: "", reply: "Timer laga diya."}
+  - {id: r07, label: hinglish, tool_data: "", reply: "Kal Pune mein baarish ka chance 70% hai."}
+  - {id: r08, label: hinglish, tool_data: "Dentist",
+     reply: "'Dentist' Thu 19 Nov, 4:00-5:00 pm calendar mein daal diya."}
+  - {id: r09, label: hinglish, tool_data: "", reply: "Sorry, yeh main nahi kar sakta."}
+  - {id: r10, label: hinglish, tool_data: "Buy milk, Pay electricity bill",
+     reply: "Aapki do tasks pending hain: Buy milk aur Pay electricity bill."}
+  - {id: r11, label: hinglish, tool_data: "Gym",
+     reply: "Gym cancel karne ke liye aapki approval chahiye."}
+  - {id: r12, label: hinglish, tool_data: "", reply: "Koi meeting nahi hai aaj shaam."}
+  - {id: r13, label: hinglish, tool_data: "", reply: "Bilkul, note save kar liya."}
+  - {id: r14, label: hinglish, tool_data: "", reply: "Abhi koi free slot nahi mila, kal try karein?"}
+  - {id: r15, label: hinglish, tool_data: "", reply: "Okay, done. Kuch aur?"}
+  - {id: r16, label: hinglish, tool_data: "", reply: "Sure! Main aapki madad karunga."}
+  - {id: r17, label: hinglish, tool_data: "Lonavala",
+     reply: "Lonavala trip Saturday subah 7 baje add ho gaya."}
+  - {id: r18, label: en, tool_data: "", reply: "Hi! How can I help you today?"}
+  - {id: r19, label: en, tool_data: "Meeting with Rahul",
+     reply: "Done! Added 'Meeting with Rahul' on Tue 17 Nov, 10:00-11:00 am."}
+  - {id: r20, label: en, tool_data: "",
+     reply: "You're free on Thu 19 Nov: 12:00-1:00 pm and 2:00-4:00 pm."}
+  - {id: r21, label: en, tool_data: "Doodh", reply: "Added 'Doodh' to your tasks."}
+  - {id: r22, label: en, tool_data: "",
+     reply: "I checked the forecast for Sat 21 Nov: 5% chance of rain."}
+  - {id: r23, label: en, tool_data: "", reply: "Sure."}
+  - {id: r24, label: en, tool_data: "", reply: "OK, done."}
+  - {id: r25, label: en, tool_data: "chai", reply: "Timer 'chai' set for 10 minutes."}
+  - {id: r26, label: en, tool_data: "gas cylinder book karna hai",
+     reply: "Your note 'gas cylinder book karna hai' is saved."}
+  - {id: r27, label: en, tool_data: "", reply: "Saved the note."}
+  - {id: r28, label: en, tool_data: "Pune, Open-Meteo",
+     reply: "No, it will not rain in Pune tomorrow. (Source: Open-Meteo)"}
+  - {id: r29, label: en, tool_data: "Gym",
+     reply: "Cancelling 'Gym' needs your approval first; nothing was cancelled yet."}
+  - {id: r30, label: en, tool_data: "", reply: "Do you want me to move it to 5 pm?"}
+  - {id: r31, label: en, tool_data: "", reply: "I'm not sure. Can you say the time again?"}
+  - {id: r32, label: en, tool_data: "480", reply: "The answer is 480."}
+  - {id: r33, label: en, tool_data: "Meeting with Rahul, Andheri",
+     reply: "Your meeting with Rahul is at 10 am in Andheri."}
+  - {id: r34, label: en, tool_data: "Sharma ji",
+     reply: "Added 'Sharma ji' on Fri 20 Nov, 6:00-7:00 pm."}
+  - {id: r35, label: en, tool_data: "Lonavala",
+     reply: "The trip to Lonavala was not added because the rain chance is 60%."}
+  - {id: r36, label: hi, tool_data: "Open-Meteo",
+     reply: "नहीं, कल पुणे में बारिश नहीं होगी। बारिश की संभावना 0% है। (स्रोत: Open-Meteo)"}
+  - {id: r37, label: hi, tool_data: "", reply: "ठीक है, कर दिया।"}
+  - {id: r38, label: hi, tool_data: "", reply: "आपका टाइमर 10 मिनट के लिए लग गया।"}
+  - {id: r39, label: hi, tool_data: "", reply: "हो गया!"}
+  - {id: r40, label: hi, tool_data: "Meeting with Rahul",
+     reply: "'Meeting with Rahul' कल सुबह 10 बजे कैलेंडर में डाल दी।"}
+  - {id: r41, label: hi, tool_data: "Gym, Call", reply: "आपके पास शनिवार को Gym और Call हैं।"}
+  - {id: r42, label: hi, tool_data: "", reply: "मुझे नहीं पता।"}
+  - {id: r43, label: hi, tool_data: "", reply: "18% of 2450 = 441, यानी जवाब 441 है।"}
+  # Added by the user.
+  - {id: r44, label: en, tool_data: "", reply: "Your main meeting is at 5 pm. Do you want to move it?"}
+  - {id: r45, label: en, tool_data: "", reply: "Hi Neha, I added it to your list too."}
+  - {id: r46, label: hinglish, tool_data: "", reply: "Ok, kr diya. Kuch aur chahiye?"}
+  - {id: r47, label: hinglish, tool_data: "", reply: "Haan ji, ho gya."}
+  - {id: r48, label: en, tool_data: "", reply: "Sorry, I couldn't find \"kal wali PDF\"."}
