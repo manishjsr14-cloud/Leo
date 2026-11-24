@@ -56,7 +56,8 @@ def offline_reload() -> str:
     env = {**os.environ, "HF_HUB_OFFLINE": "1", "TRANSFORMERS_OFFLINE": "1"}
     done = subprocess.run([sys.executable, "-c", OFFLINE_LOAD], check=False, cwd=ROOT,
                           env=env,
-                          capture_output=True, text=True, timeout=600)
+                          capture_output=True, text=True, encoding="utf-8",
+                          errors="replace", timeout=600)
     if done.returncode == 0:
         return done.stdout.strip().splitlines()[-1]
     return f"FAILED (exit {done.returncode}): {done.stderr.strip().splitlines()[-1]}"
