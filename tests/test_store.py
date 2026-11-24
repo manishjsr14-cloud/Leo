@@ -21,6 +21,14 @@ def test_open_db_creates_tables_with_wal(tmp_path):
     assert {"tasks", "notes"} <= tables
 
 
+# open_db loads the sqlite-vec extension, and turns extension loading off again.
+def test_open_db_loads_sqlite_vec(tmp_path):
+    conn = open_db(tmp_path / "leo.db")
+    assert conn.execute("SELECT vec_version()").fetchone()[0].startswith("v")
+    with pytest.raises(sqlite3.OperationalError):
+        conn.execute("SELECT load_extension('nothing_here')")
+
+
 # Opening the same file twice keeps the data (the schema uses IF NOT EXISTS).
 def test_open_db_twice_keeps_rows(tmp_path):
     path = tmp_path / "leo.db"
