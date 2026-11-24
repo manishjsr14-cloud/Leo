@@ -9,12 +9,15 @@ said "already complete" after a task was completed). When the am/pm of the
 event time was assumed ("4 baje" -> 4 pm), the reply asks about it.
 M1 exit check (K06): a single find_free_slots also gets a code reply that
 lists every free slot ("12:00-1:00 pm and 2:00-4:00 pm"), or says there is none.
+M1 cleanup item 4: a single successful get_events gets a code reply that lists
+every event with its time, or says nothing is on (leo/graph/events_reply.py).
 Other reads, questions, refusals, Hindi (Devanagari) messages and multi-step
 requests still go to the LLM responder.
 """
 
 from datetime import datetime
 
+from leo.graph.events_reply import events_reply
 from leo.graph.state import LeoState
 from leo.language.say_time import say_clock, say_clock_span, say_day, say_iso_span
 from leo.llm.prompts import load_prompt
@@ -71,9 +74,10 @@ def quick_reply(state: LeoState) -> str | None:
     step, outcome = found
     result = step.get("result")
     templates = load_prompt("replies").extra(language)
-    if step["tool"] == "find_free_slots" and isinstance(result, list):
+    readers = {"find_free_slots": free_reply, "get_events": events_reply}
+    if step["tool"] in readers and isinstance(result, list):
         try:
-            return free_reply(step, templates)
+            return readers[step["tool"]](step, templates)
         except (KeyError, TypeError, ValueError):
             return None
     if step["tool"] not in WRITES or not isinstance(result, dict) or "error" in result:

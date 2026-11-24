@@ -8,8 +8,11 @@
 # find_free_slots, listing every slot.
 # Version 4 (M1 exit fix round): forecast and added, so the reply after a clear
 # or a held event is written by code in full (leo/graph/calendar_reply.py).
+# Version 5 (M1 cleanup item 4): events_on_day, events_at and no_events for a
+# single successful get_events ("what's on"), listing every event with its time
+# (leo/graph/events_reply.py).
 name: replies
-version: 4
+version: 5
 en:
   create_event: "Done! Added '{title}' on {when}."
   move_event: "Done! Moved '{title}' to {when}."
@@ -29,6 +32,9 @@ en:
   free_on_day: "You're free on {day}: {slots}."
   free_at: "You're free at these times: {slots}."
   no_free: "You have no free time in {span}."
+  events_on_day: "On {day} you have: {events}."
+  events_at: "On your calendar: {events}."
+  no_events: "Nothing on your calendar in {span}."
 hinglish:
   create_event: "Ho gaya! '{title}' {when} calendar mein daal diya."
   move_event: "Ho gaya! '{title}' ko {when} pe shift kar diya."
@@ -48,3 +54,6 @@ hinglish:
   free_on_day: "{day} ko aap free ho: {slots}."
   free_at: "Aap in times pe free ho: {slots}."
   no_free: "{span} mein aapka koi free time nahi hai."
+  events_on_day: "{day} ko aapke calendar mein hai: {events}."
+  events_at: "Aapke calendar mein hai: {events}."
+  no_events: "{span} mein aapke calendar mein kuch nahi hai."

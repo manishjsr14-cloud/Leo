@@ -47,7 +47,7 @@ def test_timer_and_calculation():
 
 
 def test_reads_hindi_and_failures_go_to_the_llm():
-    assert quick_reply(state("get_events", [EVENT])) is None
+    assert quick_reply(state("list_tasks", [{"id": 1}], agent="productivity")) is None
     assert quick_reply(state("create_event", EVENT, "hi")) is None
     assert quick_reply(state("create_event", {"error": "bad"})) is None
     assert quick_reply(state("create_event", EVENT, stopped="ask")) is None
@@ -106,3 +106,57 @@ def test_free_slots_reply_passes_the_eval_reply_rules():
     turn = {"text": "Thursday dopahar free hoon?", "reply_times_required": ["13:00", "14:00"]}
     assert reply_fails(text, turn, steps) == []
     assert language_ok(text, "hinglish")[0]
+
+
+# M1 cleanup item 4: a single successful get_events gets a code reply naming
+# every event with its time, in start order.
+SAT_EVENTS = [
+    {"id": "c", "title": "Call", "start": "2026-11-21T10:00:00+05:30",
+     "end": "2026-11-21T10:30:00+05:30"},
+    {"id": "g", "title": "Gym", "start": "2026-11-21T08:00:00+05:30",
+     "end": "2026-11-21T09:00:00+05:30"}]
+SAT_RANGE = {"start": "2026-11-21T06:00:00+05:30", "end": "2026-11-21T12:00:00+05:30"}
+
+
+def test_events_reply_lists_every_event_on_one_day():
+    assert quick_reply(state("get_events", SAT_EVENTS)) == (
+        "On Sat 21 Nov you have: 'Gym' (8:00-9:00 am) and 'Call' (10:00-10:30 am).")
+    assert quick_reply(state("get_events", SAT_EVENTS, "hinglish")) == (
+        "Sat 21 Nov ko aapke calendar mein hai: 'Gym' (8:00-9:00 am) aur 'Call' (10:00-10:30 am).")
+
+
+def test_events_reply_on_several_days_carries_each_day():
+    assert quick_reply(state("get_events", [EVENT, SAT_EVENTS[1]])) == (
+        "On your calendar: 'Call with Neha' (Fri 20 Nov, 6:30-7:30 pm) and "
+        "'Gym' (Sat 21 Nov, 8:00-9:00 am).")
+
+
+def test_events_reply_nothing_on():
+    empty = state("get_events", [], "hinglish")
+    empty["agent_results"]["calendar"]["steps"][0]["args"] = SAT_RANGE
+    assert quick_reply(empty) == (
+        "Sat 21 Nov, 6:00 am-12:00 pm mein aapke calendar mein kuch nahi hai.")
+    empty["language"] = "en"
+    assert quick_reply(empty) == "Nothing on your calendar in Sat 21 Nov, 6:00 am-12:00 pm."
+
+
+def test_failed_or_followed_get_events_goes_to_the_llm():
+    assert quick_reply(state("get_events", {"error": "bad range"})) is None
+    moved = state("get_events", SAT_EVENTS)
+    moved["agent_results"]["calendar"]["steps"].append(
+        {"tool": "move_event", "args": {}, "result": SAT_EVENTS[1]})
+    assert quick_reply(moved) is None
+    assert quick_reply(state("get_events", SAT_EVENTS, "hi")) is None
+
+
+# The events reply passes the M1.8 reply rules the eval scores, with v1 and v2.
+def test_events_reply_passes_the_eval_reply_rules():
+    from evals.language_scoring_v2 import language_ok_v2
+    from evals.m1_8_scoring import language_ok, reply_fails
+
+    text = quick_reply(state("get_events", SAT_EVENTS, "hinglish"))
+    steps = [{"tool": "get_events", "args": SAT_RANGE, "result": SAT_EVENTS}]
+    turn = {"text": "Saturday subah kya hai?", "reply_must_mention": ["Gym", "Call"]}
+    assert reply_fails(text, turn, steps) == []
+    assert language_ok(text, "hinglish", "Gym Call")[0]
+    assert language_ok_v2(text, "hinglish", "Gym Call")[0]
