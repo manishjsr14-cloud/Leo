@@ -59,7 +59,7 @@ Each M1 cleanup item ticks its line in the commit that fixes it.
 
 - [x] L20 "Hi Leo, kaise ho?" failed the language scorer in run6 with the valid Hinglish reply "Hi! Baat karein, kaise ho? 😊"; it passed in run5 (`m1_exit_check_2026-11-24_run5_run6.md`) (fixed in M1 cleanup item 1: scorer v2, `evals/language_scoring_v2.py`; v1 unchanged)
 - [x] An eval report lists a turn that failed only the language check with the reason "all checks pass" (run6, L20 under "New failures") (fixed in M1 cleanup item 2: reasons name the language check; the comparison no longer calls it "routing")
-- [ ] Eval runs use temperature 0.7 with no seed, so verdicts can flip between runs with no code change (L20: pass in run5, fail in run6) (fixed by M1 cleanup item 7: experiment)
+- [ ] Eval runs use temperature 0.7 with no seed, so verdicts can flip between runs with no code change (L20: pass in run5, fail in run6) (open: measured in M1 cleanup item 7 - with scorer v1, L20 flipped once at 0.7 and once at 0.3 over two runs each; with v2, 0 flips; `m1_cleanup_temperature_note_2026-11-24.md`; recommendation keep 0.7, the user's decision)
 - [x] M1 exit run1 and run2 scored code-routed turns as wrong routing: the runner read the plan only from the supervisor's LLM reply (`m1_exit_check_2026-11-23_run1_run2_invalid.md`) (fixed in cb4e490)
 - [x] First M1.10 runner output: report file name cut to `m1.md`, timings unrounded (fixed in 9a826ab; that output is not in the repository)
 - [x] L08 shows as fixed in M1.10 although its first `calculate` was refused in both runs (by design: K05 is the case that checks the first attempt)
