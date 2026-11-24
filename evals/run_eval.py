@@ -3,7 +3,7 @@ listed in evals/scenarios/m1_10_suite.yaml through the real graph and the real
 LLM gateway on MOCK tools, scores each turn, and writes one new report as
 <stem>.md and <stem>.json (the .json is what eval_compare reads).
 
-  python -m evals.run_eval <report stem> <label> [<baseline .json>]
+  python -m evals.run_eval <report stem> <label> [<baseline .json>] [--temperature T]
 
 e.g. python -m evals.run_eval evals/reports/m1.10_eval_2026-11-23_run1 run1
 With a baseline, the report ends with the before/after comparison.
@@ -26,6 +26,7 @@ from evals.m1_7_calendar_check import git_state
 from evals.m1_8_check import run_one
 from evals.machine import machine_line
 from leo.config import load_config
+from leo.llm import gateway
 
 SUITE_FILE = Path("evals/scenarios/m1_10_suite.yaml")
 
@@ -83,15 +84,33 @@ def header(label: str, machine: str, commit: str, config, suite: dict,
             *skips, ""]
 
 
+# Measuring only (M1 cleanup item 7): this run sends `temperature` instead of
+# config.yaml's. The gateway reads config.yaml on every call, so its load_config
+# is wrapped for this process only; config.yaml itself is not changed, and the
+# report's sampling line shows the value sent.
+def use_temperature(temperature: float) -> None:
+    def with_temperature():
+        config = load_config()
+        primary = config.llm.primary.model_copy(update={"temperature": temperature})
+        llm = config.llm.model_copy(update={"primary": primary})
+        return config.model_copy(update={"llm": llm})
+    gateway.load_config = with_temperature
+
+
 # Run the suite and write the new report files.
 def main() -> None:
-    stem, label = Path(sys.argv[1]), sys.argv[2]
+    args = sys.argv[1:]
+    if "--temperature" in args:                      # measuring only (M1 cleanup item 7)
+        at = args.index("--temperature")
+        use_temperature(float(args[at + 1]))
+        del args[at:at + 2]
+    stem, label = Path(args[0]), args[1]
     # Not with_suffix: "m1.10_eval_..." would lose everything after "m1".
     md, js = stem.parent / f"{stem.name}.md", stem.parent / f"{stem.name}.json"
     if md.exists() or js.exists():
         sys.exit(f"{stem}.md/.json already exists; earlier reports are never rewritten.")
-    baseline = Path(sys.argv[3]) if len(sys.argv) > 3 else None
-    config, suite = load_config(), load(SUITE_FILE)
+    baseline = Path(args[2]) if len(args) > 2 else None
+    config, suite = gateway.load_config(), load(SUITE_FILE)
     machine, commit = machine_line(), git_state()
     files = [(Path(entry["file"]), load(Path(entry["file"]))) for entry in suite["run"]]
     known = known_keys(files)
