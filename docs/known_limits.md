@@ -52,7 +52,7 @@ Each M1 cleanup item ticks its line in the commit that fixes it.
 - [x] M1.4 "already complete" wording after a task was completed (K01) (fixed in M1.8, 567d16e: code replies; K01 passes in M1.10 run1 and run2)
 - [ ] The model can give the trip a poor title: "Check weather for Lonavala on Saturday" in run6, which still passes `title_contains: lonavala` (plan, M1 exit closure) (open)
 - [x] Replies to "what's on" questions (a successful `get_events`) are written by the LLM responder, which can leave events out (fixed in M1 cleanup item 4: `leo/graph/events_reply.py`, every event with its time, English and Hinglish, and a "nothing on" reply)
-- [ ] If the calendar agent stops after a single `get_events` on a message that asked for a change, the code reply lists the events and does not say the change was not made (found while writing M1 cleanup item 4) (open)
+- [x] If the calendar agent stops after a single `get_events` on a message that asked for a change, the code reply lists the events and does not say the change was not made (found while writing M1 cleanup item 4) (fixed in the M1 cleanup item 4 follow-up: a "change not made" line when the message has cancel, move, create or clear words; replies.yaml v6)
 
 ## Measuring
 

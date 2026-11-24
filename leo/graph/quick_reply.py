@@ -17,6 +17,8 @@ requests still go to the LLM responder.
 
 from datetime import datetime
 
+from langchain_core.messages import HumanMessage
+
 from leo.graph.events_reply import events_reply
 from leo.graph.state import LeoState
 from leo.language.say_time import say_clock, say_clock_span, say_day, say_iso_span
@@ -74,7 +76,10 @@ def quick_reply(state: LeoState) -> str | None:
     step, outcome = found
     result = step.get("result")
     templates = load_prompt("replies").extra(language)
-    readers = {"find_free_slots": free_reply, "get_events": events_reply}
+    message = next((m.content for m in reversed(state.get("messages", []))
+                    if isinstance(m, HumanMessage)), "")
+    readers = {"find_free_slots": free_reply,
+               "get_events": lambda s, t: events_reply(s, t, str(message))}
     if step["tool"] in readers and isinstance(result, list):
         try:
             return readers[step["tool"]](step, templates)

@@ -11,8 +11,10 @@
 # Version 5 (M1 cleanup item 4): events_on_day, events_at and no_events for a
 # single successful get_events ("what's on"), listing every event with its time
 # (leo/graph/events_reply.py).
+# Version 6 (M1 cleanup item 4 follow-up): not_changed, added to the events reply
+# when the message asked for a change but only get_events ran.
 name: replies
-version: 5
+version: 6
 en:
   create_event: "Done! Added '{title}' on {when}."
   move_event: "Done! Moved '{title}' to {when}."
@@ -35,6 +37,7 @@ en:
   events_on_day: "On {day} you have: {events}."
   events_at: "On your calendar: {events}."
   no_events: "Nothing on your calendar in {span}."
+  not_changed: " The change you asked for was not made; your calendar is as it was."
 hinglish:
   create_event: "Ho gaya! '{title}' {when} calendar mein daal diya."
   move_event: "Ho gaya! '{title}' ko {when} pe shift kar diya."
@@ -57,3 +60,4 @@ hinglish:
   events_on_day: "{day} ko aapke calendar mein hai: {events}."
   events_at: "Aapke calendar mein hai: {events}."
   no_events: "{span} mein aapke calendar mein kuch nahi hai."
+  not_changed: " Aapne jo change bola tha woh nahi hua; calendar pehle jaisa hi hai."

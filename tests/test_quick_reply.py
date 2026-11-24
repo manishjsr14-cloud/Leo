@@ -160,3 +160,42 @@ def test_events_reply_passes_the_eval_reply_rules():
     assert reply_fails(text, turn, steps) == []
     assert language_ok(text, "hinglish", "Gym Call")[0]
     assert language_ok_v2(text, "hinglish", "Gym Call")[0]
+
+
+# M1 cleanup item 4 follow-up: a message asking for a change that ended with only
+# get_events gets a line saying the change was not made, in both languages.
+def asked(text: str, language: str = "en") -> dict:
+    s = state("get_events", SAT_EVENTS, language)
+    s["messages"] = [HumanMessage(text)]
+    return s
+
+
+def test_events_reply_says_a_requested_change_was_not_made():
+    en = quick_reply(asked("Cancel my Saturday gym"))
+    assert en.startswith("On Sat 21 Nov you have: 'Gym' (8:00-9:00 am)")
+    assert en.endswith("The change you asked for was not made; your calendar is as it was.")
+    hinglish = quick_reply(asked("Saturday subah clear kar do", "hinglish"))
+    assert hinglish.endswith("Aapne jo change bola tha woh nahi hua; calendar pehle jaisa hi hai.")
+    for text in ("Move the call to 11 am", "Saturday ko gym daal do"):
+        assert "not made" in quick_reply(asked(text))
+
+
+def test_events_reply_for_a_question_has_no_change_line():
+    for text in ("Saturday ko kya kya hai?", "What's on my calendar on Saturday?"):
+        assert "not made" not in quick_reply(asked(text))
+        assert "nahi hua" not in quick_reply(asked(text, "hinglish"))
+
+
+# The change line passes the eval's reply rules, incl. "no invented results".
+def test_change_line_passes_the_eval_reply_rules():
+    from evals.eval_scoring import invented_results
+    from evals.language_scoring_v2 import language_ok_v2
+    from evals.m1_8_scoring import language_ok, reply_fails
+
+    steps = [{"tool": "get_events", "args": SAT_RANGE, "result": SAT_EVENTS}]
+    for text, lang in (("Cancel my Saturday gym", "en"), ("Saturday gym hata do", "hinglish")):
+        reply = quick_reply(asked(text, lang))
+        assert reply_fails(reply, {"text": text}, steps) == []
+        assert invented_results(reply, steps) == []
+        assert language_ok(reply, lang, "Gym Call")[0]
+        assert language_ok_v2(reply, lang, "Gym Call")[0]

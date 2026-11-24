@@ -7,10 +7,19 @@ are listed under that day ("On Sat 21 Nov you have: 'Gym' (8:00-9:00 am) and
 'Call' (10:00-10:30 am)."); events on several days each carry their day. An
 empty result gives the "nothing on" reply for the range asked about.
 Same pattern as the free-slot replies (free_reply in quick_reply.py).
+When the message asked for a change (cancel, move, create or clear words, as
+in leo/language/calendar_words.py), only this get_events ran, so no write
+succeeded: the reply then adds a line saying nothing was changed.
 """
 
 from datetime import datetime
 
+from leo.language.calendar_words import (
+    asks_to_cancel,
+    asks_to_clear,
+    asks_to_create,
+    asks_to_move,
+)
 from leo.language.say_time import say_clock_span, say_day, say_iso_span
 
 
@@ -19,8 +28,21 @@ def joined(items: list[str], word: str) -> str:
     return items[0] if len(items) == 1 else f"{', '.join(items[:-1])} {word} {items[-1]}"
 
 
-# The reply for a successful get_events result (a list of events).
-def events_reply(step: dict, templates: dict) -> str:
+# True when the message asks to cancel, move, add or clear an event.
+def asks_for_change(message: str) -> bool:
+    return any(ask(message) for ask in (asks_to_cancel, asks_to_move, asks_to_create,
+                                        asks_to_clear))
+
+
+# The reply for a successful get_events result (a list of events), with the
+# "nothing was changed" line when the user's message asked for a change.
+def events_reply(step: dict, templates: dict, message: str = "") -> str:
+    listed = events_list(step, templates)
+    return listed + templates["not_changed"] if asks_for_change(message) else listed
+
+
+# The events (or "nothing on") part of the reply.
+def events_list(step: dict, templates: dict) -> str:
     events = sorted(step["result"], key=lambda e: e["start"])
     if not events:
         args = step.get("args", {})
