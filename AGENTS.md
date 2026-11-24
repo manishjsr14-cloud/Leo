@@ -27,6 +27,9 @@ Instructions for Claude Code (and any other coding agent) working in this reposi
 - Do not regenerate or rewrite earlier reports. New runs write new files.
 - Every real-run report records the machine it ran on (the "Machine:" header line from `evals/machine.py`). Timings and VRAM figures from the gaming desktop (RTX 3060 12 GB) are never compared with or quoted as laptop results. Reports without a machine line predate this rule and ran on the laptop.
 - Do not relax dependency pins in `requirements.txt` without asking.
+- Never edit tracked files while a real run is in progress.
+- Before a real run, the tree must be clean apart from `evals/reports/`.
+- Commit only if `ruff check .` and `pytest` both succeeded, checked in the same command (PowerShell: run them, check `$?` after each, stop on failure).
 
 ## Fixed design decisions
 
