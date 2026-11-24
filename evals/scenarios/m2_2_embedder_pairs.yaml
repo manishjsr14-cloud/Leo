@@ -1,0 +1,102 @@
+# M2.2 embedder check set (architecture section 8.1). Committed before the embedder code.
+# Never edit this file to improve a result; a better set is a new file (AGENTS.md).
+#
+# Every text is embedded with the "query: " prefix on both sides: comparing two
+# messages is a symmetric task, and e5 uses "query: " for symmetric tasks.
+#
+# near_groups: the same sentence in English (en), Hinglish and Devanagari Hindi (hi).
+#   Each group gives 3 near pairs: en-hinglish, en-hi, hinglish-hi.
+# far_pairs: two group sentences with different meanings. They name sentences as
+#   <group id>.<language>. Pairs marked "hard: true" share most of their words but
+#   mean something different (book vs cancel, eat vs don't eat). They are scored.
+# recorded_pairs: "kal" (tomorrow) vs "parso" (day after tomorrow) versions of the
+#   same sentence. RECORDED, NOT SCORED. Leo takes dates from the time parser
+#   (leo/language/time_parser.py, section 15), never from vector similarity, so
+#   the embedder is not expected to tell kal from parso. The report shows their
+#   similarity next to the near pairs of the same sentence, and the result goes
+#   into docs/known_limits.md as "by design".
+#
+# Pass rule (rule B, fixed before any run):
+#   For every sentence S in the near groups, every near pair containing S must
+#   score higher (cosine similarity) than every far pair containing S.
+#   The check passes only if this holds for all sentences. recorded_pairs are
+#   not part of the rule.
+
+pass_rule: B
+prefix: "query: "
+
+near_groups:
+  - id: g01
+    en: "Remind me to take my medicine at 9 tonight."
+    hinglish: "Aaj raat 9 baje dawai lene ki yaad dilana."
+    hi: "आज रात 9 बजे दवाई लेने की याद दिलाना।"
+  - id: g02
+    en: "Will it rain in Delhi tomorrow?"
+    hinglish: "Kal Delhi mein baarish hogi kya?"
+    hi: "कल दिल्ली में बारिश होगी क्या?"
+  - id: g03
+    en: "I have a meeting tomorrow at 5 pm."
+    hinglish: "Kal shaam 5 baje meri meeting hai."
+    hi: "कल शाम 5 बजे मेरी मीटिंग है।"
+  - id: g04
+    en: "Cancel my dentist appointment."
+    hinglish: "Mera dentist appointment cancel kar do."
+    hi: "मेरा डेंटिस्ट अपॉइंटमेंट कैंसिल कर दो।"
+  - id: g05
+    en: "I spent 500 rupees on groceries today."
+    hinglish: "Aaj grocery pe 500 rupaye kharch kiye."
+    hi: "आज किराने पर 500 रुपये खर्च किए।"
+  - id: g06
+    en: "What is today's news?"
+    hinglish: "Aaj ki news kya hai?"
+    hi: "आज की खबरें क्या हैं?"
+  - id: g07
+    en: "My sister's birthday is on 12 March."
+    hinglish: "Meri behen ka birthday 12 March ko hai."
+    hi: "मेरी बहन का जन्मदिन 12 मार्च को है।"
+  - id: g08
+    en: "Wake me up at 6 in the morning."
+    hinglish: "Mujhe subah 6 baje utha dena."
+    hi: "मुझे सुबह 6 बजे उठा देना।"
+  - id: g09
+    en: "I am feeling very tired today."
+    hinglish: "Aaj main bahut thaka hua hoon."
+    hi: "आज मैं बहुत थका हुआ हूँ।"
+  - id: g10
+    en: "I don't eat non-veg food."
+    hinglish: "Main non-veg nahi khata."
+    hi: "मैं मांसाहारी खाना नहीं खाता।"
+  - id: g11
+    en: "Book a doctor's appointment for me."
+    hinglish: "Mere liye doctor ka appointment book kar do."
+    hi: "मेरे लिए डॉक्टर का अपॉइंटमेंट बुक कर दो।"
+  - id: g12
+    en: "I eat non-veg food."
+    hinglish: "Main non-veg khata hoon."
+    hi: "मैं मांसाहारी खाना खाता हूँ।"
+
+far_pairs:
+  - {a: g01.en, b: g05.en, why: "medicine reminder vs grocery spending"}
+  - {a: g02.hinglish, b: g07.hinglish, why: "rain question vs a birthday"}
+  - {a: g03.hi, b: g09.hi, why: "meeting time vs feeling tired"}
+  - {a: g06.en, b: g08.hinglish, why: "news question vs wake-up alarm"}
+  - {a: g05.hi, b: g02.en, why: "grocery spending vs rain question"}
+  - {a: g07.en, b: g09.hinglish, why: "a birthday vs feeling tired"}
+  - {a: g08.en, b: g06.hi, why: "wake-up alarm vs news question"}
+  - {a: g09.en, b: g01.hinglish, why: "feeling tired vs medicine reminder"}
+  - {a: g01.hi, b: g07.hi, why: "medicine reminder vs a birthday"}
+  - {a: g06.hinglish, b: g05.hinglish, why: "news question vs grocery spending"}
+  - {a: g08.hi, b: g03.en, why: "wake-up alarm vs meeting time"}
+  - {a: g03.hinglish, b: g02.hi, why: "meeting time vs rain question"}
+  - {a: g04.en, b: g11.en, hard: true, why: "cancel an appointment vs book one"}
+  - {a: g04.hinglish, b: g11.hinglish, hard: true, why: "cancel an appointment vs book one"}
+  - {a: g04.hi, b: g11.hi, hard: true, why: "cancel an appointment vs book one"}
+  - {a: g10.en, b: g12.en, hard: true, why: "does not eat non-veg vs eats it"}
+  - {a: g10.hinglish, b: g12.hinglish, hard: true, why: "does not eat non-veg vs eats it"}
+  - {a: g10.hi, b: g12.hi, hard: true, why: "does not eat non-veg vs eats it"}
+
+recorded_pairs:
+  - {a: g03.en, b_text: "I have a meeting the day after tomorrow at 5 pm.", why: "tomorrow vs day after tomorrow"}
+  - {a: g03.hinglish, b_text: "Parso shaam 5 baje meri meeting hai.", why: "kal vs parso"}
+  - {a: g03.hi, b_text: "परसों शाम 5 बजे मेरी मीटिंग है।", why: "kal vs parso"}
+  - {a: g02.hinglish, b_text: "Parso Delhi mein baarish hogi kya?", why: "kal vs parso"}
