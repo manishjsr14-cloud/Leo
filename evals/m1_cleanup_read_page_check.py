@@ -50,8 +50,8 @@ def main() -> None:
         rows = [(url, want, *try_url(read_page, url)) for url, want in CASES]
     lines = [f"# M1 cleanup read_page check — {datetime.now().strftime('%Y-%m-%d %H:%M')}",
              machine_line(), f"Commit: {git_state()}.",
-             "Real read_page, system resolver, real network; each request pinned to the "
-             "checked address.", "",
+             ("Real read_page, system resolver, real network; each request pinned to the "
+              "checked address."), "",
              f"**Matches expected: {sum(want == got for _, want, got, _ in rows)}/{len(rows)}**",
              "", "| url | expected | got | detail |", "|---|---|---|---|"]
     lines += [f"| {url} | {want} | {got}{'' if got == want else ' (UNEXPECTED)'} | "

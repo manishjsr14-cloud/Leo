@@ -38,7 +38,7 @@ Each M1 cleanup item ticks its line in the commit that fixes it.
 - [ ] Query words ("kya kya hai", "what's on"): routed to calendar by code, but the agent is still offered `find_free_slots` as well as `get_events` (plan, planned follow-ups from M1.7) (open)
 - [ ] The condition check knows only "no rain" conditions; any other "agar"/"if" before an add adds nothing until the user confirms (plan, M1 exit closure) (open)
 - [ ] After a clear, the model is offered only the add or move the message also asks for; other parts of a linked message are not done (plan, M1 exit closure) (open)
-- [ ] `read_page` checks the host's addresses, but httpx resolves the name again when connecting, so DNS rebinding is not stopped (`leo/tools/real/web.py` docstring) (fixed by M1 cleanup item 6)
+- [x] `read_page` checks the host's addresses, but httpx resolves the name again when connecting, so DNS rebinding is not stopped (`leo/tools/real/web.py` docstring) (fixed in M1 cleanup item 6: each request goes to the checked IP, Host header and TLS name kept)
 - [ ] The `human_approval` node does not exist yet: 🔴 calls are refused with "needs approval" (fixed by M2.5)
 - [x] Calendar is a mock until Radicale (by design: M2.6)
 - [x] Query routing is a narrow word rule, not a trained intent router (by design: Phase 6)
