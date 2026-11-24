@@ -1,0 +1,559 @@
+{
+  "model": "intfloat/multilingual-e5-small",
+  "device": "cpu",
+  "dimension": 384,
+  "cache_dir": "models/hf_cache",
+  "was_cached": true,
+  "cache_mib": 470.4409246444702,
+  "load_s": 18.580946899999617,
+  "first_embed_ms": 50.984399998924346,
+  "timing": {
+    "runs": 20,
+    "median_ms": 19.892200000867888,
+    "min_ms": 18.08799999889743,
+    "max_ms": 39.1351999987819
+  },
+  "torch_threads": 4,
+  "rss_start_mib": 33.97265625,
+  "rss_loaded_mib": 1163.84765625,
+  "rss_end_mib": 1170.67578125,
+  "peak_mib": 1210.734375,
+  "offline_reload": "offline load ok",
+  "near": [
+    {
+      "a": "g01.en",
+      "b": "g01.hinglish",
+      "similarity": 0.8469729022947038
+    },
+    {
+      "a": "g01.en",
+      "b": "g01.hi",
+      "similarity": 0.9063509065986682
+    },
+    {
+      "a": "g01.hinglish",
+      "b": "g01.hi",
+      "similarity": 0.9105178926788496
+    },
+    {
+      "a": "g02.en",
+      "b": "g02.hinglish",
+      "similarity": 0.8380695825849109
+    },
+    {
+      "a": "g02.en",
+      "b": "g02.hi",
+      "similarity": 0.938844168566194
+    },
+    {
+      "a": "g02.hinglish",
+      "b": "g02.hi",
+      "similarity": 0.8352015747453558
+    },
+    {
+      "a": "g03.en",
+      "b": "g03.hinglish",
+      "similarity": 0.83704460639226
+    },
+    {
+      "a": "g03.en",
+      "b": "g03.hi",
+      "similarity": 0.8964548986892257
+    },
+    {
+      "a": "g03.hinglish",
+      "b": "g03.hi",
+      "similarity": 0.9063380721538584
+    },
+    {
+      "a": "g04.en",
+      "b": "g04.hinglish",
+      "similarity": 0.9252529690356086
+    },
+    {
+      "a": "g04.en",
+      "b": "g04.hi",
+      "similarity": 0.8548740475991836
+    },
+    {
+      "a": "g04.hinglish",
+      "b": "g04.hi",
+      "similarity": 0.8584783094752187
+    },
+    {
+      "a": "g05.en",
+      "b": "g05.hinglish",
+      "similarity": 0.8650602626292165
+    },
+    {
+      "a": "g05.en",
+      "b": "g05.hi",
+      "similarity": 0.8619936037015099
+    },
+    {
+      "a": "g05.hinglish",
+      "b": "g05.hi",
+      "similarity": 0.9081627197025152
+    },
+    {
+      "a": "g06.en",
+      "b": "g06.hinglish",
+      "similarity": 0.8723689852729997
+    },
+    {
+      "a": "g06.en",
+      "b": "g06.hi",
+      "similarity": 0.9284601965616125
+    },
+    {
+      "a": "g06.hinglish",
+      "b": "g06.hi",
+      "similarity": 0.8683585281202153
+    },
+    {
+      "a": "g07.en",
+      "b": "g07.hinglish",
+      "similarity": 0.8810011912002311
+    },
+    {
+      "a": "g07.en",
+      "b": "g07.hi",
+      "similarity": 0.9063463904174358
+    },
+    {
+      "a": "g07.hinglish",
+      "b": "g07.hi",
+      "similarity": 0.9331356923951349
+    },
+    {
+      "a": "g08.en",
+      "b": "g08.hinglish",
+      "similarity": 0.8374487395524186
+    },
+    {
+      "a": "g08.en",
+      "b": "g08.hi",
+      "similarity": 0.8917321308386307
+    },
+    {
+      "a": "g08.hinglish",
+      "b": "g08.hi",
+      "similarity": 0.904623009593693
+    },
+    {
+      "a": "g09.en",
+      "b": "g09.hinglish",
+      "similarity": 0.7567841256215996
+    },
+    {
+      "a": "g09.en",
+      "b": "g09.hi",
+      "similarity": 0.8864680809318742
+    },
+    {
+      "a": "g09.hinglish",
+      "b": "g09.hi",
+      "similarity": 0.8340833401877095
+    },
+    {
+      "a": "g10.en",
+      "b": "g10.hinglish",
+      "similarity": 0.8498308840903882
+    },
+    {
+      "a": "g10.en",
+      "b": "g10.hi",
+      "similarity": 0.8725521664677216
+    },
+    {
+      "a": "g10.hinglish",
+      "b": "g10.hi",
+      "similarity": 0.8897583448724562
+    },
+    {
+      "a": "g11.en",
+      "b": "g11.hinglish",
+      "similarity": 0.9057509894240815
+    },
+    {
+      "a": "g11.en",
+      "b": "g11.hi",
+      "similarity": 0.9035880048986481
+    },
+    {
+      "a": "g11.hinglish",
+      "b": "g11.hi",
+      "similarity": 0.920988074575273
+    },
+    {
+      "a": "g12.en",
+      "b": "g12.hinglish",
+      "similarity": 0.8428929488409472
+    },
+    {
+      "a": "g12.en",
+      "b": "g12.hi",
+      "similarity": 0.8486605780387647
+    },
+    {
+      "a": "g12.hinglish",
+      "b": "g12.hi",
+      "similarity": 0.8530861258913989
+    }
+  ],
+  "far": [
+    {
+      "a": "g01.en",
+      "b": "g05.en",
+      "similarity": 0.8211195588672133,
+      "hard": false
+    },
+    {
+      "a": "g02.hinglish",
+      "b": "g07.hinglish",
+      "similarity": 0.7817534145438989,
+      "hard": false
+    },
+    {
+      "a": "g03.hi",
+      "b": "g09.hi",
+      "similarity": 0.8528897550632812,
+      "hard": false
+    },
+    {
+      "a": "g06.en",
+      "b": "g08.hinglish",
+      "similarity": 0.7516060983359696,
+      "hard": false
+    },
+    {
+      "a": "g05.hi",
+      "b": "g02.en",
+      "similarity": 0.7422147626926342,
+      "hard": false
+    },
+    {
+      "a": "g07.en",
+      "b": "g09.hinglish",
+      "similarity": 0.7239573271016094,
+      "hard": false
+    },
+    {
+      "a": "g08.en",
+      "b": "g06.hi",
+      "similarity": 0.7206986120669439,
+      "hard": false
+    },
+    {
+      "a": "g09.en",
+      "b": "g01.hinglish",
+      "similarity": 0.7695716777473047,
+      "hard": false
+    },
+    {
+      "a": "g01.hi",
+      "b": "g07.hi",
+      "similarity": 0.8010937351031769,
+      "hard": false
+    },
+    {
+      "a": "g06.hinglish",
+      "b": "g05.hinglish",
+      "similarity": 0.8363211914731367,
+      "hard": false
+    },
+    {
+      "a": "g08.hi",
+      "b": "g03.en",
+      "similarity": 0.8203307881228102,
+      "hard": false
+    },
+    {
+      "a": "g03.hinglish",
+      "b": "g02.hi",
+      "similarity": 0.780339734184174,
+      "hard": false
+    },
+    {
+      "a": "g04.en",
+      "b": "g11.en",
+      "similarity": 0.886913499751251,
+      "hard": true
+    },
+    {
+      "a": "g04.hinglish",
+      "b": "g11.hinglish",
+      "similarity": 0.8740308872558048,
+      "hard": true
+    },
+    {
+      "a": "g04.hi",
+      "b": "g11.hi",
+      "similarity": 0.9428525116981676,
+      "hard": true
+    },
+    {
+      "a": "g10.en",
+      "b": "g12.en",
+      "similarity": 0.9842652193439373,
+      "hard": true
+    },
+    {
+      "a": "g10.hinglish",
+      "b": "g12.hinglish",
+      "similarity": 0.9794688286693404,
+      "hard": true
+    },
+    {
+      "a": "g10.hi",
+      "b": "g12.hi",
+      "similarity": 0.9558109874245803,
+      "hard": true
+    }
+  ],
+  "recorded": [
+    {
+      "a": "g03.en",
+      "b_text": "I have a meeting the day after tomorrow at 5 pm.",
+      "why": "tomorrow vs day after tomorrow",
+      "similarity": 0.984835542060768
+    },
+    {
+      "a": "g03.hinglish",
+      "b_text": "Parso shaam 5 baje meri meeting hai.",
+      "why": "kal vs parso",
+      "similarity": 0.989218323113322
+    },
+    {
+      "a": "g03.hi",
+      "b_text": "परसों शाम 5 बजे मेरी मीटिंग है।",
+      "why": "kal vs parso",
+      "similarity": 0.9782766147581957
+    },
+    {
+      "a": "g02.hinglish",
+      "b_text": "Parso Delhi mein baarish hogi kya?",
+      "why": "kal vs parso",
+      "similarity": 0.939293289768436
+    }
+  ],
+  "rule_b": [
+    {
+      "sentence": "g01.en",
+      "lowest_near": 0.8469729022947038,
+      "highest_far": 0.8211195588672133,
+      "ok": true
+    },
+    {
+      "sentence": "g01.hinglish",
+      "lowest_near": 0.8469729022947038,
+      "highest_far": 0.7695716777473047,
+      "ok": true
+    },
+    {
+      "sentence": "g01.hi",
+      "lowest_near": 0.9063509065986682,
+      "highest_far": 0.8010937351031769,
+      "ok": true
+    },
+    {
+      "sentence": "g02.en",
+      "lowest_near": 0.8380695825849109,
+      "highest_far": 0.7422147626926342,
+      "ok": true
+    },
+    {
+      "sentence": "g02.hinglish",
+      "lowest_near": 0.8352015747453558,
+      "highest_far": 0.7817534145438989,
+      "ok": true
+    },
+    {
+      "sentence": "g02.hi",
+      "lowest_near": 0.8352015747453558,
+      "highest_far": 0.780339734184174,
+      "ok": true
+    },
+    {
+      "sentence": "g03.en",
+      "lowest_near": 0.83704460639226,
+      "highest_far": 0.8203307881228102,
+      "ok": true
+    },
+    {
+      "sentence": "g03.hinglish",
+      "lowest_near": 0.83704460639226,
+      "highest_far": 0.780339734184174,
+      "ok": true
+    },
+    {
+      "sentence": "g03.hi",
+      "lowest_near": 0.8964548986892257,
+      "highest_far": 0.8528897550632812,
+      "ok": true
+    },
+    {
+      "sentence": "g04.en",
+      "lowest_near": 0.8548740475991836,
+      "highest_far": 0.886913499751251,
+      "ok": false
+    },
+    {
+      "sentence": "g04.hinglish",
+      "lowest_near": 0.8584783094752187,
+      "highest_far": 0.8740308872558048,
+      "ok": false
+    },
+    {
+      "sentence": "g04.hi",
+      "lowest_near": 0.8548740475991836,
+      "highest_far": 0.9428525116981676,
+      "ok": false
+    },
+    {
+      "sentence": "g05.en",
+      "lowest_near": 0.8619936037015099,
+      "highest_far": 0.8211195588672133,
+      "ok": true
+    },
+    {
+      "sentence": "g05.hinglish",
+      "lowest_near": 0.8650602626292165,
+      "highest_far": 0.8363211914731367,
+      "ok": true
+    },
+    {
+      "sentence": "g05.hi",
+      "lowest_near": 0.8619936037015099,
+      "highest_far": 0.7422147626926342,
+      "ok": true
+    },
+    {
+      "sentence": "g06.en",
+      "lowest_near": 0.8723689852729997,
+      "highest_far": 0.7516060983359696,
+      "ok": true
+    },
+    {
+      "sentence": "g06.hinglish",
+      "lowest_near": 0.8683585281202153,
+      "highest_far": 0.8363211914731367,
+      "ok": true
+    },
+    {
+      "sentence": "g06.hi",
+      "lowest_near": 0.8683585281202153,
+      "highest_far": 0.7206986120669439,
+      "ok": true
+    },
+    {
+      "sentence": "g07.en",
+      "lowest_near": 0.8810011912002311,
+      "highest_far": 0.7239573271016094,
+      "ok": true
+    },
+    {
+      "sentence": "g07.hinglish",
+      "lowest_near": 0.8810011912002311,
+      "highest_far": 0.7817534145438989,
+      "ok": true
+    },
+    {
+      "sentence": "g07.hi",
+      "lowest_near": 0.9063463904174358,
+      "highest_far": 0.8010937351031769,
+      "ok": true
+    },
+    {
+      "sentence": "g08.en",
+      "lowest_near": 0.8374487395524186,
+      "highest_far": 0.7206986120669439,
+      "ok": true
+    },
+    {
+      "sentence": "g08.hinglish",
+      "lowest_near": 0.8374487395524186,
+      "highest_far": 0.7516060983359696,
+      "ok": true
+    },
+    {
+      "sentence": "g08.hi",
+      "lowest_near": 0.8917321308386307,
+      "highest_far": 0.8203307881228102,
+      "ok": true
+    },
+    {
+      "sentence": "g09.en",
+      "lowest_near": 0.7567841256215996,
+      "highest_far": 0.7695716777473047,
+      "ok": false
+    },
+    {
+      "sentence": "g09.hinglish",
+      "lowest_near": 0.7567841256215996,
+      "highest_far": 0.7239573271016094,
+      "ok": true
+    },
+    {
+      "sentence": "g09.hi",
+      "lowest_near": 0.8340833401877095,
+      "highest_far": 0.8528897550632812,
+      "ok": false
+    },
+    {
+      "sentence": "g10.en",
+      "lowest_near": 0.8498308840903882,
+      "highest_far": 0.9842652193439373,
+      "ok": false
+    },
+    {
+      "sentence": "g10.hinglish",
+      "lowest_near": 0.8498308840903882,
+      "highest_far": 0.9794688286693404,
+      "ok": false
+    },
+    {
+      "sentence": "g10.hi",
+      "lowest_near": 0.8725521664677216,
+      "highest_far": 0.9558109874245803,
+      "ok": false
+    },
+    {
+      "sentence": "g11.en",
+      "lowest_near": 0.9035880048986481,
+      "highest_far": 0.886913499751251,
+      "ok": true
+    },
+    {
+      "sentence": "g11.hinglish",
+      "lowest_near": 0.9057509894240815,
+      "highest_far": 0.8740308872558048,
+      "ok": true
+    },
+    {
+      "sentence": "g11.hi",
+      "lowest_near": 0.9035880048986481,
+      "highest_far": 0.9428525116981676,
+      "ok": false
+    },
+    {
+      "sentence": "g12.en",
+      "lowest_near": 0.8428929488409472,
+      "highest_far": 0.9842652193439373,
+      "ok": false
+    },
+    {
+      "sentence": "g12.hinglish",
+      "lowest_near": 0.8428929488409472,
+      "highest_far": 0.9794688286693404,
+      "ok": false
+    },
+    {
+      "sentence": "g12.hi",
+      "lowest_near": 0.8486605780387647,
+      "highest_far": 0.9558109874245803,
+      "ok": false
+    }
+  ],
+  "passed": false
+}
