@@ -39,6 +39,7 @@ Each M1 cleanup item ticks its line in the commit that fixes it.
 - [ ] The condition check knows only "no rain" conditions; any other "agar"/"if" before an add adds nothing until the user confirms (plan, M1 exit closure) (open)
 - [ ] After a clear, the model is offered only the add or move the message also asks for; other parts of a linked message are not done (plan, M1 exit closure) (open)
 - [x] `read_page` checks the host's addresses, but httpx resolves the name again when connecting, so DNS rebinding is not stopped (`leo/tools/real/web.py` docstring) (fixed in M1 cleanup item 6: each request goes to the checked IP, Host header and TLS name kept)
+- [ ] The live read_page checks could not show that a certificate for another name is refused: wrong.host.badssl.com gave a connect timeout (`m1_cleanup_read_page_check_2026-11-24.md`) and, on one retry, a ConnectError whose cause the tool does not report (`m1_cleanup_read_page_check_2026-11-24_run2.md`). The unit tests cover pinning, the Host header and the TLS name (`tests/test_web_tools.py`) (open)
 - [ ] The `human_approval` node does not exist yet: 🔴 calls are refused with "needs approval" (fixed by M2.5)
 - [x] Calendar is a mock until Radicale (by design: M2.6)
 - [x] Query routing is a narrow word rule, not a trained intent router (by design: Phase 6)
