@@ -29,6 +29,7 @@ from leo.graph.builder import build_graph
 from leo.language.normalize import language_tag, normalize
 from leo.llm import gateway
 from leo.llm.gateway import LLMUnavailable
+from leo.llm.warmup import warm_up
 from leo.memory.store import open_db
 from leo.ops import tracing
 from leo.ops.trace_tags import request_tags
@@ -103,17 +104,23 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
 
 
 # The chat loop. input_fn, output_fn and graph can be swapped in tests;
-# with a test graph, tracing is left as the test set it up.
+# with a test graph, tracing is left as the test set it up and there is no
+# warm-up unless the test passes `warm`. With --cloud there is no warm-up.
 def main(
     argv: list[str] | None = None,
     input_fn: Callable[[str], str] = input,
     output_fn: Callable[[str], None] = print,
     graph=None,
+    warm: Callable[[], object] | None = None,
 ) -> None:
     args = parse_args(argv)
     if graph is None:
         setup_tracing(load_config(), load_secrets())
         graph = default_graph(output_fn)
+        warm = warm or warm_up
+    if warm is not None and not args.cloud:
+        output_fn("Loading the local model...")
+        warm()  # one tiny request, not part of the conversation (M1 cleanup)
     try:
         chat_loop(graph, args.cloud, uuid.uuid4().hex, input_fn, output_fn)
     finally:

@@ -12,6 +12,7 @@ llm:
     first_token_timeout_s: 20
     total_timeout_s: 60
     max_bad_outputs: 2             # schema failures before falling back to Groq (6.1)
+    warm_up: true                  # CLI start sends one tiny request so the first turn finds the model loaded
   desktop:                         # backup tier; skipped when off, unreachable or gaming
     provider: ollama
     model: qwen3:14b

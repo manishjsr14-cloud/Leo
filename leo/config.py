@@ -34,6 +34,7 @@ class PrimaryLLM(Strict):
     first_token_timeout_s: float = Field(gt=0)
     total_timeout_s: float = Field(gt=0)
     max_bad_outputs: int = Field(ge=1)
+    warm_up: bool = True          # one tiny request at startup loads the model (M1 cleanup)
 
 
 class DesktopLLM(Strict):

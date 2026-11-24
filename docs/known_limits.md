@@ -13,7 +13,7 @@ Each M1 cleanup item ticks its line in the commit that fixes it.
 
 - [x] Plain `qwen3:4b` is thinking-only: thinking cannot be turned off (`m1.1_think_probe_2026-11-12.md`) (fixed in M1.1, b1fe523: `leo-qwen3` built from the instruct build)
 - [x] Plain `qwen3:4b` spilled 28 % to the CPU; `leo-qwen3` measured 100 % GPU, 3145 MiB of 4096 MiB (`m1.1_model_check_2026-11-12.md`) (fixed in M1.1, b1fe523)
-- [ ] Cold start: the first request waits for the model to load; first token 8.39 s cold, 2.16 s warm (`m1.1_model_check_2026-11-12.md`, laptop); in the first M1.8 baseline (desktop) L01 and L02 failed before any LLM call: model loading, no Groq key (plan, M1.8 closure) (fixed by M1 cleanup item 3)
+- [x] Cold start: the first request waits for the model to load; first token 8.39 s cold, 2.16 s warm (`m1.1_model_check_2026-11-12.md`, laptop); in the first M1.8 baseline (desktop) L01 and L02 failed before any LLM call: model loading, no Groq key (plan, M1.8 closure) (fixed in M1 cleanup item 3: `leo/llm/warmup.py`, one tiny request when the CLI starts, `llm.primary.warm_up`)
 - [x] Gaming-desktop (RTX 3060) timings are never quoted as laptop results; the M1.8 runs and the latency probe ran on the desktop (by design: the laptop is the target machine)
 - [x] Desktop tier is a `config.yaml` stub; the gateway never calls it (by design: Phase 5c)
 - [x] Only one model is ever loaded in Ollama; embeddings, guards and ML models go on the CPU (by design: 8 GB RAM, 4 GB GPU)
