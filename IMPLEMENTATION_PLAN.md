@@ -124,6 +124,17 @@ Known limits after the M1 exit check:
 - The model can give the trip a poor title: in run6 "Check weather for Lonavala on Saturday", which still passes the `title_contains: lonavala` check.
 - The condition check knows only "no rain" conditions; any other "agar"/"if" before an add means nothing is added until the user confirms. After a clear, the model is offered only the add or move the message also asks for; other parts of a linked message are not done.
 
+**M1 cleanup (agreed 2026-11-24, before any cleanup code).** One task, one commit per item, in this order; every item with a check set commits the check set before the code. Step 0: `docs/known_limits.md`, a checklist of every known limit recorded so far; each later item ticks its line in the commit that fixes it.
+1. Language scorer v2 (`evals/language_scoring_v2.py`; v1 in `evals/m1_8_scoring.py` stays as it is), with a fresh check set of replies labelled en / hinglish / hi; v1 and v2 reported side by side. v2 rule, fixed before the check set was written: "hi" when Devanagari letters are at least the Roman letters; words found in the turn's tool data are not counted; "hinglish" when at least 2 Hindi markers, or markers are at least 20 % of the words (v1's marker list plus common verb and question words, English look-alikes left out); "en" with no markers; anything else "unclear", which fails both.
+2. Hinglish gap: one laptop eval run scored with v1 and v2; each Hinglish turn still failing under v2 listed with its reason; fixes proposed only.
+3. Warm-up: one tiny request to load the model when Leo starts, with no effect on the conversation; time to first token of the first user turn measured with and without it.
+4. Code-written replies for a single successful `get_events` ("what's on"), English and Hinglish, every event with its time, and a "nothing on" reply.
+5. Hindi number words up to 100 for amounts only (`leo/language/number_words.py`, never clock hours); phrase file first; both M1.6 phrase sets must still pass, their recorded scores stay. "saath"/"sath" is 60 only right before sau/hazaar/lakh/crore or a rupee word; "sau"/"hazaar" alone are 100/1000.
+6. `read_page` connects to the checked address (pinned), Host header and TLS name kept.
+7. Temperature: two laptop runs at 0.7 and two at 0.3 on the same commit, compared with each other and with the M1.10 baseline; no code change unless the numbers justify it; the value is the user's decision.
+
+Done rule: after all items, a full eval suite run on the laptop against `evals/reports/m1.10_eval_2026-11-23_run1.json` shows no newly failing turn, judged with scorer v2 on both sides (the baseline's stored replies rescored with v2); v1 numbers reported alongside.
+
 **Planned follow-ups from M1.7** (each done with a fresh check written and committed before it runs):
 - Done in the M1 exit check, ahead of M2.5: "clear <range>" handled in code, cancels proposed together. The `human_approval` node itself is still M2.5.
 - Query words ("kya kya hai", "what's on"): the M1 exit check routes these to calendar by code; offering `get_events` only (no `find_free_slots`) is still open.
