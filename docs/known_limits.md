@@ -23,7 +23,8 @@ Each M1 cleanup item ticks its line in the commit that fixes it.
 - [x] A Hinglish question got a Devanagari reply (`m1.5_cli_check_2026-11-16_run2.md`) (fixed in M1.8, 567d16e: M1.8 run2 had no Devanagari replies, language correct 20/20)
 - [x] Held-out phrase h18 "in an hour remind me" not understood; held-out score 33/34 (97.1 %) (`m1.6_heldout_check_2026-11-15.md`) (fixed in M1.6, 4e0ab19; the recorded score stays 97.1 %)
 - [x] "at <hour>" without am/pm not read as a clock time (fixed in M1.8 session, 4858aa7; `m1.6_parser_check_2026-11-22_at_hour.md`)
-- [ ] Hindi number words only go up to twelve (ek ... barah) in `leo/language/numbers.py` (fixed by M1 cleanup item 5)
+- [x] Hindi number words only go up to twelve (ek ... barah) in `leo/language/numbers.py` (fixed in M1 cleanup item 5 for amounts: words 13-99 in `leo/language/number_words.py`, sau/hazaar alone; clock hours still one to twelve by design)
+- [ ] "bees" (20) is also an English word and is read as 20 in any amount text (M1 cleanup item 5 rule) (open)
 - [ ] Speech-to-text may give Devanagari; Devanagari input is tagged `hi` and left as it is, no transliteration (plan, note for Phase 5) (open: Phase 5, new dependency needs approval)
 - [x] The language tag is a simple token ratio, not a trained detector (by design: the detector is Phase 6)
 

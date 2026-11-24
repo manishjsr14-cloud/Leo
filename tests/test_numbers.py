@@ -61,3 +61,28 @@ def test_number_at():
 def test_tokens():
     assert tokens("₹1,50,000 de do") == ["₹", "150000", "de", "do"]
     assert tokens("haan, theek") == ["haan", "theek"]
+
+
+# M1 cleanup item 5: words 13-99 in amounts (cases not taken from the phrase file).
+def test_words_from_13_to_99_in_amounts():
+    assert parse_amount("athara hazaar") == 18000
+    assert parse_amount("bayalis rupaye") == 42
+    assert parse_amount("navve lakh") == 9000000
+    assert parse_amount("ek hazaar teis") == 1023
+
+
+def test_saath_is_60_only_before_a_multiplier_or_rupee_word():
+    assert parse_amount("sath sau") == 6000
+    assert parse_amount("Rs saath") is None          # a rupee word BEFORE it does not count
+    assert parse_amount("mummy ke saath") is None
+
+
+def test_sau_and_hazaar_alone():
+    assert parse_amount("hazaar") == 1000
+    assert parse_amount("sau aur pachas") == 150
+    assert parse_amount("lakh") is None              # only sau and hazaar stand alone
+
+
+def test_words_above_twelve_are_never_clock_hours():
+    assert number_at(["bees", "baje"], 0) is None
+    assert number_at(["pachaas"], 0) is None

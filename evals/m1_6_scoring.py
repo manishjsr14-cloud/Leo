@@ -19,7 +19,8 @@ DEFAULTS = {"status": "ok", "date": None, "time": None, "assumed_ampm": False,
             "remind_before_min": None, "ask_about": None}
 # Number words that are also ordinary words: "do" (verb), "sat" (Saturday), ...
 # parse_amount reads every number word, so in a number case any of these counts.
-AMBIGUOUS = {"do", "sat", "che", "tin", "bara", "das", "ath"}
+AMBIGUOUS = {"do", "sat", "che", "tin", "bara", "das", "ath",
+             "bees", "saath", "sath"}   # added in M1 cleanup item 5 (words 13-100); listing only
 
 
 # Load one phrase set file.

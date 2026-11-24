@@ -3,10 +3,14 @@
 Reads amounts like "dedh sau" (150), "paune do lakh" (175000) and "₹1,50,000".
 The time parser reuses `number_at` for hours such as "sava teen" (3.25).
 Rules only, no LLM. Fractions are exact (fractions.Fraction), never floats.
+M1 cleanup item 5: amounts also read the words 13-99 (number_words.py) and
+"sau"/"hazaar" alone; clock hours (number_at) still know only one to twelve.
 """
 
 import re
 from fractions import Fraction
+
+from leo.language.number_words import ALSO_WORDS, AMOUNT_WORDS
 
 # Number words one to twelve, with common Roman spellings.
 WORDS = {
@@ -38,6 +42,9 @@ MULTIPLIERS = {
     **dict.fromkeys(["lakh", "lakhs", "lac", "laakh"], 100_000),
     **dict.fromkeys(["crore", "crores", "cr", "karod", "karor"], 10_000_000),
 }
+
+# "sau" and "hazaar" (any spelling) also count with no number before them.
+ALONE_VALUES = {100, 1000}
 
 DIGITS = re.compile(r"^\d+(\.\d+)?$")
 # Words that only say "rupees" and carry no value.
@@ -74,14 +81,33 @@ def number_at(words: list[str], i: int) -> tuple[Fraction, int] | None:
     return (value, i + 1) if value is not None else None
 
 
-# Parse an amount in rupees ("dhai lakh", "3 lakh 50 hazaar", "Rs 2.5 lakh").
-# Returns a whole number, or None when the text holds no amount or the
-# amount is not a whole number of rupees.
+# Read one number of an amount at words[i]: what number_at reads, a word from
+# 13 to 99 (number_words.py), or "sau"/"hazaar" with no number before it (read
+# as 1, the multiplier is applied next). "saath"/"sath" counts only right before
+# a multiplier or a rupee word. Returns (value, index after it) or None.
+def amount_at(words: list[str], i: int) -> tuple[Fraction, int] | None:
+    read = number_at(words, i)
+    if read is not None:
+        return read
+    word = words[i]
+    after = words[i + 1] if i + 1 < len(words) else ""
+    if word in ALSO_WORDS and after not in MULTIPLIERS and after not in CURRENCY:
+        return None
+    if word in AMOUNT_WORDS:
+        return Fraction(AMOUNT_WORDS[word]), i + 1
+    if MULTIPLIERS.get(word) in ALONE_VALUES:
+        return Fraction(1), i
+    return None
+
+
+# Parse an amount in rupees ("dhai lakh", "3 lakh 50 hazaar", "Rs 2.5 lakh",
+# "pachaas hazaar"). Returns a whole number, or None when the text holds no
+# amount or the amount is not a whole number of rupees.
 def parse_amount(text: str) -> int | None:
-    words = [w for w in tokens(text) if w not in CURRENCY]
+    words = tokens(text)                             # rupee words kept: "saath rupaye"
     total, found, i = Fraction(0), False, 0
     while i < len(words):
-        read = number_at(words, i)
+        read = None if words[i] in CURRENCY else amount_at(words, i)
         if read is None:
             i += 1                                   # skip words that are not numbers
             continue
