@@ -19,7 +19,6 @@ Change log:
 """
 
 import json
-import subprocess
 import sys
 import time
 from datetime import datetime
@@ -27,6 +26,7 @@ from pathlib import Path
 
 import yaml
 
+from evals.git_state import git_state
 from evals.m1_4_check_helpers import CountingChat, call_label
 from evals.m1_5_check_helpers import chosen, tagged
 from evals.m1_7_scoring import score_turn
@@ -49,13 +49,6 @@ DONE_RULE = ("M1.7 is done if run4 passes t01 and t10 and at least 8 of 10 turns
              "(decided before run4).")
 
 
-# The current commit and whether the working tree has uncommitted changes.
-def git_state() -> str:
-    head = subprocess.run(["git", "rev-parse", "--short", "HEAD"],
-                          check=False, capture_output=True, text=True).stdout.strip()
-    dirty = subprocess.run(["git", "status", "--porcelain"],
-                           check=False, capture_output=True, text=True).stdout.strip()
-    return head + (" (uncommitted changes present)" if dirty else "")
 
 
 # The first key of a step reply as the model wrote it, "(not JSON)" if it is not

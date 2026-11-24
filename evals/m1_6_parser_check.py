@@ -6,11 +6,11 @@ Usage (one or more sets, each as "label=path"):
 Writes a new report; never overwrites an existing one.
 """
 
-import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
 
+from evals.git_state import git_state
 from evals.m1_6_scoring import AMBIGUOUS, FIELDS, accuracy, load_set, score_set
 from evals.machine import machine_line
 
@@ -19,13 +19,6 @@ SECTIONS = {"t": "day words, clock, kal, midnight", "w": "weekdays", "r": "relat
             "o": "reminder offsets", "x": "not understood", "m": "numbers"}
 
 
-# The current commit and whether the working tree has uncommitted changes.
-def git_state() -> str:
-    head = subprocess.run(["git", "rev-parse", "--short", "HEAD"],
-                          check=False, capture_output=True, text=True).stdout.strip()
-    dirty = subprocess.run(["git", "status", "--porcelain"],
-                           check=False, capture_output=True, text=True).stdout.strip()
-    return f"{head}{' (uncommitted changes present)' if dirty else ''}"
 
 
 # A case's report section: its `section` field, else the name for its id prefix.
