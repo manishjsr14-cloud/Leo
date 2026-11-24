@@ -6,3 +6,6 @@ target-version = "py312"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+# real_model tests load the real e5 embedder; plain `pytest` skips them (M2.2).
+markers = ["real_model: loads the real embedding model (run with -m real_model)"]
+addopts = "-m 'not real_model'"

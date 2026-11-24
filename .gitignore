@@ -27,3 +27,6 @@ models/*.onnx
 # Web app
 node_modules/
 web/dist/
+
+# Hugging Face model cache (embedder weights, config.yaml embedder.cache_dir)
+models/hf_cache/

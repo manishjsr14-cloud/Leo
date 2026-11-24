@@ -91,6 +91,22 @@ class StorageConfig(Strict):
         return self.db_path if self.db_path.is_absolute() else PROJECT_ROOT / self.db_path
 
 
+class EmbedderConfig(Strict):
+    """The shared e5 embedder (section 8.1). CPU only: the GPU is kept for Ollama."""
+
+    model: str
+    device: Literal["cpu"]
+    dimension: int = Field(gt=0)
+    cache_dir: Path
+    query_prefix: str
+    passage_prefix: str
+    cache_size: int = Field(ge=1)
+
+    # The model cache folder as an absolute path (relative paths start at the project folder).
+    def resolved_cache_dir(self) -> Path:
+        return self.cache_dir if self.cache_dir.is_absolute() else PROJECT_ROOT / self.cache_dir
+
+
 class AgentConfig(Strict):
     """Limits for one specialist agent run."""
 
@@ -157,6 +173,7 @@ class LeoConfig(Strict):
     server: ServerConfig
     graph: GraphConfig
     storage: StorageConfig
+    embedder: EmbedderConfig
     agent: AgentConfig
     tracing: TracingConfig
     research: ResearchConfig

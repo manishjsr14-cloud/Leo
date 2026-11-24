@@ -46,8 +46,18 @@ graph:
 storage:
   db_path: leo_data/leo.db         # relative to the project folder; git-ignored (section 7)
 
+embedder:                          # shared embedder (section 8.1); CPU only, the GPU stays for Ollama
+  model: intfloat/multilingual-e5-small
+  device: cpu                      # only "cpu" is accepted
+  dimension: 384                   # must match the model and the vec0 tables
+  cache_dir: models/hf_cache       # Hugging Face download cache; relative to the project folder (D:),
+                                   # so the ~0.5 GB of weights stay off the C: drive; git-ignored
+  query_prefix: "query: "          # e5: the incoming message and any symmetric comparison
+  passage_prefix: "passage: "      # e5: stored texts that queries search (memories, documents)
+  cache_size: 256                  # recent message vectors kept for reuse (each message embedded once)
+
 agent:
-  max_steps: 6                     # tool steps inside one specialist run before it hands back
+  max_steps: 6                    # tool steps inside one specialist run before it hands back
 
 tracing:                           # Langfuse Cloud (section 13.2); keys and host in .env
   include_text: false              # false: no message text, tool args or replies in traces
