@@ -9,15 +9,17 @@ redirect hop (followed here by hand, up to research.max_redirects), the host
 name is resolved and each address it gives is checked; loopback, private,
 link-local, Tailscale (100.64.0.0/10) and other non-public addresses are refused.
 So a page cannot send Leo to Radicale, the router or the Tailscale network.
-Known limit: httpx resolves the name again when connecting, so a DNS server that
-changes its answer between the check and the request (DNS rebinding) is not
-stopped here.
+Each request then goes to the address that passed the check (pinned, M1 cleanup
+item 6): the URL carries that IP, the Host header carries the name, and for
+https the TLS name (SNI and the certificate check) is the name too. The name is
+never looked up a second time, so a DNS server that changes its answer between
+the check and the request (DNS rebinding) cannot move the request.
 """
 
 import ipaddress
 import socket
 from collections.abc import Callable
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import urljoin, urlsplit, urlunsplit
 
 import httpx
 import trafilatura
@@ -60,7 +62,8 @@ def is_blocked(address: str) -> bool:
 
 
 # Raise ToolError unless `url` is http(s) and every address of its host is public.
-def check_url(url: str, resolve: Callable[[str], list[str]]) -> None:
+# Returns the checked addresses.
+def check_url(url: str, resolve: Callable[[str], list[str]]) -> list[str]:
     parts = urlsplit(url)
     if parts.scheme not in ("http", "https") or not parts.hostname:
         raise ToolError(f"refused {url!r}: only http(s) web addresses")
@@ -70,15 +73,29 @@ def check_url(url: str, resolve: Callable[[str], list[str]]) -> None:
         raise ToolError(f"could not find host {parts.hostname!r}") from error
     if not addresses or any(is_blocked(a) for a in addresses):
         raise ToolError(f"refused {parts.hostname!r}: not a public internet address")
+    return addresses
 
 
-# GET `url`, following redirects by hand and checking every hop.
+# The request for `url` pinned to `address`: (URL with the IP, Host header, extensions).
+def pinned(url: str, address: str) -> tuple[str, str, dict]:
+    parts = urlsplit(url)
+    port = f":{parts.port}" if parts.port else ""
+    ip = f"[{address}]" if ":" in address else address
+    name = f"[{parts.hostname}]" if ":" in parts.hostname else parts.hostname
+    ip_url = urlunsplit((parts.scheme, ip + port, parts.path or "/", parts.query, ""))
+    tls = {"sni_hostname": parts.hostname} if parts.scheme == "https" else {}
+    return ip_url, name + port, tls
+
+
+# GET `url`, following redirects by hand and checking every hop; each request
+# goes to the first checked address of its host (pinned).
 # Returns (final url, content type, body cut to max_bytes).
 def fetch(client: httpx.Client, url: str, settings: ResearchConfig,
           resolve: Callable[[str], list[str]]) -> tuple[str, str, bytes]:
     for _ in range(settings.max_redirects + 1):
-        check_url(url, resolve)
-        with client.stream("GET", url, follow_redirects=False) as response:
+        ip_url, host, tls = pinned(url, check_url(url, resolve)[0])
+        with client.stream("GET", ip_url, headers={"Host": host}, extensions=tls,
+                           follow_redirects=False) as response:
             if response.status_code in REDIRECTS and "location" in response.headers:
                 url = urljoin(url, response.headers["location"])
                 continue

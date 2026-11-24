@@ -25,13 +25,69 @@ def fake_resolve(host: str) -> list[str]:
             "nowhere.example": []}.get(host, [PUBLIC_IP])
 
 
+# The page address a pinned request asks for: its scheme, Host header and path.
+def asked_url(request: httpx.Request) -> str:
+    return f"{request.url.scheme}://{request.headers['host']}{request.url.raw_path.decode()}"
+
+
 # web_functions on a MockTransport that answers from `pages` (url -> response).
-def tools(pages: dict, search=None):
+# Every request is kept in `sent`.
+def tools(pages: dict, search=None, resolve=fake_resolve, sent: list | None = None):
     def handler(request: httpx.Request) -> httpx.Response:
-        return pages.get(str(request.url), httpx.Response(404))
+        if sent is not None:
+            sent.append(request)
+        return pages.get(asked_url(request), httpx.Response(404))
     client = httpx.Client(transport=httpx.MockTransport(handler))
     return web_functions(client, SETTINGS, search=search or (lambda q, n: []),
-                         resolve=fake_resolve)
+                         resolve=resolve)
+
+
+# A resolver that gives the public IP the first time and 127.0.0.1 after that
+# (DNS rebinding), counting its lookups.
+def rebinding_resolver():
+    lookups = []
+
+    def resolve(host: str) -> list[str]:
+        lookups.append(host)
+        return [PUBLIC_IP] if len(lookups) == 1 else ["127.0.0.1"]
+    return resolve, lookups
+
+
+# M1 cleanup item 6: the request goes to the checked public IP, with the name in
+# the Host header and as the TLS name, and the name is looked up only once.
+def test_request_is_pinned_to_the_checked_address():
+    resolve, lookups = rebinding_resolver()
+    sent = []
+    out = tools({"https://rebind.example/a?x=1": html_page()}, resolve=resolve,
+                sent=sent)["read_page"](ReadPageArgs(url="https://rebind.example/a?x=1"))
+    assert out["url"] == "https://rebind.example/a?x=1"
+    assert lookups == ["rebind.example"]
+    (request,) = sent
+    assert request.url.host == PUBLIC_IP
+    assert request.headers["host"] == "rebind.example"
+    assert request.extensions["sni_hostname"] == "rebind.example"
+
+
+# Each redirect hop is checked and pinned on its own; a second hop to the same
+# name that now resolves to 127.0.0.1 is refused, not fetched.
+def test_each_hop_is_pinned_and_a_rebound_hop_is_refused():
+    resolve, lookups = rebinding_resolver()
+    sent = []
+    pages = {"https://rebind.example/old": httpx.Response(301, headers={"location": "/new"})}
+    with pytest.raises(ToolError, match="not a public"):
+        tools(pages, resolve=resolve, sent=sent)["read_page"](
+            ReadPageArgs(url="https://rebind.example/old"))
+    assert [r.url.host for r in sent] == [PUBLIC_IP]
+    assert lookups == ["rebind.example", "rebind.example"]
+
+
+def test_pinned_keeps_port_and_has_no_tls_name_for_http():
+    sent = []
+    tools({"http://a.example:8080/p": html_page()}, sent=sent)["read_page"](
+        ReadPageArgs(url="http://a.example:8080/p"))
+    assert str(sent[0].url) == f"http://{PUBLIC_IP}:8080/p"
+    assert sent[0].headers["host"] == "a.example:8080"
+    assert "sni_hostname" not in sent[0].extensions
 
 
 def html_page(body: bytes = HTML) -> httpx.Response:
