@@ -1,0 +1,73 @@
+# M1 cleanup item 5: Hindi number words 13-100 in amounts.
+# Committed BEFORE the code that reads them (leo/language/number_words.py).
+# Never edited to improve a score; a better set is a new file with a change log.
+#
+# Same format as the numbers section of evals/scenarios/m1_6_indian_phrases.yaml:
+# each case runs parse_amount(text); expect is an integer, or null for text that
+# is not an amount. Correct only on an exact match. Scored with
+# evals/m1_6_parser_check.py (a file with no times section is fine).
+#
+# Rules this set encodes (agreed 2026-11-24, M1 cleanup plan):
+#   - The words 13-100 are read in amounts only, never as clock hours (the time
+#     parser is unchanged).
+#   - "saath"/"sath" also means "with": it is 60 only right before
+#     sau/hazaar/lakh/crore or a rupee word.
+#   - "sau" or "hazaar" with no number before it is 100 or 1000.
+#   - "bees" is also an English word; it is read as 20 and listed with the
+#     other words that can mean something else in the parser report.
+
+version: 1
+now: "2026-11-24T10:00:00+05:30"
+times: []
+
+numbers:
+  # --- 13-19 ---
+  - {id: c01, text: "terah sau rupaye", expect: 1300}
+  - {id: c02, text: "chaudah hazaar", expect: 14000}
+  - {id: c03, text: "pandrah lakh", expect: 1500000}
+  - {id: c04, text: "solah sau", expect: 1600}
+  - {id: c05, text: "satrah hazaar rupaye", expect: 17000}
+  - {id: c06, text: "atharah sau", expect: 1800}
+  - {id: c07, text: "unnis hazaar", expect: 19000}
+  # --- tens and other words up to 99 ---
+  - {id: c08, text: "bees hazaar", expect: 20000}
+  - {id: c09, text: "Rs bees", expect: 20}
+  - {id: c10, text: "ikkis sau", expect: 2100}
+  - {id: c11, text: "pachchis hazaar", expect: 25000}
+  - {id: c12, text: "pachees lakh", expect: 2500000}
+  - {id: c13, text: "sattais sau", expect: 2700}
+  - {id: c14, text: "tees rupaye", expect: 30}
+  - {id: c15, text: "battis rupaye", expect: 32}
+  - {id: c16, text: "untalis hazaar", expect: 39000}
+  - {id: c17, text: "chalis hazaar", expect: 40000}
+  - {id: c18, text: "chaalis rupaye", expect: 40}
+  - {id: c19, text: "paintalis hazaar", expect: 45000}
+  - {id: c20, text: "pachaas rupaye", expect: 50}
+  - {id: c21, text: "pachas hazaar", expect: 50000}
+  - {id: c22, text: "pachpan hazaar", expect: 55000}
+  - {id: c23, text: "chhappan sau", expect: 5600}
+  - {id: c24, text: "iksath rupaye", expect: 61}
+  - {id: c25, text: "sattar hazaar", expect: 70000}
+  - {id: c26, text: "pachhattar rupaye", expect: 75}
+  - {id: c27, text: "assi rupaye", expect: 80}
+  - {id: c28, text: "bayasi rupaye", expect: 82}
+  - {id: c29, text: "chaurasi lakh", expect: 8400000}
+  - {id: c30, text: "nabbe hazaar", expect: 90000}
+  - {id: c31, text: "ninyanve rupaye", expect: 99}
+  # --- saath / sath: 60 only before a multiplier or a rupee word ---
+  - {id: c32, text: "saath hazaar", expect: 60000}
+  - {id: c33, text: "sath lakh", expect: 6000000}
+  - {id: c34, text: "saath rupaye", expect: 60}
+  - {id: c35, text: "Rahul ke saath meeting", expect: null}
+  - {id: c36, text: "Neha ke sath lunch", expect: null}
+  # --- sau / hazaar alone ---
+  - {id: c37, text: "sau rupaye", expect: 100}
+  - {id: c38, text: "sau", expect: 100}
+  - {id: c39, text: "hazaar rupaye", expect: 1000}
+  # --- combinations ---
+  - {id: c40, text: "do sau pachaas", expect: 250}
+  - {id: c41, text: "teen hazaar paanch sau pachhattar", expect: 3575}
+  - {id: c42, text: "ek lakh pachaas hazaar", expect: 150000}
+  - {id: c43, text: "₹ bees hazaar paanch sau", expect: 20500}
+  # --- not a number ---
+  - {id: c44, text: "tera kaam ho gaya", expect: null}
