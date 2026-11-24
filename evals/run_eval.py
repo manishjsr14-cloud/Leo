@@ -21,6 +21,7 @@ from evals.eval_compare import compare
 from evals.eval_metrics import compute
 from evals.eval_report import body, sampling_line
 from evals.eval_scoring import score, verdict
+from evals.eval_v2 import with_v2
 from evals.m1_7_calendar_check import git_state
 from evals.m1_8_check import run_one
 from evals.machine import machine_line
@@ -59,12 +60,13 @@ def run_turn(turn: dict, data: dict, lang: str, config) -> dict:
 def record(key: str, result: dict, known: dict[str, str]) -> dict:
     turn, calls = result["turn"], result["calls"]
     scored = score(result)
-    return {"key": key, "lang": turn["lang"], "text": turn["text"], "reply": result["reply"],
-            "plan": result["plan"], "stops": result["stops"], "steps": result["steps"],
-            "calls": calls, "llm_calls": len(calls), "turn_s": result["wall"],
-            "fallback_calls": sum(c["provider"] != "ollama" for c in calls),
-            "from": known.get(key), "known": key in known,
-            "verdict": verdict(scored["passed"], key in known), **scored}
+    return with_v2({"key": key, "lang": turn["lang"], "text": turn["text"],
+                    "reply": result["reply"], "plan": result["plan"], "stops": result["stops"],
+                    "steps": result["steps"], "calls": calls, "llm_calls": len(calls),
+                    "turn_s": result["wall"],
+                    "fallback_calls": sum(c["provider"] != "ollama" for c in calls),
+                    "from": known.get(key), "known": key in known,
+                    "verdict": verdict(scored["passed"], key in known), **scored})
 
 
 # Header lines: title, machine, commit, models, sampling, files run and skipped.

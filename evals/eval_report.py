@@ -7,6 +7,7 @@ import urllib.request
 from collections import Counter
 
 from evals.eval_metrics import table
+from evals.eval_v2 import fail_reasons
 from evals.m1_8_check_helpers import call_label
 
 SAMPLING_KEYS = ("temperature", "top_k", "top_p", "seed")
@@ -43,13 +44,12 @@ def mark(value) -> str:
     return "-" if value is None else "ok" if value else "FAIL"
 
 
-# One list section, e.g. the known failing turns, with each turn's reasons.
-def turn_list(title: str, records: list[dict]) -> list[str]:
+# One list section, e.g. the known failing turns, with each turn's reasons
+# (a failed language check included, M1 cleanup item 2).
+def turn_list(title: str, records: list[dict], scorer: str = "v1") -> list[str]:
     lines = [f"## {title} ({len(records)})", ""]
     for r in records:
-        why = "; ".join(r["tool_fails"] + r["reply_fails"])
-        if not r["routing_ok"]:
-            why = f"plan {r['plan']}; " + why
+        why = "; ".join(fail_reasons(r, scorer))
         source = f" [from {r['from']}]" if r.get("from") else ""
         lines.append(f"- {r['key']}{source}: {why or 'all checks pass'}")
     return lines + ([""] if records else ["- none", ""])
@@ -59,6 +59,7 @@ def turn_list(title: str, records: list[dict]) -> list[str]:
 def details(r: dict) -> list[str]:
     lines = [f"### {r['key']} ({r['lang']}): {r['verdict']}", "", f"**You:** {r['text']}", "",
              f"**Leo:** {r['reply']}", "", f"Language: {r['lang_why']}",
+             f"Language (v2): {r['lang_v2_why']}; verdict with v2: {r['verdict_v2']}",
              f"Plan: {r['plan']}; stops: {r['stops'] or 'no agent run'}",
              "LLM calls: " + ", ".join(call_label(c) for c in r["calls"]), "", "Tool calls:"]
     lines += [f"- `{s['tool']}({s['args']})` -> `{s['result']}`" for s in r["steps"]] or ["- none"]
@@ -81,6 +82,8 @@ def body(records: list[dict], metrics: dict, comparison: list[str]) -> list[str]
              ("All turns are counted, known failing ones included. A '-' check is not scored "
               "for that turn (no tool expectations beyond the plan)."), "", *table(metrics), ""]
     lines += turn_list("New failures", [r for r in records if r["verdict"] == "fail"])
+    lines += turn_list("New failures with scorer v2",
+                       [r for r in records if r["verdict_v2"] == "fail"], "v2")
     lines += turn_list("Known failing", [r for r in records if r["verdict"] == "known_failing"])
     lines += turn_list("Fixed (known failing, now passing)",
                        [r for r in records if r["verdict"] == "fixed"])
@@ -88,9 +91,11 @@ def body(records: list[dict], metrics: dict, comparison: list[str]) -> list[str]
     lines += [f"## Refused calls ({sum(len(r['refused']) for r in records)})", ""]
     lines += [f"- {r['key']}: {', '.join(r['refused'])}" for r in with_refused] or ["- none"]
     lines += ["", "## Turns", "",
-              "| turn | lang | verdict | routing | tools | reply | refused | llm_calls | turn_s |",
-              "|---|---|---|---|---|---|---|---|---|"]
-    lines += [f"| {r['key']} | {r['lang']} | {r['verdict']} | {mark(r['routing_ok'])} | "
+              ("| turn | lang | verdict | verdict v2 | routing | tools | reply | refused | "
+               "llm_calls | turn_s |"),
+              "|---|---|---|---|---|---|---|---|---|---|"]
+    lines += [f"| {r['key']} | {r['lang']} | {r['verdict']} | {r['verdict_v2']} | "
+              f"{mark(r['routing_ok'])} | "
               f"{mark(r['tools_ok'])} | {mark(r['reply_ok'])} | {len(r['refused'])} | "
               f"{r['llm_calls']} | {r['turn_s']:.1f} |" for r in records]
     if comparison:

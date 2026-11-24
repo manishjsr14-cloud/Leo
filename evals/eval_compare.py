@@ -16,7 +16,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-from evals.eval_metrics import GROUPS, TIMING_ROWS, number_text, rate_text
+from evals.eval_metrics import GROUPS, TIMING_ROWS, compute, number_text, rate_text
+from evals.eval_v2 import fail_reasons, with_v2
 
 
 # True if code changed between two commits, False if only reports did,
@@ -55,8 +56,26 @@ def metric_rows(before: dict, after: dict, same_machine: bool) -> list[str]:
     return rows
 
 
-# Lines comparing two reports (loaded .json dicts).
+# A report scored with v2 too: a report written before scorer v2 is rescored
+# from its stored replies, with its metrics recomputed (the file is not changed).
+def with_v2_report(report: dict) -> dict:
+    if all("verdict_v2" in t for t in report["turns"]):
+        return report
+    turns = [with_v2(t) for t in report["turns"]]
+    return {**report, "turns": turns, "metrics": compute(turns)}
+
+
+# "- key: reasons" for each turn failing under `scorer` now but not before.
+def newly_failing(old: dict, new: dict, scorer: str) -> list[str]:
+    field = "verdict" if scorer == "v1" else "verdict_v2"
+    return [f"- {k}: {'; '.join(fail_reasons(new[k], scorer))}" for k in new
+            if new[k][field] == "fail" and old.get(k, {}).get(field) != "fail"]
+
+
+# Lines comparing two reports (loaded .json dicts). Both are scored with v1 and
+# v2 (M1 cleanup item 2); the metric table shows both scorers' rows.
 def compare(before: dict, after: dict, before_name: str, after_name: str) -> list[str]:
+    before, after = with_v2_report(before), with_v2_report(after)
     same_machine = before["machine"] == after["machine"]
     lines = [f"Before: {before_name} ({before['machine']}; commit {before['commit']})",
              f"After: {after_name} ({after['machine']}; commit {after['commit']})", "",
@@ -69,11 +88,11 @@ def compare(before: dict, after: dict, before_name: str, after_name: str) -> lis
     new = {t["key"]: t for t in after["turns"]}
     changed = [f"- {k}: {old[k]['verdict']} -> {new[k]['verdict']}"
                for k in new if k in old and old[k]["verdict"] != new[k]["verdict"]]
-    failing = [f"- {k}: {'; '.join(new[k]['tool_fails'] + new[k]['reply_fails']) or 'routing'}"
-               for k in new if new[k]["verdict"] == "fail"
-               and old.get(k, {}).get("verdict") != "fail"]
+    failing, failing_v2 = newly_failing(old, new, "v1"), newly_failing(old, new, "v2")
     lines += [f"Turns whose verdict changed: {len(changed)}", "", *(changed or ["- none"]), "",
-              f"Newly failing turns: {len(failing)}", "", *(failing or ["- none"])]
+              f"Newly failing turns: {len(failing)}", "", *(failing or ["- none"]), "",
+              f"Newly failing turns, scorer v2 on both sides: {len(failing_v2)}", "",
+              *(failing_v2 or ["- none"])]
     only = sorted(set(old) ^ set(new))
     if only:
         lines += ["", "Turns in only one report: " + ", ".join(only)]

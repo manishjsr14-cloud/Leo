@@ -7,7 +7,10 @@ from evals.eval_metrics import compute
 # A report dict like run_eval's .json, from (key, verdict) pairs.
 def report(machine, verdicts, commit="abc", seconds=5.0):
     turns = [{"key": k, "verdict": v, "tool_fails": ["missing call x"] if v == "fail" else [],
-              "reply_fails": []} for k, v in verdicts]
+              "reply_fails": [], "reply": "Done.", "lang": "en", "steps": [], "plan": [],
+              "routing_ok": True, "tools_ok": v != "fail", "lang_ok": True, "lang_why": "",
+              "known": v in ("known_failing", "fixed"), "llm_calls": 2, "turn_s": seconds,
+              "refused": [], "fallback_calls": 0} for k, v in verdicts]
     records = [{"lang": "en", "routing_ok": v != "fail", "tools_ok": True, "reply_ok": True,
                 "lang_ok": True, "clock_ok": True, "json_ok": True, "invented_ok": True,
                 "passed": v in ("pass", "fixed"), "llm_calls": 2, "turn_s": seconds,
@@ -41,6 +44,24 @@ def test_other_machine_drops_timing_rows(monkeypatch):
     assert "timing rows (turn seconds) are left out" in text
     assert "| routing accuracy | all | 1/1 (100.0 %) | 1/1 (100.0 %) |" in text
     assert "Code changed" in text
+
+
+# A report written before scorer v2 is rescored from its replies: a turn that
+# failed only v1's language check is not newly failing with v2 on both sides,
+# and a language-only failure names the language reason (not "routing").
+def test_rescored_with_v2_on_both_sides(monkeypatch):
+    monkeypatch.setattr(eval_compare, "code_changed", lambda a, b: True)
+    before = report("Machine: laptop", [("f:g", "pass")])
+    after = report("Machine: laptop", [("f:g", "fail")])
+    turn = after["turns"][0]
+    turn.update(lang="hinglish", reply="Hi! Baat karein, kaise ho?", tools_ok=True,
+                tool_fails=[], lang_ok=False, lang_why="Hindi markers: ['ho']")
+    before["turns"][0].update(lang="hinglish", reply="Main theek hoon, aap batao?")
+    text = "\n".join(eval_compare.compare(before, after, "old", "new"))
+    assert "Newly failing turns: 1" in text
+    assert "- f:g: language (v1): Hindi markers: ['ho']" in text
+    assert "Newly failing turns, scorer v2 on both sides: 0" in text
+    assert "| turn passed (all checks, scorer v2) | all | 1/1 (100.0 %) | 1/1 (100.0 %) |" in text
 
 
 # A dirty tree means the code change cannot be told.

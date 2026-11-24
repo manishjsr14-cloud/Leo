@@ -19,6 +19,8 @@ RATES = {  # metric name -> the record key it counts
     "reply: no JSON": "json_ok",
     "reply: no invented results": "invented_ok",
     "turn passed (all checks)": "passed",
+    "reply: language (scorer v2)": "lang_v2_ok",          # M1 cleanup item 2
+    "turn passed (all checks, scorer v2)": "passed_v2",
 }
 NUMBERS = {  # metric name -> how to read it from a record
     "LLM calls per turn": lambda r: r["llm_calls"],
@@ -55,7 +57,7 @@ def compute(records: list[dict]) -> dict:
     for name, key in RATES.items():
         rates[name] = {}
         for g in GROUPS:
-            counted = [r[key] for r in group(records, g) if r[key] is not None]
+            counted = [r.get(key) for r in group(records, g) if r.get(key) is not None]
             rates[name][g] = [sum(bool(v) for v in counted), len(counted)]
     for name, read in NUMBERS.items():
         numbers[name] = {g: summary([read(r) for r in group(records, g)]) for g in GROUPS}
