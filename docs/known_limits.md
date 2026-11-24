@@ -55,6 +55,12 @@ Each M1 cleanup item ticks its line in the commit that fixes it.
 - [x] Replies to "what's on" questions (a successful `get_events`) are written by the LLM responder, which can leave events out (fixed in M1 cleanup item 4: `leo/graph/events_reply.py`, every event with its time, English and Hinglish, and a "nothing on" reply)
 - [x] If the calendar agent stops after a single `get_events` on a message that asked for a change, the code reply lists the events and does not say the change was not made (found while writing M1 cleanup item 4) (fixed in the M1 cleanup item 4 follow-up: a "change not made" line when the message has cancel, move, create or clear words; replies.yaml v6)
 
+## Embedder and memory (M2.2)
+
+- [x] The embedder does not tell "kal" from "parso": the kal/parso versions of one sentence scored 0.939-0.989, above every same-sentence pair across languages (`m2_2_embedder_check_2026-11-24.md`, laptop) (by design: dates come from the time parser, section 15, never from vector similarity; recorded, not scored)
+- [ ] Negation is not separated: "I don't eat non-veg food" vs "I eat non-veg food" scored 0.984 (en), 0.979 (Hinglish), 0.956 (Devanagari), above their own cross-language pairs (lowest 0.843-0.873) (`m2_2_embedder_check_2026-11-24.md`, laptop) (open: M2.3 `memory_write` replaces a contradicting fact on the same subject instead of adding a second one)
+- [ ] Book vs cancel is not separated: "Cancel my dentist appointment" vs "Book a doctor's appointment for me" scored 0.887 (en), 0.874 (Hinglish), 0.943 (Devanagari); rule B failed for g04 in all three languages and for g11.hi (`m2_2_embedder_check_2026-11-24.md`, laptop) (open: the action comes from the LLM and tool arguments, not from vector similarity)
+
 ## Measuring
 
 - [x] L20 "Hi Leo, kaise ho?" failed the language scorer in run6 with the valid Hinglish reply "Hi! Baat karein, kaise ho? 😊"; it passed in run5 (`m1_exit_check_2026-11-24_run5_run6.md`) (fixed in M1 cleanup item 1: scorer v2, `evals/language_scoring_v2.py`; v1 unchanged)
