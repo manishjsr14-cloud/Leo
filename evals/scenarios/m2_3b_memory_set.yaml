@@ -1,0 +1,141 @@
+# M2.3b memory check set (2026-11-26). Written by the user outside the code and
+# committed before any M2.3b code. Converted to the project's format without
+# changing any message, id or expected result; the original inline comments are
+# kept as `note:` fields. Never edit this file to improve a result; a better set
+# is a new file (AGENTS.md). All people and facts are fictional.
+#
+# Run order: facts (F) -> plans/events (P) -> same-topic additions (N)
+#            -> updates with a cue (U) -> boundary (B) -> questions (Q, X).
+# Each message is sent as a user turn through the real write path.
+# "now" for every turn: 2026-11-26 21:00 IST (Thursday).
+#
+# Done rule (the user's words, fixed before any code):
+# - Everything runs end to end through the real write path on the local
+#   model, on the laptop, plugged in.
+# - Pass: at least 90% of lasting facts stored (F, N and U messages); 0
+#   plans/events stored; all 4 cued updates replaced and 0 of the 3 uncued
+#   same-topic messages replaced; Recall@5 of at least 0.90 on the 15
+#   questions; for the 5 unanswerable questions, no reply states an invented
+#   fact. The boundary group is reported only.
+# - If any part misses: one fix round, with a fresh question set written
+#   before the fixes; if it still misses, close with known limits. The score
+#   quoted is always the run on the set written before the code being
+#   judged. Any result not covered by these words is decided by the user, not
+#   assumed.
+#
+# How the parts are counted (from the approved proposal, before any code):
+# - A lasting fact is stored when a memory row with its text was written
+#   during its turn (32 messages: 25 F + 3 N + 4 U; 90% = at least 29).
+# - A cued update is replaced when the memory of its `replaces` fact became
+#   inactive with replaced_by pointing at the update's memory.
+# - A question counts for Recall@5 when the personal-question gate opens and
+#   one of its expect_any_of memories is among the 5 nearest active memories.
+# - Unanswerable replies are printed in full; code flags whether each holds a
+#   "don't know" phrase, and the user judges any reply that does not.
+# Also asked for at approval, reported next to the rule: the M1.10 suite with
+# memory on (empty store and the store this check leaves) shows no new failures
+# against the M1.10 laptop baseline under scorer v2, with how many suite
+# messages open the gate and trigger a write; five small-talk messages
+# (reported only, not part of this set) and whether each would be stored.
+
+now: "2026-11-26T21:00:00+05:30"
+
+done_rule:
+  lasting_stored_min: 0.90       # of the F, N and U messages
+  plans_stored_max: 0
+  cued_updates_replaced: 4       # of 4
+  uncued_replaced_max: 0         # of 3
+  recall_at_5_min: 0.90          # on the 15 questions
+  unanswerable_invented_max: 0   # of 5
+  boundary: reported_only
+
+# --- Lasting facts: must be stored (25) -------------------------------------
+facts:
+  - {id: F01, lang: en,       text: "My blood group is B positive."}
+  - {id: F02, lang: hinglish, text: "Main ek startup mein software tester hoon."}
+  - {id: F03, lang: en,       text: "I live in Pune, near Baner."}
+  - {id: F04, lang: hinglish, text: "Mujhe peanuts se allergy hai."}
+  - {id: F05, lang: en,       text: "I'm vegetarian."}
+  - {id: F06, lang: hinglish, text: "Meri behen ka naam Kavya hai."}
+  - {id: F07, lang: en,       text: "My brother's name is Arjun."}
+  - {id: F08, lang: hinglish, text: "Mujhe chai bina cheeni ke pasand hai."}
+  - {id: F09, lang: en,       text: "I drive a white Honda City."}
+  - {id: F10, lang: hinglish, text: "Mera doctor Dr. Mehta hai, Kothrud wala."}
+  - {id: F11, lang: en,       text: "I support Mumbai Indians in the IPL."}
+  - {id: F12, lang: hinglish, text: "Main Marathi aur Hindi dono bolta hoon."}
+  - {id: F13, lang: en,       text: "My work laptop is a ThinkPad."}
+  - {id: F14, lang: hinglish, text: "Mujhe horror movies pasand nahi hain."}
+  - {id: F15, lang: en,       text: "I prefer reminders as phone notifications, not voice."}
+  - {id: F16, lang: hinglish, text: "Mera gym Gold's Gym hai, Aundh mein."}
+  - {id: F17, lang: en,       text: "My manager is called Priya."}
+  - {id: F18, lang: hinglish, text: "Main left-handed hoon."}
+  - {id: F19, lang: en,       text: "I'm learning to play the guitar."}
+  - {id: F20, lang: hinglish, text: "Mere dog ka naam Bruno hai."}
+  - {id: F21, lang: en,       text: "I don't drink coffee."}
+  - {id: F22, lang: hinglish, text: "Mera favourite khana rajma chawal hai."}
+  - {id: F23, lang: en,       text: "I use an iPhone."}
+  - {id: F24, lang: hinglish, text: "Mere papa retired teacher hain."}
+  - {id: F25, lang: en,       text: "I usually work from home."}
+
+# --- Plans and events: must NOT be stored (8) --------------------------------
+plans:
+  - {id: P01, lang: hinglish, text: "Kal mujhe Mumbai jaana hai."}
+  - {id: P02, lang: en,       text: "I have a dentist appointment on Friday."}
+  - {id: P03, lang: hinglish, text: "Meri parso shaam ko meeting hai."}
+  - {id: P04, lang: en,       text: "I'm meeting Kavya for lunch tomorrow."}
+  - {id: P05, lang: hinglish, text: "Aaj main office late jaunga."}
+  - {id: P06, lang: en,       text: "Remind me to call Arjun at 6 pm."}
+  - {id: P07, lang: hinglish, text: "Is weekend main Lonavala ja raha hoon.", note: "no date/clock word: tests the code rule's edge"}
+  - {id: P08, lang: en,       text: "My flight to Delhi is on 5 December."}
+
+# --- Same topic, NO update cue: must be ADDED, must NOT replace (3) -----------
+same_topic_no_cue:
+  - {id: N1, lang: en,       text: "I'm also allergic to dust.",              topic_of: F04}
+  - {id: N2, lang: hinglish, text: "Meri choti behen ka naam Isha hai.",     topic_of: F06}
+  - {id: N3, lang: hinglish, text: "Mujhe comedy movies bahut pasand hain.", topic_of: F14}
+
+# --- Updates WITH a cue: must REPLACE the old fact (old kept as history) (4) --
+updates:
+  - {id: U1, lang: en,       text: "I'm not vegetarian anymore, I eat chicken now.",              replaces: F05, cue: "anymore"}
+  - {id: U2, lang: en,       text: "I moved to Bangalore last month.",                            replaces: F03, cue: "moved to"}
+  - {id: U3, lang: hinglish, text: "Ab main tester nahi hoon, ab developer hoon.",                replaces: F02, cue: "ab ... nahi"}
+  - {id: U4, lang: hinglish, text: "Maine Gold's Gym chhod diya, ab ghar pe workout karta hoon.", replaces: F16, cue: "chhod diya"}
+
+# --- Boundary cases: REPORTED ONLY, not scored -------------------------------
+# Lasting facts that contain a time or date. Design point 1 ("code rejects
+# messages with a date or time") would reject them. Approved handling: a
+# preference, habit or yearly word (pasand, prefer, roz, har, every, daily,
+# usually, always, hamesha, birthday, anniversary) overrides the time rule.
+boundary:
+  - {id: B1, lang: hinglish, text: "Mujhe meetings 11 baje ke baad pasand hain.", note: "F2's headline example"}
+  - {id: B2, lang: hinglish, text: "Main roz subah 6 baje uthta hoon."}
+  - {id: B3, lang: en,       text: "My mother's birthday is on 12 March."}
+
+# --- Personal questions: Recall@5 must include an expected id (15) -----------
+# Expected ids refer to the state AFTER the updates (U*), so a replaced fact's
+# new version is the right answer. "any_of" = any one of these counts.
+questions:
+  - {id: Q01, lang: en,       text: "What's my blood group?",          expect_any_of: [F01]}
+  - {id: Q02, lang: hinglish, text: "Mujhe kis cheez se allergy hai?", expect_any_of: [F04, N1]}
+  - {id: Q03, lang: en,       text: "Where do I live now?",            expect_any_of: [U2]}
+  - {id: Q04, lang: hinglish, text: "Meri behen ka naam kya hai?",     expect_any_of: [F06, N2]}
+  - {id: Q05, lang: en,       text: "What do I do for work?",          expect_any_of: [U3], note: "en question, hinglish fact"}
+  - {id: Q06, lang: hinglish, text: "Mera manager kaun hai?",          expect_any_of: [F17], note: "hinglish question, en fact"}
+  - {id: Q07, lang: en,       text: "Do I eat meat?",                  expect_any_of: [U1], note: "synonym: meat / chicken / vegetarian"}
+  - {id: Q08, lang: hinglish, text: "Mere doctor ka naam kya hai?",    expect_any_of: [F10]}
+  - {id: Q09, lang: en,       text: "Which IPL team do I support?",    expect_any_of: [F11]}
+  - {id: Q10, lang: hinglish, text: "Meri gaadi kaunsi hai?",          expect_any_of: [F09], note: "synonym gaadi / car, cross-language"}
+  - {id: Q11, lang: en,       text: "What's my dog called?",           expect_any_of: [F20], note: "cross-language"}
+  - {id: Q12, lang: hinglish, text: "Main chai kaise peeta hoon?",     expect_any_of: [F08], note: "no my/mera cue: tests the gating words"}
+  - {id: Q13, lang: en,       text: "What's my favourite food?",       expect_any_of: [F22], note: "cross-language"}
+  - {id: Q14, lang: hinglish, text: "Mere papa kya karte the?",        expect_any_of: [F24]}
+  - {id: Q15, lang: en,       text: "Do I like scary films?",          expect_any_of: [F14], note: "synonym scary/horror, films/movies; cross-language"}
+
+# --- Personal questions with NO stored answer (5) ----------------------------
+# Pass: the reply states no invented fact (it should say Leo doesn't know).
+unanswerable:
+  - {id: X01, lang: en,       text: "What's my mother's name?"}
+  - {id: X02, lang: hinglish, text: "Mera passport number kya hai?"}
+  - {id: X03, lang: en,       text: "Which school did I go to?"}
+  - {id: X04, lang: hinglish, text: "Mera favourite colour kaunsa hai?"}
+  - {id: X05, lang: en,       text: "Do I have any cousins in Delhi?"}
