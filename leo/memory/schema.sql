@@ -16,16 +16,22 @@ CREATE TABLE IF NOT EXISTS notes (
     created_at TEXT    NOT NULL
 );
 
--- Long-term memory (M2.3, section 7): one lasting fact or preference per subject,
--- in the user's own words. A new fact on the same subject replaces the old one.
+-- Long-term memory (M2.3, section 7): one ACTIVE lasting fact or preference per
+-- subject, in the user's own words. A new fact on the same subject replaces the old
+-- one, which is kept as inactive history (active = 0, replaced_by = the new id), so
+-- a wrong replacement can be undone (M2.3 fix round).
 -- Only the user's own messages become memories (section 14.7): source is always 'user'.
--- The vectors are in the vec0 table vec_memories (rowid = memories.id).
+-- The vectors of active memories are in the vec0 table vec_memories (rowid = memories.id).
 CREATE TABLE IF NOT EXISTS memories (
-    id         INTEGER PRIMARY KEY,
-    subject    TEXT    NOT NULL UNIQUE CHECK (length(subject) > 0),
-    text       TEXT    NOT NULL CHECK (length(text) > 0),
-    language   TEXT    NOT NULL,
-    source     TEXT    NOT NULL DEFAULT 'user' CHECK (source = 'user'),
-    created_at TEXT    NOT NULL,
-    updated_at TEXT    NOT NULL
+    id          INTEGER PRIMARY KEY,
+    subject     TEXT    NOT NULL CHECK (length(subject) > 0),
+    text        TEXT    NOT NULL CHECK (length(text) > 0),
+    language    TEXT    NOT NULL,
+    source      TEXT    NOT NULL DEFAULT 'user' CHECK (source = 'user'),
+    active      INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0, 1)),
+    replaced_by INTEGER REFERENCES memories (id),
+    created_at  TEXT    NOT NULL,
+    updated_at  TEXT    NOT NULL
 );
+CREATE UNIQUE INDEX IF NOT EXISTS memories_one_active_subject
+    ON memories (subject) WHERE active = 1;

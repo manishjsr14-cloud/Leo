@@ -26,13 +26,15 @@ def vector_count(bank) -> int:
 
 
 # The plan's M2.3 note: a contradicting fact on the same subject replaces the old
-# one (row and vector), so a search finds only the new fact.
+# one, so a search finds only the new fact. The old one is kept as inactive
+# history pointing at the new one (M2.3 fix round); only its vector is removed.
 def test_new_fact_on_same_subject_replaces_the_old_one(tmp_path):
     bank = make_bank(tmp_path)
     first_id, replaced_first = save_memory(bank, "diet", EATS, "en", NOW)
     second_id, replaced_second = save_memory(bank, "diet", STOPPED, "en", NOW)
     assert (replaced_first, replaced_second) == (False, True)
-    assert second_id == first_id
+    old = bank.conn.execute("SELECT * FROM memories WHERE id = ?", (first_id,)).fetchone()
+    assert (old["text"], old["active"], old["replaced_by"]) == (EATS, 0, second_id)
     rows = all_memories(bank)
     assert [(r["subject"], r["text"]) for r in rows] == [("diet", STOPPED)]
     assert vector_count(bank) == 1
