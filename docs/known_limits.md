@@ -94,3 +94,15 @@ Each M1 cleanup item ticks its line in the commit that fixes it.
 - [ ] There is no way to forget a memory yet; section 14.7's "Leo, forget that" comes later (open)
 - [ ] A message with two facts is stored as one memory under one subject (M2.3 design: one memory per message) (open)
 - [x] Only the user's own messages become memories; web pages, tool results, files and replies never reach memory_write (by design: section 14.7; tested in `tests/test_memory_nodes.py`)
+
+## Memory redesign (M2.3b)
+
+- [ ] The question rule reads the Hinglish "is" ("this") as the English question word, so a statement that starts with it is treated as a question and never stored ("Is saal se main Marathi classes le raha hoon"). In the first M2.3b check, P07 "Is weekend main Lonavala ja raha hoon" was kept out by this bug, not by the plan rule (`m2_3b_memory_check_2026-11-26.md`) (open)
+- [ ] The plan rule does not read a part of today as a time: "this afternoon / this morning / this evening", "tonight", "aaj shaam", "aaj raat". A plan that names only one of these (fix-round P10 "I'm going to the bank this afternoon") is stored as a memory. Not changed in the M2.3b fix round (user's decision: not on the fix list) (open)
+- [ ] Imperative personal requests ("Mere manager ka naam batao", "tell me my blood group") do not open the recall gate, which needs a question; they get no memory hints (fix-round Q21) (open)
+- [ ] Six tool-argument fields that agents fill in as structured output are optional or have defaults, against the architecture section 6.6 rule that every field in a structured reply is required: `web_search.max_results`, `list_tasks.include_done`, `complete_task.task_id` and `title`, `list_notes.limit`, `start_timer.label`. Listed as exceptions in `tests/test_structured_schemas.py` (open: a later task, with its own eval suite run)
+- [x] The memory extraction reply schema had defaults, so Ollama's schema marked no field required and every reply in the first M2.3b check was broken JSON; every fact was stored under "general" and no cued update replaced anything (`m2_3b_memory_check_2026-11-26.md`) (fixed in 28a7c46: both fields required)
+- [x] The first M2.3b check wrote its two databases to `leo_data/evals/`; that folder held only check data and was deleted (fixed in 05a1518: checks use `<temp>/leo_evals/`, tested)
+- [ ] The small-talk rule (rule A, 47db797) was written after reading the fix-round set's small-talk lines S01-S06, so its result on them is not blind; other small talk outside its word list is stored (open)
+- [ ] A passing state with no time word ("I am really sleepy right now") is stored like a lasting fact: code stores every first-person statement that is not a plan, request or small talk (by design of M2.3b; open)
+

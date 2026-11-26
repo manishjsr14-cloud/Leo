@@ -97,3 +97,27 @@ def done_parts(rule: dict, data: dict, records: dict, rows: dict, questions: lis
          f"{len(unanswerable)}; without one (the user judges): {flagged or 'none'}"),
          True if not flagged else None),
     ]
+
+
+# The fix-round pass rule, part by part (m2_3b_fixround_set.yaml). `records` holds
+# both sets' turns, since its updates replace facts of the first set.
+def fix_parts(rule: dict, data: dict, records: dict, rows: dict, questions: list[dict],
+              unanswerable: list[dict]) -> list[tuple[str, bool | None]]:
+    cued, uncued = cued_updates(data, records, rows), uncued_replaced(data, records)
+    plans = plans_stored(data, records)
+    talk = [m["id"] for m in data["small_talk"] if records[m["id"]]["created"]]
+    hits = sum(q["hit5"] for q in questions)
+    flagged = [x["id"] for x in unanswerable if not x["dont_know"]]
+    return [
+        (f"cued updates replaced: {sum(cued.values())}/{len(cued)} {cued}",
+         sum(cued.values()) >= rule["cued_updates_replaced"]),
+        (f"uncued same-topic messages that replaced: {uncued or 'none'}",
+         len(uncued) <= rule["uncued_replaced_max"]),
+        (f"plans stored: {plans or 'none'}", len(plans) <= rule["plans_stored_max"]),
+        (f"small-talk lines stored: {talk or 'none'}", len(talk) <= rule["small_talk_stored_max"]),
+        ((f"Recall@5 on Q16-Q27: {hits}/{len(questions)} = {hits / len(questions):.2f} "
+          f"(min {rule['recall_at_5_min']:.2f})"), hits / len(questions) >= rule["recall_at_5_min"]),
+        ((f"unanswerable replies with a don't-know phrase: {len(unanswerable) - len(flagged)}/"
+          f"{len(unanswerable)}; without one (the user judges): {flagged or 'none'}"),
+         True if not flagged else None),
+    ]
