@@ -1,0 +1,179 @@
+{
+  "rounds": [
+    {
+      "round": "without",
+      "before": {
+        "available_mib": 2600,
+        "page_file_used_mib": 705,
+        "page_file_total_mib": 9172,
+        "this_process_mib": 65
+      },
+      "first_token_s": 8.465878199989675,
+      "total_s": 8.594564099999843,
+      "ollama_load_s": 5.9442882,
+      "after": {
+        "available_mib": 2107,
+        "page_file_used_mib": 706,
+        "page_file_total_mib": 9172,
+        "this_process_mib": 65
+      },
+      "loaded": [
+        {
+          "name": "leo-qwen3:latest",
+          "size_mib": 3076,
+          "gpu_share": 1.0
+        }
+      ],
+      "embedder": {},
+      "embedder_held": false
+    },
+    {
+      "round": "with",
+      "before": {
+        "available_mib": 1983,
+        "page_file_used_mib": 715,
+        "page_file_total_mib": 9172,
+        "this_process_mib": 1190
+      },
+      "first_token_s": 8.275790799991228,
+      "total_s": 8.404782600002363,
+      "ollama_load_s": 5.7573737,
+      "after": {
+        "available_mib": 1214,
+        "page_file_used_mib": 723,
+        "page_file_total_mib": 9172,
+        "this_process_mib": 1191
+      },
+      "loaded": [
+        {
+          "name": "leo-qwen3:latest",
+          "size_mib": 3076,
+          "gpu_share": 1.0
+        }
+      ],
+      "embedder": {
+        "before": {
+          "available_mib": 2275,
+          "page_file_used_mib": 706,
+          "page_file_total_mib": 9172,
+          "this_process_mib": 62
+        },
+        "load_s": 71.9,
+        "after": {
+          "available_mib": 1227,
+          "page_file_used_mib": 713,
+          "page_file_total_mib": 9172,
+          "this_process_mib": 1187
+        }
+      },
+      "embedder_held": true
+    },
+    {
+      "round": "without",
+      "before": {
+        "available_mib": 3119,
+        "page_file_used_mib": 721,
+        "page_file_total_mib": 9172,
+        "this_process_mib": 66
+      },
+      "first_token_s": 7.352036600001156,
+      "total_s": 7.477167700009886,
+      "ollama_load_s": 4.8516478,
+      "after": {
+        "available_mib": 2459,
+        "page_file_used_mib": 721,
+        "page_file_total_mib": 9172,
+        "this_process_mib": 66
+      },
+      "loaded": [
+        {
+          "name": "leo-qwen3:latest",
+          "size_mib": 3076,
+          "gpu_share": 1.0
+        }
+      ],
+      "embedder": {},
+      "embedder_held": false
+    },
+    {
+      "round": "with",
+      "before": {
+        "available_mib": 2149,
+        "page_file_used_mib": 708,
+        "page_file_total_mib": 9172,
+        "this_process_mib": 1192
+      },
+      "first_token_s": 7.744802899978822,
+      "total_s": 7.860935000004247,
+      "ollama_load_s": 5.1968219,
+      "after": {
+        "available_mib": 1382,
+        "page_file_used_mib": 710,
+        "page_file_total_mib": 9172,
+        "this_process_mib": 1193
+      },
+      "loaded": [
+        {
+          "name": "leo-qwen3:latest",
+          "size_mib": 3076,
+          "gpu_share": 1.0
+        }
+      ],
+      "embedder": {
+        "before": {
+          "available_mib": 2518,
+          "page_file_used_mib": 721,
+          "page_file_total_mib": 9172,
+          "this_process_mib": 61
+        },
+        "load_s": 70.4,
+        "after": {
+          "available_mib": 1419,
+          "page_file_used_mib": 708,
+          "page_file_total_mib": 9172,
+          "this_process_mib": 1188
+        }
+      },
+      "embedder_held": true
+    },
+    {
+      "round": "with_warm_up",
+      "embedder": {
+        "before": {
+          "available_mib": 2529,
+          "page_file_used_mib": 710,
+          "page_file_total_mib": 9172,
+          "this_process_mib": 62
+        },
+        "load_s": 54.8,
+        "after": {
+          "available_mib": 1430,
+          "page_file_used_mib": 714,
+          "page_file_total_mib": 9172,
+          "this_process_mib": 1187
+        }
+      },
+      "warm_up_result_s": 7.812999999994645,
+      "elapsed_s": 7.80428650000249,
+      "loaded_right_after": [
+        {
+          "name": "leo-qwen3:latest",
+          "size_mib": 3076,
+          "gpu_share": 1.0
+        }
+      ],
+      "loaded_60_s_later": [
+        {
+          "name": "leo-qwen3:latest",
+          "size_mib": 3076,
+          "gpu_share": 1.0
+        }
+      ],
+      "embedder_held": true
+    }
+  ],
+  "ollama_timeouts": {
+    "first_token_s": 20.0,
+    "total_s": 60.0
+  }
+}
