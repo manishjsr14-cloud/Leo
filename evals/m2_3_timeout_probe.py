@@ -101,7 +101,7 @@ def warm_up_probe(base: str, config) -> dict:
 def one_round(label: str) -> dict:
     config = load_config()
     cfg, base, embed, embedder = config.llm.primary, config.llm.primary.base_url, {}, None
-    if label.startswith("with"):
+    if label in ("with", "with_warm_up"):
         embed["before"] = memory()
         start = time.perf_counter()
         embedder = load_embedder(config.embedder)  # kept alive until the round ends
