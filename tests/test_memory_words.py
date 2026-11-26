@@ -12,6 +12,7 @@ FACTS = [
     "I don't eat eggs.", "My dog's name is Bruno.", "I don't drink cola anymore.",
     "Meri mummy ka naam Sunita hai.", "Main Nagpur se hoon.", "Mujhe jazz pasand hai.",
     "Mujhe dust se allergy hai.", "Main anda nahi khata.",
+    "Maine cigarette chhod di hai.", "Maine gym jaana chod diya.",  # M2.3 fix round
 ]
 REMEMBER = ["Remember that the gate code is in the blue diary.",
             "Yaad rakhna, gaadi ki service March mein hoti hai.",

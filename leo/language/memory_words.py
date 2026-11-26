@@ -15,6 +15,10 @@ after seeing it:
   Hinglish:   mera / meri / mere ... hai / hain, main ... hoon / hu,
               mujhe ... pasand hai / nahi, mujhe ... allergy hai, main ... nahi khata / khati
 "note kar lo" is left out: it asks for the notes tool.
+
+Added in the M2.3 fix round (a logged change, asked for by the user after the
+first M2.3 check, so not independent of that check set):
+  Hinglish past tense: maine ... chhod di / chhod diya (also "chod")
 """
 
 import re
@@ -32,7 +36,8 @@ FACT_FORMS = [re.compile(p) for p in (
     r"\bi (don't|do not) eat\b", r"\bmy\b.+\bis\b", r"\banymore\b",
     r"\b(mera|meri|mere)\b.*\b(hai|hain)\b", r"\bmain\b.*\b(hoon|hu)\b",
     r"\bmujhe\b.*\bpasand\b.*\b(hai|hain|nahi)\b", r"\bmujhe\b.*\ballergy\b.*\bhai\b",
-    r"\bmain\b.*\bnahi (khata|khati)\b")]
+    r"\bmain\b.*\bnahi (khata|khati)\b",
+    r"\bmaine\b.*\b(chhod|chod) (di|diya)\b")]
 
 
 # The message's words in lower case, apostrophes kept ("i'm", "don't").
