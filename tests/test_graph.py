@@ -88,7 +88,7 @@ def test_memory_nodes_wrap_the_turn(tmp_path):
 
     fact, question = "Main Pune mein rehta hoon.", "Main kahan rehta hoon?"
     bank = make_bank(tmp_path, {f"home city: {fact}": [1, 0, 0, 0], question: [1, 0, 0, 0]})
-    chat = FakeChat("Theek hai.", {"remember": True, "subject": "home_city"}, "Pune mein.")
+    chat = FakeChat("Theek hai.", {"subject": "home_city", "replaces": 0}, "Pune mein.")
     graph = build_graph(chat, memory=bank)
     assert {"memory_recall", "memory_write"} <= set(graph.get_graph().nodes)
     graph.invoke({"messages": [HumanMessage(fact)], "language": "hinglish"})

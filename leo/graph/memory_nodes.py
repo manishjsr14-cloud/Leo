@@ -54,10 +54,12 @@ FALLBACK_SUBJECT = "general"
 
 class MemoryDecision(BaseModel):
     """The extraction step's reply: the fact's subject and, on an update cue, the
-    number of the listed memory it replaces (0 for none)."""
+    number of the listed memory it replaces (0 for none). Both fields are required
+    (architecture section 6.6): with defaults, the schema sent to Ollama marked no
+    field required and every reply in the first M2.3b check was broken JSON."""
 
-    subject: str = Field(default="", max_length=60)
-    replaces: int = 0
+    subject: str = Field(max_length=60)
+    replaces: int
 
 
 # Find the hints for a personal question and put their texts in state["memories"].

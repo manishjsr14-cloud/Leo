@@ -322,6 +322,8 @@ Requests escalated to the **desktop** go to the user's own machine over Tailscal
 
 **Decision (M1.7):** Ollama writes JSON keys in alphabetical order, so step replies use the tool name as the only key (`{"create_event": {...}}`, `{"done": {"summary": ...}}`) and the model's first choice is the tool, not its arguments.
 
+**Decision (M2.3b fix round):** every field in a structured reply must be required, with no default: with an optional field the local model wrote broken JSON in every memory extraction reply (`evals/reports/m2_3b_memory_check_2026-11-26.md`).
+
 ### 6.7 Desktop Backup Tier & Gaming Mode
 
 The laptop stays the main machine. The gaming desktop (RTX 3060 12 GB, 32 GB RAM) is a **backup tier** that runs a bigger model **only when it is on and not being used for games**. Gaming always wins: as soon as a game starts, Leo stops using the desktop.
