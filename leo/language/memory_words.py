@@ -5,7 +5,9 @@ to every turn. These rules run first, in code.
 
 Write trigger (M2.3b): a message is a candidate memory when it is not a
 question and either says "remember" / "yaad rakhna", or is a first-person
-statement (I, me, my, main, mera, mujhe, ...) with no request word. Plans and
+statement (I, me, my, main, mera, mujhe, ...) with no request word (the M2.3b
+fix round added complete, mark, remove, list, open, reschedule, rename and
+update: "complete my milk task" in the M1.10 suite would have been stored). Plans and
 events are kept out by leo/language/memory_events.py.
 
 Update cue (M2.3b): only a message with an explicit update word replaces an
@@ -36,7 +38,8 @@ FIRST_PERSON = {"i", "i'm", "i've", "i'd", "i'll", "me", "my", "mine", "myself",
 REQUEST = re.compile(
     r"\b(remind|yaad dila\w*|batao|bata do|bataiye|dikhao|dikha do|show|tell me|set|add|daal"
     r"|daalo|dal do|cancel|delete|hatao|hata do|karo|kar do|kardo|please|plz|search|dhundo"
-    r"|find|check|schedule|create|lagao|laga do|chahiye|calculate|convert|note kar)\b")
+    r"|find|check|schedule|create|lagao|laga do|chahiye|calculate|convert|note kar"
+    r"|complete|mark|remove|list|open|reschedule|rename|update)\b")  # M2.3b fix round
 UPDATE_CUE = re.compile(r"\b(anymore|any more|no longer|moved to|(chhod|chod) (di|diya|dia))\b"
                         r"|\bab\b.*\bnahi\b")
 

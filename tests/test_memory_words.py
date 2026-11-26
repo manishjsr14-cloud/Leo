@@ -74,7 +74,8 @@ def test_first_person_statements_are_picked(text):
 # M2.3b: a first-person request is not a fact.
 @pytest.mark.parametrize("text", ["Remind me to pay the bill.", "Mera schedule batao.",
                                   "Mujhe ek chai chahiye.", "Please add my gym session.",
-                                  "Mere notes dikhao."])
+                                  "Mere notes dikhao.", "complete my milk task",
+                                  "Mark my gym task done.", "Remove my old note."])
 def test_first_person_requests_are_not_picked(text):
     assert is_request(text) and not worth_remembering(text)
 
