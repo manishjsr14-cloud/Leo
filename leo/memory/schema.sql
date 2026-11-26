@@ -33,5 +33,5 @@ CREATE TABLE IF NOT EXISTS memories (
     created_at  TEXT    NOT NULL,
     updated_at  TEXT    NOT NULL
 );
-CREATE UNIQUE INDEX IF NOT EXISTS memories_one_active_subject
-    ON memories (subject) WHERE active = 1;
+-- M2.3b: several active memories may share a subject; the M2.3 unique index goes.
+DROP INDEX IF EXISTS memories_one_active_subject;

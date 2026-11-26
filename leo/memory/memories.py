@@ -1,12 +1,12 @@
 """Long-term memory: lasting facts and preferences (M2.3, architecture section 7).
 
 Each memory is one row in `memories` (a subject key, the user's own words, the
-language) plus one vector in `vec_memories` with the same id. There is at most
-one memory per subject: saving a fact on a subject that already has one
-REPLACES it, so "I eat non-veg" followed by "I don't eat non-veg anymore"
-leaves only the second active. The embedder cannot tell those two apart (0.984
-in M2.2), so the subject key, not similarity, decides a replacement.
-M2.3 fix round: a replaced memory is never deleted. It stays as inactive
+language) plus one vector in `vec_memories` with the same id.
+M2.3b: several active memories may share a subject ("allergic to peanuts" and
+"allergic to dust"). A memory is replaced only when the message had an update
+cue and named the memory it replaces (leo/graph/memory_nodes.py); the embedder
+cannot tell a fact from its negation (0.984 in M2.2), so similarity alone never
+replaces anything. A replaced memory is never deleted: it stays as inactive
 history (its vector is removed, so it is never recalled) and a wrong
 replacement can be undone (leo/memory/memory_history.py).
 
@@ -75,32 +75,30 @@ def add_vector(bank: MemoryBank, memory_id: int, subject: str, text: str) -> Non
     bank.vectors.add([memory_id], [vector])
 
 
-# Save one fact under its subject. Returns (new memory id, True if an older fact on
-# the same subject was replaced). The replaced fact is kept, inactive, pointing at
-# the new one; only its vector is removed.
+# Save one fact under its subject and set the active memories in `replaces`
+# inactive, pointing at the new one (only their vectors are removed). Returns
+# (new memory id, ids actually replaced).
 def save_memory(bank: MemoryBank, subject: str, text: str, language: str,
-                now: datetime) -> tuple[int, bool]:
+                now: datetime, replaces: Sequence[int] = ()) -> tuple[int, list[int]]:
     key = clean_subject(subject)
     if key is None or not text.strip():
         raise ValueError(f"bad memory: subject={subject!r}")
     stamp = now.isoformat(timespec="seconds")
-    old = bank.conn.execute("SELECT id FROM memories WHERE subject = ? AND active = 1",
-                            (key,)).fetchone()
+    old = [int(r["id"]) for r in bank.conn.execute(
+        f"SELECT id FROM memories WHERE active = 1 AND id IN ({','.join('?' * len(replaces))})",
+        list(replaces)).fetchall()] if replaces else []
     with bank.conn:
-        if old is not None:
-            bank.conn.execute("UPDATE memories SET active = 0, updated_at = ? WHERE id = ?",
-                              (stamp, old["id"]))
         cur = bank.conn.execute(
             "INSERT INTO memories (subject, text, language, source, created_at, updated_at)"
             " VALUES (?, ?, ?, 'user', ?, ?)", (key, text.strip(), language, stamp, stamp))
         memory_id = int(cur.lastrowid)
-        if old is not None:
-            bank.conn.execute("UPDATE memories SET replaced_by = ? WHERE id = ?",
-                              (memory_id, old["id"]))
-    if old is not None:
-        bank.vectors.delete([int(old["id"])])
+        for old_id in old:
+            bank.conn.execute("UPDATE memories SET active = 0, replaced_by = ?, updated_at = ?"
+                              " WHERE id = ?", (memory_id, stamp, old_id))
+    if old:
+        bank.vectors.delete(old)
     add_vector(bank, memory_id, key, text)
-    return memory_id, old is not None
+    return memory_id, old
 
 
 # The k memories nearest to a message vector, nearest first, with similarity.
@@ -116,10 +114,9 @@ def search_memories(bank: MemoryBank, vector: Sequence[float], k: int) -> list[M
     return found
 
 
-# The hints for the reply: at most recall_k of the found memories, each at or
-# above min_similarity.
-def pick_hints(found: list[Memory], cfg: MemoryConfig) -> list[Memory]:
-    return [m for m in found if m.similarity >= cfg.min_similarity][: cfg.recall_k]
+# The hints for the reply (M2.3b: no threshold): the recall_k nearest found memories.
+def top_hints(found: list[Memory], cfg: MemoryConfig) -> list[Memory]:
+    return found[: cfg.recall_k]
 
 
 # All active memories, oldest first (for checks and, later, "what do you know about me?").

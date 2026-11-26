@@ -1,7 +1,6 @@
 """Tests for leo/memory/memory_history.py (M2.3 fix round): replaced memories are
 kept as history, and a wrong replacement can be undone."""
 
-import sqlite3
 from datetime import datetime
 
 import pytest
@@ -30,7 +29,8 @@ def found_texts(bank) -> set[str]:
 def test_sister_case_name_is_recoverable(tmp_path):
     bank = make_bank(tmp_path)
     name_id, _ = save_memory(bank, "sister_name", NAME, "hinglish", NOW)
-    birthday_id, replaced = save_memory(bank, "sister_name", BIRTHDAY, "hinglish", NOW)
+    birthday_id, replaced = save_memory(bank, "sister_name", BIRTHDAY, "hinglish", NOW,
+                                         replaces=[name_id])
     assert replaced and active(bank) == [("sister_name", BIRTHDAY)]
     assert [(r["text"], r["active"]) for r in history(bank, "sister_name")] == [
         (NAME, 0), (BIRTHDAY, 1)]
@@ -45,8 +45,8 @@ def test_sister_case_name_is_recoverable(tmp_path):
 # history (still not deleted).
 def test_undo_without_new_subject(tmp_path):
     bank = make_bank(tmp_path)
-    save_memory(bank, "sister_name", NAME, "hinglish", NOW)
-    birthday_id, _ = save_memory(bank, "sister_name", BIRTHDAY, "hinglish", NOW)
+    name_id, _ = save_memory(bank, "sister_name", NAME, "hinglish", NOW)
+    birthday_id, _ = save_memory(bank, "sister_name", BIRTHDAY, "hinglish", NOW, [name_id])
     undo_replacement(bank, birthday_id, NOW)
     assert active(bank) == [("sister_name", NAME)]
     assert found_texts(bank) == {NAME}
@@ -59,16 +59,15 @@ def test_undo_refuses_bad_requests(tmp_path):
     name_id, _ = save_memory(bank, "sister_name", NAME, "hinglish", NOW)
     with pytest.raises(ValueError):
         undo_replacement(bank, name_id, NOW)
-    birthday_id, _ = save_memory(bank, "sister_name", BIRTHDAY, "hinglish", NOW)
+    birthday_id, _ = save_memory(bank, "sister_name", BIRTHDAY, "hinglish", NOW, [name_id])
     with pytest.raises(ValueError):
         undo_replacement(bank, birthday_id, NOW, new_subject="!!")
     assert active(bank) == [("sister_name", BIRTHDAY)]
 
 
-# The database allows only one active memory per subject.
-def test_one_active_memory_per_subject(tmp_path):
+# M2.3b: the M2.3 unique index is gone, so two active memories may share a subject.
+def test_several_active_memories_per_subject(tmp_path):
     bank = make_bank(tmp_path)
-    save_memory(bank, "diet", "I eat non-veg food.", "en", NOW)
-    with pytest.raises(sqlite3.IntegrityError):
-        bank.conn.execute("INSERT INTO memories (subject, text, language, created_at, updated_at)"
-                          " VALUES ('diet', 'x', 'en', 'a', 'a')")
+    save_memory(bank, "sister_name", NAME, "hinglish", NOW)
+    save_memory(bank, "sister_name", "Meri choti behen Isha hai.", "hinglish", NOW)
+    assert [r["active"] for r in history(bank, "sister_name")] == [1, 1]

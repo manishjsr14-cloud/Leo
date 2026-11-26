@@ -1,24 +1,24 @@
-"""A word rule that decides when a message may hold a fact worth remembering (M2.3).
+"""Word rules for long-term memory (M2.3, redesigned in M2.3b).
 
 Most turns are requests and questions, so memory_write must not add an LLM call
-to every turn. This rule runs first, in code: only a message it picks goes to
-the extraction step (one LLM call), which then decides "remember" or not and
-gives the subject.
+to every turn. These rules run first, in code.
 
-The word lists below were fixed in the M2.3 proposal, before the check set
-(evals/scenarios/m2_3_memory_questions.yaml) was written, and were not changed
-after seeing it:
-  never:      questions ("?" or a question word)
-  remember:   remember, yaad rakhna, yaad rakho, yaad rakh lo
-  English:    I am / I'm, I eat / don't eat, I like / love / hate / prefer,
-              I'm allergic, I live / work, my ... is, anymore
-  Hinglish:   mera / meri / mere ... hai / hain, main ... hoon / hu,
-              mujhe ... pasand hai / nahi, mujhe ... allergy hai, main ... nahi khata / khati
-"note kar lo" is left out: it asks for the notes tool.
+Write trigger (M2.3b): a message is a candidate memory when it is not a
+question and either says "remember" / "yaad rakhna", or is a first-person
+statement (I, me, my, main, mera, mujhe, ...) with no request word. Plans and
+events are kept out by leo/language/memory_events.py.
 
-Added in the M2.3 fix round (a logged change, asked for by the user after the
-first M2.3 check, so not independent of that check set):
-  Hinglish past tense: maine ... chhod di / chhod diya (also "chod")
+Update cue (M2.3b): only a message with an explicit update word replaces an
+older memory: anymore, no longer, moved to, chhod di / diya, ab ... nahi.
+Without a cue, a fact on a known topic is added next to the old one.
+
+Personal-question gate (M2.3b): recall gives hints only for a question with a
+first-person word ("What's my ...", "Do I ...", "Mujhe kis ...", "Main ... ?").
+
+The word lists were fixed in the approved M2.3b proposal, after reading the
+check set (evals/scenarios/m2_3b_memory_set.yaml). Known limit: the question
+rule reads the Hinglish "is" ("this") as the English question word, so a
+statement that starts with it is treated as a question and never stored.
 """
 
 import re
@@ -31,13 +31,14 @@ QUESTION_START = {"what", "when", "where", "who", "which", "how", "why", "do", "
                   "is", "am", "are", "can"}
 HINGLISH_QUESTION = {"kya", "kab", "kahan", "kaun", "kaunsa", "kaunsi", "kitna", "kitne", "kitni",
                      "kaise", "kyun", "kyon"}
-FACT_FORMS = [re.compile(p) for p in (
-    r"\bi am\b", r"\bi'm\b", r"\bi (eat|like|love|hate|prefer|live|work)\b",
-    r"\bi (don't|do not) eat\b", r"\bmy\b.+\bis\b", r"\banymore\b",
-    r"\b(mera|meri|mere)\b.*\b(hai|hain)\b", r"\bmain\b.*\b(hoon|hu)\b",
-    r"\bmujhe\b.*\bpasand\b.*\b(hai|hain|nahi)\b", r"\bmujhe\b.*\ballergy\b.*\bhai\b",
-    r"\bmain\b.*\bnahi (khata|khati)\b",
-    r"\bmaine\b.*\b(chhod|chod) (di|diya)\b")]
+FIRST_PERSON = {"i", "i'm", "i've", "i'd", "i'll", "me", "my", "mine", "myself", "main", "maine",
+                "mera", "meri", "mere", "mujhe", "mujhko"}
+REQUEST = re.compile(
+    r"\b(remind|yaad dila\w*|batao|bata do|bataiye|dikhao|dikha do|show|tell me|set|add|daal"
+    r"|daalo|dal do|cancel|delete|hatao|hata do|karo|kar do|kardo|please|plz|search|dhundo"
+    r"|find|check|schedule|create|lagao|laga do|chahiye|calculate|convert|note kar)\b")
+UPDATE_CUE = re.compile(r"\b(anymore|any more|no longer|moved to|(chhod|chod) (di|diya|dia))\b"
+                        r"|\bab\b.*\bnahi\b")
 
 
 # The message's words in lower case, apostrophes kept ("i'm", "don't").
@@ -59,13 +60,32 @@ def says_remember(text: str) -> bool:
     return bool(REMEMBER.search(text) or REMEMBER_AT_END.search(text))
 
 
-# True when the message may hold a lasting fact: never for a question; yes for
-# "remember" words or a first-person fact form.
+# True when the message has a first-person word (I, my, main, mera, mujhe, ...).
+def first_person(text: str) -> bool:
+    return any(w in FIRST_PERSON for w in words_of(text))
+
+
+# True when the message asks Leo to do something (remind, batao, set, cancel, ...).
+def is_request(text: str) -> bool:
+    return bool(REQUEST.search(" ".join(words_of(text))))
+
+
+# True when the message may be a lasting fact: never a question; yes for
+# "remember" words or a first-person statement that is not a request.
 def worth_remembering(text: str) -> bool:
     if is_question(text):
         return False
-    lowered = " ".join(words_of(text))
-    return says_remember(text) or any(p.search(lowered) for p in FACT_FORMS)
+    return says_remember(text) or (first_person(text) and not is_request(text))
+
+
+# True when the message says an older fact changed ("anymore", "chhod diya", ...).
+def has_update_cue(text: str) -> bool:
+    return bool(UPDATE_CUE.search(" ".join(words_of(text))))
+
+
+# True when the message is a question about the user: the recall gate.
+def is_personal_question(text: str) -> bool:
+    return is_question(text) and first_person(text)
 
 
 # The fact in the user's own words: the message without its "remember" words.

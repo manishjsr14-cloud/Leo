@@ -1,4 +1,4 @@
-"""Tests for leo/memory/memories.py (M2.3): saving, replacing on the same subject, searching."""
+"""Tests for leo/memory/memories.py (M2.3, M2.3b): saving, adding, replacing by id, searching."""
 
 import sqlite3
 from datetime import datetime
@@ -9,9 +9,9 @@ from leo.memory.memories import (
     Memory,
     all_memories,
     clean_subject,
-    pick_hints,
     save_memory,
     search_memories,
+    top_hints,
 )
 from tests.memory_fakes import make_bank
 
@@ -25,22 +25,45 @@ def vector_count(bank) -> int:
     return bank.conn.execute("SELECT count(*) FROM vec_memories").fetchone()[0]
 
 
-# The plan's M2.3 note: a contradicting fact on the same subject replaces the old
-# one, so a search finds only the new fact. The old one is kept as inactive
-# history pointing at the new one (M2.3 fix round); only its vector is removed.
-def test_new_fact_on_same_subject_replaces_the_old_one(tmp_path):
+# M2.3b: a fact on the same subject is ADDED unless the caller names what it
+# replaces ("allergic to peanuts" and "allergic to dust" are both kept).
+def test_same_subject_without_replaces_adds(tmp_path):
     bank = make_bank(tmp_path)
-    first_id, replaced_first = save_memory(bank, "diet", EATS, "en", NOW)
-    second_id, replaced_second = save_memory(bank, "diet", STOPPED, "en", NOW)
-    assert (replaced_first, replaced_second) == (False, True)
+    first_id, replaced_first = save_memory(bank, "allergy", "Mujhe peanuts se allergy hai.",
+                                           "hinglish", NOW)
+    second_id, replaced_second = save_memory(bank, "allergy", "I'm also allergic to dust.",
+                                             "en", NOW)
+    assert (replaced_first, replaced_second) == ([], [])
+    assert [r["id"] for r in all_memories(bank)] == [first_id, second_id]
+    assert vector_count(bank) == 2
+
+
+# The plan's M2.3 note, M2.3b form: a fact that names the memory it replaces
+# makes it inactive history pointing at the new one; only its vector is removed,
+# so a search finds only the new fact.
+def test_replaces_makes_the_old_fact_history(tmp_path):
+    bank = make_bank(tmp_path)
+    first_id, _ = save_memory(bank, "diet", EATS, "en", NOW)
+    second_id, replaced = save_memory(bank, "diet", STOPPED, "en", NOW, replaces=[first_id])
+    assert replaced == [first_id]
     old = bank.conn.execute("SELECT * FROM memories WHERE id = ?", (first_id,)).fetchone()
     assert (old["text"], old["active"], old["replaced_by"]) == (EATS, 0, second_id)
-    rows = all_memories(bank)
-    assert [(r["subject"], r["text"]) for r in rows] == [("diet", STOPPED)]
+    assert [(r["subject"], r["text"]) for r in all_memories(bank)] == [("diet", STOPPED)]
     assert vector_count(bank) == 1
-    query = bank.embedder.embed_query("Do I eat meat?")
-    found = search_memories(bank, query, 5)
+    found = search_memories(bank, bank.embedder.embed_query("Do I eat meat?"), 5)
     assert [m.text for m in found] == [STOPPED]
+
+
+# Replacing works across subjects, and an id that is not active is ignored.
+def test_replaces_any_active_id_only(tmp_path):
+    bank = make_bank(tmp_path)
+    gym_id, _ = save_memory(bank, "gym", "Mera gym Aundh mein hai.", "hinglish", NOW)
+    new_id, replaced = save_memory(bank, "workout", "Maine gym chhod diya.", "hinglish", NOW,
+                                   replaces=[gym_id, 999])
+    assert replaced == [gym_id]
+    _, again = save_memory(bank, "workout", "Ab ghar pe.", "hinglish", NOW, replaces=[gym_id])
+    assert again == []
+    assert next(r["id"] for r in all_memories(bank)) == new_id
 
 
 # Facts on different subjects are both kept.
@@ -94,11 +117,11 @@ def test_search_on_empty_store(tmp_path):
     assert search_memories(bank, bank.embedder.embed_query("hi"), 5) == []
 
 
-# Hints: only at or above min_similarity, and at most recall_k of them, nearest first.
-def test_pick_hints_threshold_and_count(tmp_path):
-    cfg = make_bank(tmp_path, min_similarity=0.8, recall_k=3).cfg
+# Hints (M2.3b): the recall_k nearest, with no similarity threshold.
+def test_top_hints_takes_the_nearest_without_threshold(tmp_path):
+    cfg = make_bank(tmp_path, recall_k=3).cfg
     found = [Memory(i, f"s{i}", f"t{i}", sim) for i, sim in
-             enumerate([0.95, 0.9, 0.85, 0.81, 0.79])]
-    assert [m.id for m in pick_hints(found, cfg)] == [0, 1, 2]
-    assert pick_hints([Memory(9, "s", "t", 0.79)], cfg) == []
-    assert [m.id for m in pick_hints([Memory(9, "s", "t", 0.8)], cfg)] == [9]
+             enumerate([0.95, 0.9, 0.85, 0.81, 0.2])]
+    assert [m.id for m in top_hints(found, cfg)] == [0, 1, 2]
+    assert [m.id for m in top_hints([Memory(9, "s", "t", 0.1)], cfg)] == [9]
+    assert top_hints([], cfg) == []

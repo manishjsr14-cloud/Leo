@@ -24,6 +24,7 @@ class LeoState(TypedDict, total=False):
     completed_agents: list[str]  # agents that said done in this request
     language: str  # "en", "hinglish" or "hi" for the latest message (M1.8)
     memories: list[str]  # recalled long-term facts, hints for the reply (M2.3)
+    personal_question: bool  # the recall gate opened for this message (M2.3b)
 
 
 # The text of the user's latest message ("" when there is none).

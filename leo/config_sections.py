@@ -66,9 +66,8 @@ class TracingConfig(Strict):
 
 
 class MemoryConfig(Strict):
-    """Long-term memory (M2.3): how many memories are searched and given as hints."""
+    """Long-term memory (M2.3, M2.3b): how many memories are searched and given as hints."""
 
     search_k: int = Field(ge=1)          # nearest memories looked at per message
-    recall_k: int = Field(ge=1)          # at most this many become hints for the reply
-    min_similarity: float = Field(ge=-1, le=1)  # hints only at or above this cosine similarity
+    recall_k: int = Field(ge=1)          # this many nearest become hints (personal questions)
     candidate_subjects: int = Field(ge=1)  # nearby subjects shown to the extraction step
