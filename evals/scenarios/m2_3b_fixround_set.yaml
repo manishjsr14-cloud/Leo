@@ -1,0 +1,90 @@
+# M2.3b FIX-ROUND check set (2026-11-26). Written by the user outside the code and
+# committed before any fix-round change. Converted to the project's format without
+# changing any message, id or expected result; inline comments are kept as `note:`
+# fields. Never edit this file to improve a result; a better set is a new file
+# (AGENTS.md). All people and facts are fictional.
+#
+# Runs AFTER the original m2_3b set, in the same store, so the original
+# facts (F01-F25, N1-N3, U1-U4, B1-B3) already exist.
+# Run order: plans (P) -> small talk (S) -> same-topic additions (N)
+#            -> updates with a cue (U) -> reported-only (R) -> questions (Q, X).
+# "now" for every turn: 2026-11-26 21:00 IST (Thursday), as in the original set.
+#
+# Pass rule (the user's words, fixed before any fix): all 3 cued updates
+# replaced; 0 of 2 uncued replaced; 0 plans and 0 small-talk lines stored;
+# Recall@5 of at least 0.90 on Q16-Q27; no invented fact in X06-X08. R1 is
+# reported only. This set decides the fix-round result. If it still misses,
+# M2.3b closes with known limits; any result these words don't cover is the
+# user's decision.
+#
+# Counted as for the original set (m2_3b_memory_set.yaml header): stored = the
+# turn created a memory row; a cued update is replaced when its `replaces`
+# fact's row became inactive pointing at the update's row; a question counts
+# when the recall gate opened and an expected row is among the 5 nearest active
+# memories; unanswerable replies are printed in full and judged by the user
+# (code flags a don't-know phrase).
+
+now: "2026-11-26T21:00:00+05:30"
+runs_after: evals/scenarios/m2_3b_memory_set.yaml
+
+pass_rule:
+  cued_updates_replaced: 3       # of 3
+  uncued_replaced_max: 0         # of 2
+  plans_stored_max: 0            # of 3
+  small_talk_stored_max: 0       # of 6
+  recall_at_5_min: 0.90          # on Q16-Q27
+  unanswerable_invented_max: 0   # X06-X08
+  reported_only: [R1]
+
+# --- Plans and events: must NOT be stored (3) --------------------------------
+plans:
+  - {id: P09, lang: hinglish, text: "Agle Monday mujhe Delhi jaana hai."}
+  - {id: P10, lang: en,       text: "I'm going to the bank this afternoon."}
+  - {id: P11, lang: hinglish, text: "Kal raat main late aaunga."}
+
+# --- Small talk: must NOT be stored (6) --------------------------------------
+small_talk:
+  - {id: S01, lang: hinglish, text: "Main bilkul theek hoon, thanks."}
+  - {id: S02, lang: en,       text: "I see, okay."}
+  - {id: S03, lang: hinglish, text: "Haan, sahi hai."}
+  - {id: S04, lang: en,       text: "I'm good."}
+  - {id: S05, lang: hinglish, text: "Mujhe nahi pata."}
+  - {id: S06, lang: en,       text: "I'm just checking."}
+
+# --- Same topic, NO update cue: must be ADDED, must NOT replace (2) -----------
+same_topic_no_cue:
+  - {id: N4, lang: en,       text: "My brother Arjun is an engineer.",            topic_of: F07}
+  - {id: N5, lang: hinglish, text: "Mujhe chai ke saath biscuit bhi pasand hai.", topic_of: F08}
+
+# --- Updates WITH a cue: must REPLACE the old fact (3) -----------------------
+updates:
+  - {id: U5, lang: en,       text: "I no longer support Mumbai Indians, I support CSK now.",   replaces: F11, cue: "no longer"}
+  - {id: U6, lang: hinglish, text: "Ab main guitar nahi seekh raha, piano seekh raha hoon.",   replaces: F19, cue: "ab ... nahi"}
+  - {id: U7, lang: en,       text: "I don't use an iPhone anymore, I switched to a Pixel.",    replaces: F23, cue: "anymore"}
+
+# --- Reported only (known "Is" question-word bug) ----------------------------
+reported_only:
+  - {id: R1, lang: hinglish, text: "Is saal se main Marathi classes le raha hoon.", note: "lasting fact starting with Hinglish 'Is' (this); should be stored"}
+
+# --- Personal questions: Recall@5 must include an expected id (12) -----------
+# Expected ids refer to the state after all updates.
+questions:
+  - {id: Q16, lang: en,       text: "Which phone do I use?",                        expect_any_of: [U7]}
+  - {id: Q17, lang: hinglish, text: "Mera bhai kya karta hai?",                     expect_any_of: [N4], note: "hinglish question, en fact"}
+  - {id: Q18, lang: en,       text: "What instrument am I learning?",               expect_any_of: [U6], note: "en question, hinglish fact"}
+  - {id: Q19, lang: hinglish, text: "Main kaunsi IPL team support karta hoon?",     expect_any_of: [U5], note: "cross-language"}
+  - {id: Q20, lang: en,       text: "Am I allergic to anything?",                   expect_any_of: [F04, N1]}
+  - {id: Q21, lang: hinglish, text: "Mere manager ka naam batao.",                  expect_any_of: [F17], note: 'imperative "batao", no "?"'}
+  - {id: Q22, lang: en,       text: "What's my sister called?",                     expect_any_of: [F06, N2], note: "cross-language"}
+  - {id: Q23, lang: hinglish, text: "Mujhe kaunsa khana sabse zyada pasand hai?",   expect_any_of: [F22]}
+  - {id: Q24, lang: en,       text: "Do I take sugar in my tea?",                   expect_any_of: [F08], note: "synonym sugar/cheeni, cross-language"}
+  - {id: Q25, lang: hinglish, text: "Main kahan rehta hoon?",                       expect_any_of: [U2], note: "cross-language"}
+  - {id: Q26, lang: en,       text: "What languages do I speak?",                   expect_any_of: [F12], note: "cross-language"}
+  - {id: Q27, lang: hinglish, text: "Mere papa pehle kya the?",                     expect_any_of: [F24]}
+
+# --- Personal questions with NO stored answer (3) ----------------------------
+# Pass: the reply states no invented fact.
+unanswerable:
+  - {id: X06, lang: en,       text: "What's my wife's name?"}
+  - {id: X07, lang: hinglish, text: "Meri height kitni hai?"}
+  - {id: X08, lang: en,       text: "When did I last visit a dentist?"}
