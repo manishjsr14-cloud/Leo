@@ -5,7 +5,7 @@ gateway, real embedder), into a fresh database; then the done rule.
   python -m evals.m2_3b_memory_check <report stem>
 
 Writes <stem>.md and <stem>.json and keeps the database the check left at
-leo_data/evals/<stem name>.db (git-ignored), for the M1.10 regression run with
+<temp>/leo_evals/<stem name>.db (evals/eval_paths.py, never leo_data/), for the M1.10 regression run with
 memory (evals/run_eval.py --memory-db). The five small-talk messages the user
 asked for at approval (reported only, not in the frozen set) run afterwards on
 a COPY of that database, so they do not change it. Earlier reports and
@@ -23,6 +23,7 @@ import yaml
 
 from evals import m2_3b_report as report
 from evals import m2_3b_scoring as s
+from evals.eval_paths import EVAL_DB_DIR
 from evals.git_state import git_state
 from evals.m2_3b_check_turns import memory_rows, mock_data, run_message
 from evals.machine import machine_line
@@ -34,7 +35,7 @@ from leo.memory.store import open_db
 from leo.ml.embedder import load_embedder
 
 SET_FILE = Path("evals/scenarios/m2_3b_memory_set.yaml")
-DB_DIR = Path("leo_data/evals")
+DB_DIR = EVAL_DB_DIR
 ORDER = ("facts", "plans", "same_topic_no_cue", "updates", "boundary", "questions",
          "unanswerable")
 SMALL_TALK = ["Main theek hoon", "I agree", "I'm fine, thanks", "I think so",

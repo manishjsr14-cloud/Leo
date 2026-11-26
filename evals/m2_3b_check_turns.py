@@ -2,8 +2,8 @@
 
 The graph is Leo's real graph (supervisor, agents on MOCK tools, responder,
 memory_recall and memory_write) on the real LLM gateway and the real embedder;
-the memory database is a fresh file under leo_data/evals/ (git-ignored),
-never Leo's own database. Each turn starts a new conversation, so the only
+the memory database is a fresh file in <temp>/leo_evals/ (evals/eval_paths.py),
+never Leo's own database or leo_data/. Each turn starts a new conversation, so the only
 thing carried from turn to turn is what long-term memory stored.
 For each turn it records which memories the turn created and replaced (row
 ids before and after), the reply, the LLM calls and the time taken.

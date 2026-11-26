@@ -1,18 +1,19 @@
 """Long-term memory for an eval suite run (M2.3b regression: the M1.10 suite with
 memory on). The run works on a COPY of the given database, so the database a
 check left behind is never changed; "empty" gives a new empty one. Copies live
-in leo_data/evals/ (git-ignored) and are never overwritten.
+in <temp>/leo_evals/ (evals/eval_paths.py, never leo_data/) and are never overwritten.
 """
 
 import sqlite3
 import sys
 from pathlib import Path
 
+from evals.eval_paths import EVAL_DB_DIR
 from leo.memory.memories import open_bank
 from leo.memory.store import open_db
 from leo.ml.embedder import load_embedder
 
-DB_DIR = Path("leo_data/evals")
+DB_DIR = EVAL_DB_DIR
 
 
 # A memory bank on a copy of `source` ("empty": a new database) named after the report.
