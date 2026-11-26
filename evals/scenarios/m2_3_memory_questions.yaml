@@ -1,0 +1,112 @@
+# M2.3 long-term memory check set (architecture sections 4.2, 7, 8.1, 14.7).
+# Committed before the memory code. Never edit this file to improve a result;
+# a better set is a new file (AGENTS.md).
+#
+# facts: things the user says that are lasting facts or preferences.
+#   text:    the message as the user types it.
+#   fact:    what is stored: the user's own words, with "remember" / "yaad rakhna"
+#            words taken off (one memory per message).
+#   subject: the subject key the fact is stored under. A later fact with the same
+#            subject replaces the earlier one (replaces: <fact id>).
+# must_not_store: plans, events and passing states, never lasting facts. The
+#   extraction step must decide "remember: false" for each (reported in part B).
+# questions: scored. expect is the fact id whose memory must be found.
+#   g09_style: everyday wording with small margins (the M2.2 g09 limit).
+#   negation: the answer is a fact that replaced its opposite.
+# no_memory_questions: nothing about them was ever said. RECORDED, NOT SCORED:
+#   the report shows how many hints (similarity >= memory.min_similarity) they get.
+#
+# Part A (the pass rule, fixed before any run; no LLM involved):
+#   Save every fact in the order listed, with its fact text and subject, through
+#   the real memory store and the real embedder (multilingual-e5-small) into an
+#   empty temporary database. Then search each question (top 5, no threshold).
+#   Recall@5 = questions whose expected fact is among the 5 results / 20.
+#   PASS if Recall@5 >= 0.90 (at least 18 of 20), on the laptop.
+# Part B (reported, not part of the rule): every message in write_order goes
+#   through the real memory_write node with the local model, into a second empty
+#   database. Reported: which messages trigger extraction, remember true/false,
+#   the subject given, the 3 replacements, must_not_store kept out, Recall@5 on
+#   the store that results, and the time each step took.
+
+pass_rule:
+  part: A
+  metric: recall_at_5
+  min: 0.90
+  questions: 20
+
+facts:
+  - {id: F01, lang: en, subject: diet, text: "I eat non-veg food.", fact: "I eat non-veg food."}
+  - {id: F02, lang: en, subject: meeting_time_preference, text: "I prefer meetings after 11 am.", fact: "I prefer meetings after 11 am."}
+  - {id: F03, lang: hinglish, subject: blood_group, text: "Yaad rakhna, mera blood group B positive hai.", fact: "mera blood group B positive hai."}
+  - {id: F04, lang: hinglish, subject: sister_name, text: "Meri behen ka naam Priya hai.", fact: "Meri behen ka naam Priya hai."}
+  - {id: F05, lang: hinglish, subject: sister_birthday, text: "Meri behen ka birthday 12 March ko hai.", fact: "Meri behen ka birthday 12 March ko hai."}
+  - {id: F06, lang: en, subject: brother_birthday, text: "My brother's birthday is on 5 June.", fact: "My brother's birthday is on 5 June."}
+  - {id: F07, lang: hinglish, subject: home_city, text: "Main Pune mein rehta hoon.", fact: "Main Pune mein rehta hoon."}
+  - {id: F08, lang: en, subject: coffee, text: "I drink two cups of coffee every morning.", fact: "I drink two cups of coffee every morning."}
+  - {id: F09, lang: hinglish, subject: allergy, text: "Mujhe peanuts se allergy hai.", fact: "Mujhe peanuts se allergy hai."}
+  - {id: F10, lang: en, subject: job, text: "I work as a software engineer at an insurance company.", fact: "I work as a software engineer at an insurance company."}
+  - {id: F11, lang: hinglish, subject: gym_days, text: "Mera gym Monday, Wednesday aur Friday ko hota hai.", fact: "Mera gym Monday, Wednesday aur Friday ko hota hai."}
+  - {id: F12, lang: en, subject: car, text: "Remember that my car is a white Honda City.", fact: "my car is a white Honda City."}
+  - {id: F13, lang: hinglish, subject: movie_preference, text: "Mujhe horror movies bilkul pasand nahi hain.", fact: "Mujhe horror movies bilkul pasand nahi hain."}
+  - {id: F14, lang: en, subject: sport, text: "I like watching cricket, especially test matches.", fact: "I like watching cricket, especially test matches."}
+  - {id: F15, lang: hinglish, subject: wife_name, text: "Meri wife ka naam Anjali hai.", fact: "Meri wife ka naam Anjali hai."}
+  - {id: F16, lang: en, subject: doctor, text: "My doctor is Dr. Mehta at Sahyadri hospital.", fact: "My doctor is Dr. Mehta at Sahyadri hospital."}
+  - {id: F17, lang: hinglish, subject: sleep_time, text: "Main raat ko 11 baje tak so jaata hoon.", fact: "Main raat ko 11 baje tak so jaata hoon."}
+  - {id: F18, lang: en, subject: wake_time, text: "I wake up at 6 am on weekdays.", fact: "I wake up at 6 am on weekdays."}
+  - {id: F19, lang: hinglish, subject: tea_sugar, text: "Yaad rakhna, mujhe chai mein cheeni nahi chahiye.", fact: "mujhe chai mein cheeni nahi chahiye."}
+  - {id: F20, lang: hinglish, subject: son, text: "Mera beta Aarav class 3 mein padhta hai.", fact: "Mera beta Aarav class 3 mein padhta hai."}
+  - {id: F21, lang: en, subject: favourite_cuisine, text: "My favourite cuisine is South Indian.", fact: "My favourite cuisine is South Indian."}
+  - {id: F22, lang: hinglish, subject: migraine, text: "Mujhe migraine hota hai jab main bahut thaka hua hota hoon.", fact: "Mujhe migraine hota hai jab main bahut thaka hua hota hoon."}
+  - {id: F23, lang: en, subject: afternoon_energy, text: "I get very tired after lunch, so I keep my afternoons light.", fact: "I get very tired after lunch, so I keep my afternoons light."}
+  - {id: F24, lang: en, subject: bank, text: "Remember: my bank is HDFC.", fact: "my bank is HDFC."}
+  - {id: F25, lang: en, subject: weekend_hobby, text: "I am learning Spanish on weekends.", fact: "I am learning Spanish on weekends."}
+  - {id: F26, lang: hinglish, subject: father_health, text: "Mere papa ko sugar hai, unke liye meetha mat suggest karna.", fact: "Mere papa ko sugar hai, unke liye meetha mat suggest karna."}
+  - {id: F27, lang: en, subject: laptop, text: "My laptop is a Dell G3.", fact: "My laptop is a Dell G3."}
+  - {id: F28, lang: hinglish, subject: languages_spoken, text: "Main Marathi aur Hindi dono bolta hoon.", fact: "Main Marathi aur Hindi dono bolta hoon."}
+  - {id: F29, lang: en, subject: evening_walk, text: "I usually go for a walk in the evening at 7.", fact: "I usually go for a walk in the evening at 7."}
+  - {id: F30, lang: hinglish, subject: favourite_place, text: "Mujhe baarish mein Lonavala jaana bahut pasand hai.", fact: "Mujhe baarish mein Lonavala jaana bahut pasand hai."}
+  - {id: F31, lang: en, subject: diet, replaces: F01, text: "I don't eat non-veg anymore.", fact: "I don't eat non-veg anymore."}
+  - {id: F32, lang: hinglish, subject: home_city, replaces: F07, text: "Ab main Bangalore mein rehta hoon, Pune chhod diya.", fact: "Ab main Bangalore mein rehta hoon, Pune chhod diya."}
+  - {id: F33, lang: hinglish, subject: coffee, replaces: F08, text: "Maine coffee chhod di hai, ab sirf green tea peeta hoon.", fact: "Maine coffee chhod di hai, ab sirf green tea peeta hoon."}
+
+must_not_store:
+  - {id: N01, lang: en, text: "I'm going to Pune tomorrow.", why: "a plan"}
+  - {id: N02, lang: hinglish, text: "Meri kal meeting hai.", why: "an event"}
+  - {id: N03, lang: en, text: "I have a dentist appointment on Friday at 4.", why: "an event"}
+  - {id: N04, lang: hinglish, text: "Main aaj bahut thaka hua hoon.", why: "a passing state (g09)"}
+  - {id: N05, lang: hinglish, text: "Mera aaj ka lunch Rahul ke saath hai.", why: "an event"}
+  - {id: N06, lang: en, text: "I am feeling very tired today.", why: "a passing state (g09)"}
+  - {id: N07, lang: hinglish, text: "Kal subah main Lonavala ja raha hoon.", why: "a plan"}
+
+# Part B order: facts in id order, with the must-not-store messages mixed in.
+write_order: [F01, F02, F03, N01, F04, F05, F06, F07, N02, F08, F09, F10, F11, N03, F12, F13,
+              F14, F15, N04, F16, F17, F18, F19, F20, N05, F21, F22, F23, F24, N06, F25, F26,
+              F27, F28, F29, N07, F30, F31, F32, F33]
+
+questions:
+  - {id: Q01, lang: hinglish, expect: F31, negation: true, text: "Kya main non-veg khata hoon?"}
+  - {id: Q02, lang: en, expect: F31, negation: true, text: "Do I eat meat?"}
+  - {id: Q03, lang: hinglish, expect: F32, negation: true, text: "Main kahan rehta hoon?"}
+  - {id: Q04, lang: en, expect: F33, negation: true, text: "Do I still drink coffee?"}
+  - {id: Q05, lang: hinglish, expect: F03, text: "Mera blood group kya hai?"}
+  - {id: Q06, lang: en, expect: F05, text: "When is my sister's birthday?"}
+  - {id: Q07, lang: hinglish, expect: F06, text: "Mere bhai ka birthday kab hai?"}
+  - {id: Q08, lang: en, expect: F02, text: "What time do I like to have meetings?"}
+  - {id: Q09, lang: hinglish, expect: F09, text: "Mujhe kis cheez se allergy hai?"}
+  - {id: Q10, lang: hinglish, expect: F19, text: "Meri chai kaisi banani hai?"}
+  - {id: Q11, lang: en, expect: F12, text: "What car do I drive?"}
+  - {id: Q12, lang: hinglish, expect: F22, g09_style: true, text: "Thakaan se mujhe kya problem hoti hai?"}
+  - {id: Q13, lang: en, expect: F23, g09_style: true, text: "Why do I keep my afternoons light?"}
+  - {id: Q14, lang: hinglish, expect: F26, text: "Papa ke khane mein kya dhyan rakhna hai?"}
+  - {id: Q15, lang: en, expect: F20, text: "Which class is my son in?"}
+  - {id: Q16, lang: hinglish, expect: F18, text: "Main roz subah kitne baje uthta hoon?"}
+  - {id: Q17, lang: en, expect: F13, text: "What kind of movies should you not suggest to me?"}
+  - {id: Q18, lang: hinglish, expect: F15, text: "Meri wife ka naam kya hai?"}
+  - {id: Q19, lang: en, expect: F16, text: "Who is my doctor?"}
+  - {id: Q20, lang: hinglish, expect: F21, text: "Mujhe kaunsa khana sabse zyada pasand hai?"}
+
+no_memory_questions:
+  - {id: X01, lang: en, text: "What is my favourite colour?"}
+  - {id: X02, lang: hinglish, text: "Meri gaadi ka insurance kab khatam hota hai?"}
+  - {id: X03, lang: en, text: "What is my mother's name?"}
+  - {id: X04, lang: hinglish, text: "Meri height kitni hai?"}
