@@ -4,10 +4,14 @@ LLM gateway on MOCK tools, scores each turn, and writes one new report as
 <stem>.md and <stem>.json (the .json is what eval_compare reads).
 
   python -m evals.run_eval <report stem> <label> [<baseline .json>] [--temperature T]
+                           [--memory-db <database file>]
 
 e.g. python -m evals.run_eval evals/reports/m1.10_eval_2026-11-23_run1 run1
 With a baseline, the report ends with the before/after comparison.
 Earlier reports are never overwritten. Nothing touches a real calendar.
+--memory-db (M2.3b regression): long-term memory is on, on a COPY of the given
+database (or a new empty one with --memory-db empty); the report records how
+many memory rows the run added.
 """
 
 import json
@@ -18,6 +22,7 @@ from pathlib import Path
 import yaml
 
 from evals.eval_compare import compare
+from evals.eval_memory import memory_copy, memory_count
 from evals.eval_metrics import compute
 from evals.eval_report import body, sampling_line
 from evals.eval_scoring import score, verdict
@@ -49,12 +54,12 @@ def known_keys(files: list[tuple[Path, dict]]) -> dict[str, str]:
 
 
 # Run one turn: the turn with its language, and the file data with its calendar.
-def run_turn(turn: dict, data: dict, lang: str, config) -> dict:
+def run_turn(turn: dict, data: dict, lang: str, config, memory=None) -> dict:
     turn = {**turn, "lang": turn.get("lang", lang)}
     data = dict(data)
     if "calendars" in data:
         data["mock_calendar"] = data["calendars"][turn["calendar"]]
-    return run_one(turn, data, config, datetime.fromisoformat(data["now"]))
+    return run_one(turn, data, config, datetime.fromisoformat(data["now"]), memory)
 
 
 # The JSON-ready record of one scored turn.
@@ -104,6 +109,11 @@ def main() -> None:
         at = args.index("--temperature")
         use_temperature(float(args[at + 1]))
         del args[at:at + 2]
+    memory_from = None
+    if "--memory-db" in args:                        # M2.3b regression with memory on
+        at = args.index("--memory-db")
+        memory_from = args[at + 1]
+        del args[at:at + 2]
     stem, label = Path(args[0]), args[1]
     # Not with_suffix: "m1.10_eval_..." would lose everything after "m1".
     md, js = stem.parent / f"{stem.name}.md", stem.parent / f"{stem.name}.json"
@@ -114,16 +124,21 @@ def main() -> None:
     machine, commit = machine_line(), git_state()
     files = [(Path(entry["file"]), load(Path(entry["file"]))) for entry in suite["run"]]
     known = known_keys(files)
+    bank = memory_copy(memory_from, stem, config) if memory_from else None
+    rows_before = memory_count(bank)
     records = []
     for entry, (path, data) in zip(suite["run"], files):
         for turn in data["turns"]:
             lang = entry.get("lang", {}).get(turn["id"])
             key = f"{path.stem}:{turn['id']}"
-            records.append(record(key, run_turn(turn, data, lang, config), known))
+            records.append(record(key, run_turn(turn, data, lang, config, bank), known))
             print(f"{key}: {records[-1]['verdict']}", flush=True)
     report = {"label": label, "machine": machine, "commit": commit.split()[0],
               "dirty": "uncommitted" in commit, "model": config.llm.primary.model,
-              "sampling": sampling_line(config), "metrics": compute(records), "turns": records}
+              "sampling": sampling_line(config), "metrics": compute(records), "turns": records,
+              "memory": None if bank is None else {
+                  "from": memory_from, "rows_before": rows_before,
+                  "rows_after": memory_count(bank)}}
     comparison = []
     if baseline:
         before = json.loads(baseline.read_text(encoding="utf-8"))

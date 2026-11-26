@@ -46,7 +46,7 @@ ISSUE_TURNS = {"I01", "I02", "I03", "I04", "I05"}
 
 
 # Run one turn on a fresh graph and mock tools. Returns a dict with everything found.
-def run_one(turn: dict, data: dict, config, now: datetime) -> dict:
+def run_one(turn: dict, data: dict, config, now: datetime, memory=None) -> dict:
     chat, log, runs, steps = TimedChat(), [], [], config.agent.max_steps
     calendar = by_name(mock_calendar_tools(log, data["mock_calendar"]))
     web = by_name(mock_research_tools(log, data["mock_weather"]))
@@ -57,7 +57,7 @@ def run_one(turn: dict, data: dict, config, now: datetime) -> dict:
                            "research", runs),
         "calendar": tagged(calendar_agent(chat, calendar, steps, config.calendar,
                                           now=lambda: now), "calendar", runs)}
-    graph = build_graph(chat, agents=agents, config=config)
+    graph = build_graph(chat, agents=agents, config=config, memory=memory)  # memory: M2.3b
     start = time.perf_counter()
     try:
         reply = str(cli.run_turn(graph, [], turn["text"], False)[0].content)
