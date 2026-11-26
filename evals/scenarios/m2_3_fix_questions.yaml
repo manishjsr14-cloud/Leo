@@ -1,0 +1,49 @@
+# M2.3 fix round: a FRESH set of recall and no-memory questions (2026-11-26).
+# Committed before any fix-round change to memory code or settings. Never edit this
+# file to improve a result; a better set is a new file (AGENTS.md).
+# The original set (m2_3_memory_questions.yaml) stays as it is and is reported too.
+#
+# The facts are the 33 facts of the original set (facts_from), saved the same way.
+# questions: scored, like the original set. kind:
+#   cross_language: a Hinglish question about a fact stored in English
+#   synonym:        the question uses another word for the fact (meat / non-veg ...)
+# no_memory_questions: nothing about them was ever said.
+#
+# Threshold rule (fixed now, before any measurement): with the fix-round recall
+# change in place and the 33 facts saved, take the top-1 similarity of each of the
+# 6 no-memory questions below; memory.min_similarity becomes the smallest
+# two-decimal value strictly above the highest of them. The value is set once, in
+# its own logged commit, before the rerun of parts A and B.
+#
+# Rule for the rerun (decided by the user before the rerun): Recall@5 (top 5, no
+# threshold) is reported for this set and for the original 20 questions. If it is
+# below 0.90 on both sets, M2.3 is closed with known limits.
+
+facts_from: evals/scenarios/m2_3_memory_questions.yaml
+
+rerun_rule:
+  metric: recall_at_5
+  min: 0.90
+  close_with_known_limits_if_below_on_both: true
+
+questions:
+  - {id: R01, lang: hinglish, kind: cross_language, expect: F10, text: "Main kaunsi company mein kaam karta hoon?"}
+  - {id: R02, lang: hinglish, kind: cross_language, expect: F12, text: "Meri gaadi kaunsi hai?"}
+  - {id: R03, lang: hinglish, kind: cross_language, expect: F25, text: "Weekend pe main kya seekh raha hoon?"}
+  - {id: R04, lang: hinglish, kind: cross_language, expect: F29, text: "Shaam ko main walk pe kitne baje jaata hoon?"}
+  - {id: R05, lang: hinglish, kind: cross_language, expect: F24, text: "Mera account kaunse bank mein hai?"}
+  - {id: R06, lang: hinglish, kind: cross_language, expect: F02, text: "Meetings kitne baje ke baad rakhni chahiye?"}
+  - {id: R07, lang: en, kind: synonym, expect: F31, text: "Am I a vegetarian?"}
+  - {id: R08, lang: hinglish, kind: synonym, expect: F31, text: "Kya main chicken khata hoon?"}
+  - {id: R09, lang: en, kind: synonym, expect: F27, text: "Which computer do I use?"}
+  - {id: R10, lang: en, kind: synonym, expect: F14, text: "What sport do I enjoy following?"}
+  - {id: R11, lang: en, kind: synonym, expect: F16, text: "Who is my physician?"}
+  - {id: R12, lang: en, kind: synonym, expect: F33, text: "What drink did I give up?"}
+
+no_memory_questions:
+  - {id: Y01, lang: en, text: "What is my shoe size?"}
+  - {id: Y02, lang: hinglish, text: "Meri mummy ka birthday kab hai?"}
+  - {id: Y03, lang: en, text: "Which city was I born in?"}
+  - {id: Y04, lang: hinglish, text: "Mera favourite actor kaun hai?"}
+  - {id: Y05, lang: en, text: "What is my dog's name?"}
+  - {id: Y06, lang: hinglish, text: "Mujhe kaunsa gaana pasand hai?"}
