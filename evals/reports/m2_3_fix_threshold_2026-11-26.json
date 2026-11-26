@@ -1,0 +1,607 @@
+{
+  "config": {
+    "search_k": 5,
+    "recall_k": 3,
+    "min_similarity": 0.8,
+    "candidate_subjects": 5
+  },
+  "embedder_load_s": 48.97021840000525,
+  "part_a": {
+    "saved": 33,
+    "stored": 30,
+    "replaced": 3,
+    "recall_k": 3,
+    "min_similarity": 0.8,
+    "threshold_from_fix": 0.88,
+    "sets": {
+      "original": {
+        "questions": [
+          {
+            "id": "Q01",
+            "lang": "hinglish",
+            "expect": "F31",
+            "negation": true,
+            "text": "Kya main non-veg khata hoon?",
+            "rank": 1,
+            "hints": [
+              "I don't eat non-veg anymore.",
+              "mera blood group B positive hai.",
+              "Maine coffee chhod di hai, ab sirf green tea peeta hoon."
+            ],
+            "in_prompt": true,
+            "similarity": 0.8521573841571808,
+            "top1": 0.8521573841571808
+          },
+          {
+            "id": "Q02",
+            "lang": "en",
+            "expect": "F31",
+            "negation": true,
+            "text": "Do I eat meat?",
+            "rank": 2,
+            "hints": [
+              "Mere papa ko sugar hai, unke liye meetha mat suggest karna.",
+              "I don't eat non-veg anymore.",
+              "Mera gym Monday, Wednesday aur Friday ko hota hai."
+            ],
+            "in_prompt": true,
+            "similarity": 0.8249296098947525,
+            "top1": 0.8324452340602875
+          },
+          {
+            "id": "Q03",
+            "lang": "hinglish",
+            "expect": "F32",
+            "negation": true,
+            "text": "Main kahan rehta hoon?",
+            "rank": 1,
+            "hints": [
+              "Ab main Bangalore mein rehta hoon, Pune chhod diya.",
+              "Main Marathi aur Hindi dono bolta hoon.",
+              "Mujhe migraine hota hai jab main bahut thaka hua hota hoon."
+            ],
+            "in_prompt": true,
+            "similarity": 0.8446000069379807,
+            "top1": 0.8446000069379807
+          },
+          {
+            "id": "Q04",
+            "lang": "en",
+            "expect": "F33",
+            "negation": true,
+            "text": "Do I still drink coffee?",
+            "rank": 1,
+            "hints": [
+              "Maine coffee chhod di hai, ab sirf green tea peeta hoon.",
+              "Mere papa ko sugar hai, unke liye meetha mat suggest karna.",
+              "mujhe chai mein cheeni nahi chahiye."
+            ],
+            "in_prompt": true,
+            "similarity": 0.8499234318733215,
+            "top1": 0.8499234318733215
+          },
+          {
+            "id": "Q05",
+            "lang": "hinglish",
+            "expect": "F03",
+            "text": "Mera blood group kya hai?",
+            "rank": 1,
+            "hints": [
+              "mera blood group B positive hai.",
+              "Meri behen ka naam Priya hai.",
+              "Mera beta Aarav class 3 mein padhta hai."
+            ],
+            "in_prompt": true,
+            "similarity": 0.8890938833355904,
+            "top1": 0.8890938833355904
+          },
+          {
+            "id": "Q06",
+            "lang": "en",
+            "expect": "F05",
+            "text": "When is my sister's birthday?",
+            "rank": 1,
+            "hints": [
+              "Meri behen ka birthday 12 March ko hai.",
+              "My brother's birthday is on 5 June.",
+              "Meri behen ka naam Priya hai."
+            ],
+            "in_prompt": true,
+            "similarity": 0.8884035497903824,
+            "top1": 0.8884035497903824
+          },
+          {
+            "id": "Q07",
+            "lang": "hinglish",
+            "expect": "F06",
+            "text": "Mere bhai ka birthday kab hai?",
+            "rank": 2,
+            "hints": [
+              "Meri behen ka birthday 12 March ko hai.",
+              "My brother's birthday is on 5 June.",
+              "Meri behen ka naam Priya hai."
+            ],
+            "in_prompt": true,
+            "similarity": 0.8393066227436066,
+            "top1": 0.858262911438942
+          },
+          {
+            "id": "Q08",
+            "lang": "en",
+            "expect": "F02",
+            "text": "What time do I like to have meetings?",
+            "rank": 1,
+            "hints": [
+              "I prefer meetings after 11 am.",
+              "Main raat ko 11 baje tak so jaata hoon.",
+              "Mera gym Monday, Wednesday aur Friday ko hota hai."
+            ],
+            "in_prompt": true,
+            "similarity": 0.8810986876487732,
+            "top1": 0.8810986876487732
+          },
+          {
+            "id": "Q09",
+            "lang": "hinglish",
+            "expect": "F09",
+            "text": "Mujhe kis cheez se allergy hai?",
+            "rank": 1,
+            "hints": [
+              "Mujhe peanuts se allergy hai.",
+              "Mujhe migraine hota hai jab main bahut thaka hua hota hoon.",
+              "Mujhe horror movies bilkul pasand nahi hain."
+            ],
+            "in_prompt": true,
+            "similarity": 0.9050115793943405,
+            "top1": 0.9050115793943405
+          },
+          {
+            "id": "Q10",
+            "lang": "hinglish",
+            "expect": "F19",
+            "text": "Meri chai kaisi banani hai?",
+            "rank": 5,
+            "hints": [
+              "Meri behen ka naam Priya hai.",
+              "Meri wife ka naam Anjali hai.",
+              "Meri behen ka birthday 12 March ko hai."
+            ],
+            "in_prompt": false,
+            "similarity": 0.8042309582233429,
+            "top1": 0.8579636216163635
+          },
+          {
+            "id": "Q11",
+            "lang": "en",
+            "expect": "F12",
+            "text": "What car do I drive?",
+            "rank": 1,
+            "hints": [
+              "my car is a white Honda City.",
+              "My laptop is a Dell G3.",
+              "my bank is HDFC."
+            ],
+            "in_prompt": true,
+            "similarity": 0.8503740578889847,
+            "top1": 0.8503740578889847
+          },
+          {
+            "id": "Q12",
+            "lang": "hinglish",
+            "expect": "F22",
+            "g09_style": true,
+            "text": "Thakaan se mujhe kya problem hoti hai?",
+            "rank": 5,
+            "hints": [
+              "Mujhe peanuts se allergy hai.",
+              "Mere papa ko sugar hai, unke liye meetha mat suggest karna.",
+              "mujhe chai mein cheeni nahi chahiye."
+            ],
+            "in_prompt": false,
+            "similarity": 0.8321299403905869,
+            "top1": 0.8538856953382492
+          },
+          {
+            "id": "Q13",
+            "lang": "en",
+            "expect": "F23",
+            "g09_style": true,
+            "text": "Why do I keep my afternoons light?",
+            "rank": 1,
+            "hints": [
+              "I get very tired after lunch, so I keep my afternoons light.",
+              "I usually go for a walk in the evening at 7.",
+              "I wake up at 6 am on weekdays."
+            ],
+            "in_prompt": true,
+            "similarity": 0.9131975919008255,
+            "top1": 0.9131975919008255
+          },
+          {
+            "id": "Q14",
+            "lang": "hinglish",
+            "expect": "F26",
+            "text": "Papa ke khane mein kya dhyan rakhna hai?",
+            "rank": 2,
+            "hints": [
+              "Mera beta Aarav class 3 mein padhta hai.",
+              "Mere papa ko sugar hai, unke liye meetha mat suggest karna.",
+              "Mujhe baarish mein Lonavala jaana bahut pasand hai."
+            ],
+            "in_prompt": true,
+            "similarity": 0.830821081995964,
+            "top1": 0.8376783132553101
+          },
+          {
+            "id": "Q15",
+            "lang": "en",
+            "expect": "F20",
+            "text": "Which class is my son in?",
+            "rank": 1,
+            "hints": [
+              "Mera beta Aarav class 3 mein padhta hai.",
+              "I am learning Spanish on weekends."
+            ],
+            "in_prompt": true,
+            "similarity": 0.86925008893013,
+            "top1": 0.86925008893013
+          },
+          {
+            "id": "Q16",
+            "lang": "hinglish",
+            "expect": "F18",
+            "text": "Main roz subah kitne baje uthta hoon?",
+            "rank": null,
+            "hints": [
+              "Mujhe peanuts se allergy hai.",
+              "Mujhe baarish mein Lonavala jaana bahut pasand hai.",
+              "Ab main Bangalore mein rehta hoon, Pune chhod diya."
+            ],
+            "in_prompt": false,
+            "similarity": null,
+            "top1": 0.8129954636096954
+          },
+          {
+            "id": "Q17",
+            "lang": "en",
+            "expect": "F13",
+            "text": "What kind of movies should you not suggest to me?",
+            "rank": 1,
+            "hints": [
+              "Mujhe horror movies bilkul pasand nahi hain.",
+              "Mujhe baarish mein Lonavala jaana bahut pasand hai.",
+              "Mere papa ko sugar hai, unke liye meetha mat suggest karna."
+            ],
+            "in_prompt": true,
+            "similarity": 0.846386194229126,
+            "top1": 0.846386194229126
+          },
+          {
+            "id": "Q18",
+            "lang": "hinglish",
+            "expect": "F15",
+            "text": "Meri wife ka naam kya hai?",
+            "rank": 1,
+            "hints": [
+              "Meri wife ka naam Anjali hai.",
+              "Meri behen ka naam Priya hai.",
+              "Meri behen ka birthday 12 March ko hai."
+            ],
+            "in_prompt": true,
+            "similarity": 0.907446376979351,
+            "top1": 0.907446376979351
+          },
+          {
+            "id": "Q19",
+            "lang": "en",
+            "expect": "F16",
+            "text": "Who is my doctor?",
+            "rank": 1,
+            "hints": [
+              "My doctor is Dr. Mehta at Sahyadri hospital.",
+              "Mere papa ko sugar hai, unke liye meetha mat suggest karna.",
+              "Mera beta Aarav class 3 mein padhta hai."
+            ],
+            "in_prompt": true,
+            "similarity": 0.8758653700351715,
+            "top1": 0.8758653700351715
+          },
+          {
+            "id": "Q20",
+            "lang": "hinglish",
+            "expect": "F21",
+            "text": "Mujhe kaunsa khana sabse zyada pasand hai?",
+            "rank": null,
+            "hints": [
+              "Mujhe peanuts se allergy hai.",
+              "Mujhe baarish mein Lonavala jaana bahut pasand hai.",
+              "Mujhe horror movies bilkul pasand nahi hain."
+            ],
+            "in_prompt": false,
+            "similarity": null,
+            "top1": 0.8628955632448196
+          }
+        ],
+        "no_memory": [
+          {
+            "id": "X01",
+            "lang": "en",
+            "text": "What is my favourite colour?",
+            "hints": 3,
+            "best": 0.8573632538318634
+          },
+          {
+            "id": "X02",
+            "lang": "hinglish",
+            "text": "Meri gaadi ka insurance kab khatam hota hai?",
+            "hints": 3,
+            "best": 0.8596888929605484
+          },
+          {
+            "id": "X03",
+            "lang": "en",
+            "text": "What is my mother's name?",
+            "hints": 3,
+            "best": 0.841337725520134
+          },
+          {
+            "id": "X04",
+            "lang": "hinglish",
+            "text": "Meri height kitni hai?",
+            "hints": 3,
+            "best": 0.8446209728717804
+          }
+        ]
+      },
+      "fix": {
+        "questions": [
+          {
+            "id": "R01",
+            "lang": "hinglish",
+            "kind": "cross_language",
+            "expect": "F10",
+            "text": "Main kaunsi company mein kaam karta hoon?",
+            "rank": null,
+            "hints": [
+              "Main Marathi aur Hindi dono bolta hoon.",
+              "Mujhe baarish mein Lonavala jaana bahut pasand hai.",
+              "Ab main Bangalore mein rehta hoon, Pune chhod diya."
+            ],
+            "in_prompt": false,
+            "similarity": null,
+            "top1": 0.820848822593689
+          },
+          {
+            "id": "R02",
+            "lang": "hinglish",
+            "kind": "cross_language",
+            "expect": "F12",
+            "text": "Meri gaadi kaunsi hai?",
+            "rank": null,
+            "hints": [
+              "Meri wife ka naam Anjali hai.",
+              "Meri behen ka naam Priya hai.",
+              "Meri behen ka birthday 12 March ko hai."
+            ],
+            "in_prompt": false,
+            "similarity": null,
+            "top1": 0.8624204397201538
+          },
+          {
+            "id": "R03",
+            "lang": "hinglish",
+            "kind": "cross_language",
+            "expect": "F25",
+            "text": "Weekend pe main kya seekh raha hoon?",
+            "rank": 2,
+            "hints": [
+              "Mera gym Monday, Wednesday aur Friday ko hota hai.",
+              "I am learning Spanish on weekends.",
+              "Mujhe baarish mein Lonavala jaana bahut pasand hai."
+            ],
+            "in_prompt": true,
+            "similarity": 0.8397589027881622,
+            "top1": 0.8488656580448151
+          },
+          {
+            "id": "R04",
+            "lang": "hinglish",
+            "kind": "cross_language",
+            "expect": "F29",
+            "text": "Shaam ko main walk pe kitne baje jaata hoon?",
+            "rank": 5,
+            "hints": [
+              "Mujhe peanuts se allergy hai.",
+              "Mujhe migraine hota hai jab main bahut thaka hua hota hoon.",
+              "Mujhe horror movies bilkul pasand nahi hain."
+            ],
+            "in_prompt": false,
+            "similarity": 0.8327254503965378,
+            "top1": 0.8425327390432358
+          },
+          {
+            "id": "R05",
+            "lang": "hinglish",
+            "kind": "cross_language",
+            "expect": "F24",
+            "text": "Mera account kaunse bank mein hai?",
+            "rank": 3,
+            "hints": [
+              "mera blood group B positive hai.",
+              "Meri behen ka naam Priya hai.",
+              "my bank is HDFC."
+            ],
+            "in_prompt": true,
+            "similarity": 0.8250047564506531,
+            "top1": 0.8296362161636353
+          },
+          {
+            "id": "R06",
+            "lang": "hinglish",
+            "kind": "cross_language",
+            "expect": "F02",
+            "text": "Meetings kitne baje ke baad rakhni chahiye?",
+            "rank": 5,
+            "hints": [
+              "Mujhe peanuts se allergy hai.",
+              "Mujhe horror movies bilkul pasand nahi hain.",
+              "Mere papa ko sugar hai, unke liye meetha mat suggest karna."
+            ],
+            "in_prompt": false,
+            "similarity": 0.8301549404859543,
+            "top1": 0.8446213603019714
+          },
+          {
+            "id": "R07",
+            "lang": "en",
+            "kind": "synonym",
+            "expect": "F31",
+            "text": "Am I a vegetarian?",
+            "rank": 1,
+            "hints": [
+              "I don't eat non-veg anymore.",
+              "Mere papa ko sugar hai, unke liye meetha mat suggest karna.",
+              "Mera beta Aarav class 3 mein padhta hai."
+            ],
+            "in_prompt": true,
+            "similarity": 0.8379746079444885,
+            "top1": 0.8379746079444885
+          },
+          {
+            "id": "R08",
+            "lang": "hinglish",
+            "kind": "synonym",
+            "expect": "F31",
+            "text": "Kya main chicken khata hoon?",
+            "rank": null,
+            "hints": [
+              "Ab main Bangalore mein rehta hoon, Pune chhod diya.",
+              "Main Marathi aur Hindi dono bolta hoon."
+            ],
+            "in_prompt": false,
+            "similarity": null,
+            "top1": 0.8086318820714951
+          },
+          {
+            "id": "R09",
+            "lang": "en",
+            "kind": "synonym",
+            "expect": "F27",
+            "text": "Which computer do I use?",
+            "rank": 1,
+            "hints": [
+              "My laptop is a Dell G3.",
+              "I work as a software engineer at an insurance company.",
+              "Mera gym Monday, Wednesday aur Friday ko hota hai."
+            ],
+            "in_prompt": true,
+            "similarity": 0.8399349004030228,
+            "top1": 0.8399349004030228
+          },
+          {
+            "id": "R10",
+            "lang": "en",
+            "kind": "synonym",
+            "expect": "F14",
+            "text": "What sport do I enjoy following?",
+            "rank": 1,
+            "hints": [
+              "I like watching cricket, especially test matches.",
+              "Mujhe baarish mein Lonavala jaana bahut pasand hai.",
+              "I am learning Spanish on weekends."
+            ],
+            "in_prompt": true,
+            "similarity": 0.8662452101707458,
+            "top1": 0.8662452101707458
+          },
+          {
+            "id": "R11",
+            "lang": "en",
+            "kind": "synonym",
+            "expect": "F16",
+            "text": "Who is my physician?",
+            "rank": 1,
+            "hints": [
+              "My doctor is Dr. Mehta at Sahyadri hospital.",
+              "Mere papa ko sugar hai, unke liye meetha mat suggest karna.",
+              "Mera beta Aarav class 3 mein padhta hai."
+            ],
+            "in_prompt": true,
+            "similarity": 0.86277636885643,
+            "top1": 0.86277636885643
+          },
+          {
+            "id": "R12",
+            "lang": "en",
+            "kind": "synonym",
+            "expect": "F33",
+            "text": "What drink did I give up?",
+            "rank": 2,
+            "hints": [
+              "mujhe chai mein cheeni nahi chahiye.",
+              "Maine coffee chhod di hai, ab sirf green tea peeta hoon."
+            ],
+            "in_prompt": true,
+            "similarity": 0.8021441847085953,
+            "top1": 0.8243663012981415
+          }
+        ],
+        "no_memory": [
+          {
+            "id": "Y01",
+            "lang": "en",
+            "text": "What is my shoe size?",
+            "hints": 3,
+            "best": 0.8145872056484222
+          },
+          {
+            "id": "Y02",
+            "lang": "hinglish",
+            "text": "Meri mummy ka birthday kab hai?",
+            "hints": 3,
+            "best": 0.8740599304437637
+          },
+          {
+            "id": "Y03",
+            "lang": "en",
+            "text": "Which city was I born in?",
+            "hints": 3,
+            "best": 0.8450383096933365
+          },
+          {
+            "id": "Y04",
+            "lang": "hinglish",
+            "text": "Mera favourite actor kaun hai?",
+            "hints": 3,
+            "best": 0.8260385692119598
+          },
+          {
+            "id": "Y05",
+            "lang": "en",
+            "text": "What is my dog's name?",
+            "hints": 3,
+            "best": 0.8173698484897614
+          },
+          {
+            "id": "Y06",
+            "lang": "hinglish",
+            "text": "Mujhe kaunsa gaana pasand hai?",
+            "hints": 3,
+            "best": 0.8528904616832733
+          }
+        ]
+      }
+    }
+  },
+  "passed": true,
+  "sets": {
+    "original": {
+      "recall5": 0.9,
+      "reached": true
+    },
+    "fix": {
+      "recall5": 0.75,
+      "reached": false
+    }
+  }
+}
