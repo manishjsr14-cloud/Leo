@@ -117,3 +117,13 @@ def test_bad_arguments_are_refused(tmp_path):
 # SqliteVecStore has the methods the VectorStore interface asks for.
 def test_sqlite_store_is_a_vector_store(tmp_path):
     assert isinstance(_store(tmp_path), VectorStore)
+
+
+# delete removes only the given ids (M2.3: a replaced memory); unknown ids are ignored.
+def test_delete_removes_only_given_ids(tmp_path):
+    store = _store(tmp_path)
+    rng = random.Random(SEED)
+    vectors = _vectors(3, rng)
+    store.add([1, 2, 3], vectors)
+    store.delete([2, 99])
+    assert sorted(i for i, _ in store.search(vectors[1], 3)) == [1, 3]

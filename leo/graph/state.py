@@ -23,6 +23,7 @@ class LeoState(TypedDict, total=False):
     hops: int  # agents run so far in this request (capped by graph.max_hops)
     completed_agents: list[str]  # agents that said done in this request
     language: str  # "en", "hinglish" or "hi" for the latest message (M1.8)
+    memories: list[str]  # recalled long-term facts, hints for the reply (M2.3)
 
 
 # The text of the user's latest message ("" when there is none).

@@ -15,3 +15,17 @@ CREATE TABLE IF NOT EXISTS notes (
     text       TEXT    NOT NULL CHECK (length(text) > 0),
     created_at TEXT    NOT NULL
 );
+
+-- Long-term memory (M2.3, section 7): one lasting fact or preference per subject,
+-- in the user's own words. A new fact on the same subject replaces the old one.
+-- Only the user's own messages become memories (section 14.7): source is always 'user'.
+-- The vectors are in the vec0 table vec_memories (rowid = memories.id).
+CREATE TABLE IF NOT EXISTS memories (
+    id         INTEGER PRIMARY KEY,
+    subject    TEXT    NOT NULL UNIQUE CHECK (length(subject) > 0),
+    text       TEXT    NOT NULL CHECK (length(text) > 0),
+    language   TEXT    NOT NULL,
+    source     TEXT    NOT NULL DEFAULT 'user' CHECK (source = 'user'),
+    created_at TEXT    NOT NULL,
+    updated_at TEXT    NOT NULL
+);

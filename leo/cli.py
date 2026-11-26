@@ -9,6 +9,7 @@ memory only; saving it across restarts comes with checkpointing in M2.4.
 The productivity agent keeps tasks and notes in leo_data/leo.db; the research
 agent uses DuckDuckGo, web pages and Open-Meteo over the internet. The calendar
 agent uses the MOCK calendar (fixed events, nothing saved) until M2.6.
+Long-term memory (M2.3) is in the same database; the embedder loads at start.
 Each message is one trace in Langfuse when the keys are set (section 13.2);
 the tracer is flushed on exit so the last request is not lost.
 """
@@ -30,7 +31,9 @@ from leo.language.normalize import language_tag, normalize
 from leo.llm import gateway
 from leo.llm.gateway import LLMUnavailable
 from leo.llm.warmup import warm_up
+from leo.memory.memories import open_bank
 from leo.memory.store import open_db
+from leo.ml.embedder import load_embedder
 from leo.ops import tracing
 from leo.ops.trace_tags import request_tags
 from leo.ops.tracing_setup import setup_tracing
@@ -80,7 +83,7 @@ def timer_ringer(output_fn: Callable[[str], None], make_timer=threading.Timer):
 
 # The real graph: the productivity agent with real tools on leo_data/leo.db,
 # the research agent with the real web and weather tools, and the calendar
-# agent on the mock calendar (Radicale comes in M2.6).
+# agent on the mock calendar (Radicale comes in M2.6), and long-term memory.
 def default_graph(output_fn: Callable[[str], None]):
     config = load_config()
     conn = open_db(config.storage.resolved_db_path())
@@ -89,7 +92,10 @@ def default_graph(output_fn: Callable[[str], None]):
     calendar = by_name(mock_calendar_tools([]))
     steps = config.agent.max_steps
     output_fn("Note: the calendar is a mock (fixed events, nothing saved) until M2.6.")
-    return build_graph(agents={
+    output_fn("Loading the embedder for memory...")
+    bank = open_bank(conn, load_embedder(config.embedder), config.memory,
+                     config.embedder.dimension)
+    return build_graph(memory=bank, agents={
         "productivity": productivity_agent(gateway.chat, tasks, steps),
         "research": research_agent(gateway.chat, web, steps),
         "calendar": calendar_agent(gateway.chat, calendar, steps, config.calendar)},

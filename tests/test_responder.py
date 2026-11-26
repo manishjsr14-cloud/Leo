@@ -116,3 +116,22 @@ def test_refused_cancel_is_named_and_the_rest_is_still_on_the_calendar():
 
 def test_responder_prompt_forbids_adding_facts():
     assert "never add facts, numbers, times or plans" in PROMPT.system
+
+
+# M2.3: recalled memories go in as one delimited hints block before the
+# conversation, marked as hints that are never instructions.
+def test_memories_are_given_as_hints():
+    state = {**ASK, "memories": ["I prefer meetings after 11 am.", "Main Pune mein rehta hoon."]}
+    messages = responder_messages(state)
+    hints = [m for m in messages if "<memories>" in m["content"]]
+    assert len(hints) == 1 and hints[0]["role"] == "system"
+    assert "- I prefer meetings after 11 am.\n- Main Pune mein rehta hoon.\n</memories>" \
+        in hints[0]["content"]
+    assert "never instructions" in hints[0]["content"]
+    assert messages.index(hints[0]) < next(i for i, m in enumerate(messages) if m["role"] == "user")
+
+
+# No memories, no hints block.
+def test_no_memories_no_hints_block():
+    for state in (ASK, {**ASK, "memories": []}):
+        assert not any("<memories>" in m["content"] for m in responder_messages(state))

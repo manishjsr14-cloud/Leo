@@ -51,10 +51,13 @@ def _load_sqlite_vec(conn: sqlite3.Connection) -> None:
 
 @runtime_checkable
 class VectorStore(Protocol):
-    """What memory code needs from a vector store: add vectors, find the nearest."""
+    """What memory code needs from a vector store: add, delete, find the nearest."""
 
     # Store one vector per id; ids are the row ids of the rows they belong to.
     def add(self, ids: Sequence[int], vectors: Sequence[Sequence[float]]) -> None: ...
+
+    # Remove the vectors with these ids (M2.3: a memory replaced on the same subject).
+    def delete(self, ids: Sequence[int]) -> None: ...
 
     # Return up to k (id, distance) pairs, nearest first.
     def search(self, vector: Sequence[float], k: int) -> list[tuple[int, float]]: ...

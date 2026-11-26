@@ -79,3 +79,28 @@ def test_max_hops_caps_the_planned_agents():
     config = config.model_copy(update={"graph": config.graph.model_copy(update={"max_hops": 1})})
     out, seen, _ = run_plan(["research", "productivity"], config)
     assert [name for name, _ in seen] == ["research"] and out["hops"] == 1
+
+
+# M2.3: with a memory bank, memory_recall runs before the supervisor and
+# memory_write after the reply; a fact told in one turn is a hint in the next.
+def test_memory_nodes_wrap_the_turn(tmp_path):
+    from tests.memory_fakes import make_bank
+
+    fact, question = "Main Pune mein rehta hoon.", "Main kahan rehta hoon?"
+    bank = make_bank(tmp_path, {fact: [1, 0, 0, 0], question: [1, 0, 0, 0]})
+    chat = FakeChat("Theek hai.", {"remember": True, "subject": "home_city"}, "Pune mein.")
+    graph = build_graph(chat, memory=bank)
+    assert {"memory_recall", "memory_write"} <= set(graph.get_graph().nodes)
+    graph.invoke({"messages": [HumanMessage(fact)], "language": "hinglish"})
+    assert chat.calls[0]["output_model"] is None          # the reply came first
+    assert chat.calls[1]["output_model"].__name__ == "MemoryDecision"
+    out = graph.invoke({"messages": [HumanMessage(question)], "language": "hinglish"})
+    assert out["memories"] == [fact]
+    assert any(fact in m["content"] for m in chat.calls[2]["messages"] if m["role"] == "system")
+    assert len(chat.calls) == 3                            # the question made no extraction call
+
+
+# Without a memory bank the graph has no memory nodes (as before M2.3).
+def test_no_memory_nodes_without_a_bank():
+    nodes = set(build_graph(FakeChat("hi")).get_graph().nodes)
+    assert not {"memory_recall", "memory_write"} & nodes

@@ -56,6 +56,12 @@ embedder:                          # shared embedder (section 8.1); CPU only, th
   passage_prefix: "passage: "      # e5: stored texts that queries search (memories, documents)
   cache_size: 256                  # recent message vectors kept for reuse (each message embedded once)
 
+memory:                            # long-term memory (M2.3, section 7)
+  search_k: 5                      # nearest memories looked at for each message (Recall@5)
+  recall_k: 3                      # at most 3 go into the reply prompt as hints
+  min_similarity: 0.80             # starting value, set before any run (not measured); a change is a logged change
+  candidate_subjects: 5            # subjects of the nearest memories shown to the extraction step
+
 agent:
   max_steps: 6                    # tool steps inside one specialist run before it hands back
 

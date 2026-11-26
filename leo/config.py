@@ -19,6 +19,7 @@ from leo.config_sections import (
     AgentConfig,
     EmbedderConfig,
     GraphConfig,
+    MemoryConfig,
     ServerConfig,
     StorageConfig,
     TracingConfig,
@@ -39,6 +40,7 @@ __all__ = [
     "LLMConfig",
     "LanguageConfig",
     "LeoConfig",
+    "MemoryConfig",
     "PrimaryLLM",
     "ResearchConfig",
     "Secrets",
@@ -63,6 +65,7 @@ class LeoConfig(Strict):
     graph: GraphConfig
     storage: StorageConfig
     embedder: EmbedderConfig
+    memory: MemoryConfig
     agent: AgentConfig
     tracing: TracingConfig
     research: ResearchConfig

@@ -49,6 +49,13 @@ class SqliteVecStore:
                 f"INSERT INTO {self.table} (rowid, embedding) VALUES (?, ?)", rows
             )
 
+    # Remove the vectors with these ids and commit. Ids not in the table are ignored.
+    def delete(self, ids: Sequence[int]) -> None:
+        with self.conn:
+            self.conn.executemany(
+                f"DELETE FROM {self.table} WHERE rowid = ?", [(int(i),) for i in ids]
+            )
+
     # Return up to k (id, cosine distance) pairs, nearest first.
     def search(self, vector: Sequence[float], k: int) -> list[tuple[int, float]]:
         if k < 1:
