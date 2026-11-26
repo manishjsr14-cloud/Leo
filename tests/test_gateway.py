@@ -20,11 +20,13 @@ class Choice(BaseModel):
     next: str
 
 
-# Ask the gateway with fake local and cloud clients.
+# Ask the gateway with fake local and cloud clients. A first-token timeout starts a
+# background load (M2.3 fix); it goes to a fake client that streams nothing.
 def ask(local, cloud, output_model=None, force_cloud=False, config=None):
     return gateway.chat(
         MESSAGES, output_model, force_cloud,
         config=config or load_config(), local_client=local, cloud_client=cloud,
+        load_client=FakeClient(iter([])),
     )
 
 
@@ -34,7 +36,7 @@ def ask(local, cloud, output_model=None, force_cloud=False, config=None):
     [
         (fakes.connection_error(), "connection_error"),
         (fakes.status_error(404, "model 'leo-qwen3' not found"), "model_not_found"),
-        (fakes.timeout_error(), "timeout"),
+        (fakes.timeout_error(), "first_token_timeout"),
         (fakes.status_error(500, "CUDA error: out of memory"), "out_of_memory"),
         (fakes.status_error(500, "llama runner process has terminated"), "server_error"),
     ],

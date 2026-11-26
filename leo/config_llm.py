@@ -20,6 +20,7 @@ class PrimaryLLM(Strict):
     total_timeout_s: float = Field(gt=0)
     max_bad_outputs: int = Field(ge=1)
     warm_up: bool = True          # one tiny request at startup loads the model (M1 cleanup)
+    load_timeout_s: float = Field(gt=0)  # a model load (warm-up, background load) may take this long
 
 
 class DesktopLLM(Strict):

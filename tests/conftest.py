@@ -30,3 +30,13 @@ def tracing_off():
     yield
     tracing.set_tracer(tracing.NullTracer())
     tracing.reset_warning()
+
+
+# No background model load (M2.3 fix) may outlive a test.
+@pytest.fixture(autouse=True)
+def no_background_load():
+    from leo.llm import background_load
+
+    yield
+    background_load.wait(5)
+    background_load._state["thread"] = None

@@ -4,6 +4,11 @@ Fallback triggers (section 6.1): connection error, model not found, timeouts,
 out of memory or other server errors, a reply that fails the schema twice,
 and the user asking for the cloud. The desktop tier exists only in config.yaml
 for now; this gateway never calls it. Every attempt is traced (llm_trace.py).
+
+M2.3 fix: a first-token timeout falls back to Groq as before, and also starts
+one background load of the local model (background_load.py) so a slow load is
+never aborted; while it runs, turns go to Groq without starting new loads
+(reason "model_loading").
 """
 
 import logging
@@ -13,7 +18,7 @@ import openai
 from pydantic import BaseModel, ValidationError
 
 from leo.config import LeoConfig, load_config, load_secrets
-from leo.llm import clients
+from leo.llm import background_load, clients
 from leo.llm.clients import LLMTimeout, StreamResult
 from leo.llm.llm_trace import llm_span, record_error, record_result
 
@@ -42,7 +47,9 @@ class LLMResult(BaseModel):
 
 # Turn a client error into a short fallback reason for the logs.
 def fallback_reason(error: Exception) -> str:
-    if isinstance(error, (openai.APITimeoutError, LLMTimeout)):
+    if isinstance(error, openai.APITimeoutError):
+        return "first_token_timeout"  # nothing came back in time: possibly still loading
+    if isinstance(error, LLMTimeout):
         return "timeout"
     if isinstance(error, openai.APIConnectionError):
         return "connection_error"
@@ -119,8 +126,9 @@ def _ask_groq(config: LeoConfig, client: Any, messages: list[dict], output_model
     return result
 
 
-# Answer a chat: local model first, Groq if a trigger fires or force_cloud is set.
-# If Groq also fails, return the local result when there is one, else raise.
+# Answer a chat: local model first; Groq if a trigger fires, force_cloud is set or
+# a background load is running. If Groq also fails, return the local result when
+# there is one, else raise. load_client is the background load's client (tests).
 def chat(
     messages: list[dict],
     output_model: type[BaseModel] | None = None,
@@ -129,14 +137,19 @@ def chat(
     config: LeoConfig | None = None,
     local_client: Any = None,
     cloud_client: Any = None,
+    load_client: Any = None,
 ) -> LLMResult:
     config = config or load_config()
     local, reason = None, "user_override"
-    if not force_cloud:
+    if not force_cloud and background_load.loading():
+        reason = "model_loading"
+    elif not force_cloud:
         local_client = local_client or clients.ollama_client(config.llm.primary)
         local, reason = _ask_local(config, local_client, messages, output_model)
         if reason is None:
             return local
+        if reason == "first_token_timeout":
+            background_load.start_load(config, load_client)
     log.warning("falling back to groq: reason=%s", reason)
     try:
         result = _ask_groq(config, cloud_client, messages, output_model)

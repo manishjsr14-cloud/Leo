@@ -8,6 +8,11 @@ so the model that gets loaded is the one the chat uses. The reply is thrown
 away: it is not added to the conversation, not traced and not logged as a
 chat call. A failure is only logged; Leo starts anyway and the gateway's
 normal fallback rules apply to the first real turn.
+
+M2.3 fix: the warm-up (and the gateway's background load) waits for the load
+with no first-token limit, up to llm.primary.load_timeout_s. With the 20 s
+first-token limit, every cold load in the M2.3 check was aborted by Ollama
+when the client gave up (evals/reports/m2_3_ollama_log_notes_2026-11-26.md).
 """
 
 import logging
@@ -32,19 +37,26 @@ def warm_up_request(config: LeoConfig) -> dict[str, Any]:
     return request
 
 
-# Send the warm-up request. Returns the seconds it took, or None when the
-# warm-up is off in config.yaml or the request failed.
+# Load the local model with one tiny request, waiting up to load_timeout_s with
+# no first-token limit. Returns the seconds it took, or None if it failed.
+def load_model(config: LeoConfig, client: Any = None,
+               clock: Callable[[], float] = time.monotonic) -> float | None:
+    cfg = config.llm.primary
+    client = client or clients.ollama_client(cfg, load=True)
+    start = clock()
+    try:
+        clients.run_stream(client, warm_up_request(config), cfg.load_timeout_s)
+    except (openai.APIError, LLMTimeout) as error:
+        log.warning("model load failed: %s", type(error).__name__)
+        return None
+    return clock() - start
+
+
+# The warm-up at startup: load the model, unless the warm-up is off in config.yaml
+# (then None). Returns the seconds it took, or None if it failed.
 def warm_up(config: LeoConfig | None = None, client: Any = None,
             clock: Callable[[], float] = time.monotonic) -> float | None:
     config = config or load_config()
-    cfg = config.llm.primary
-    if not cfg.warm_up:
+    if not config.llm.primary.warm_up:
         return None
-    client = client or clients.ollama_client(cfg)
-    start = clock()
-    try:
-        clients.run_stream(client, warm_up_request(config), cfg.total_timeout_s)
-    except (openai.APIError, LLMTimeout) as error:
-        log.warning("model warm-up failed: %s", type(error).__name__)
-        return None
-    return clock() - start
+    return load_model(config, client, clock)

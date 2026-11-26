@@ -13,6 +13,8 @@ llm:
     total_timeout_s: 60
     max_bad_outputs: 2             # schema failures before falling back to Groq (6.1)
     warm_up: true                  # CLI start sends one tiny request so the first turn finds the model loaded
+    load_timeout_s: 120            # warm-up and background loads wait this long, with no first-token limit:
+                                   # a 20 s limit aborted every cold load in the M2.3 check (M2.3 log notes)
   desktop:                         # backup tier; skipped when off, unreachable or gaming
     provider: ollama
     model: qwen3:14b

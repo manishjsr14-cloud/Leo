@@ -45,8 +45,12 @@ def strip_think(text: str) -> str:
 
 # Client for the local Ollama model. No SDK retries: a failure falls back to Groq.
 # The read timeout is the first-token limit, since a stream sends nothing before it.
-def ollama_client(cfg: PrimaryLLM) -> OpenAI:
-    timeout = Timeout(cfg.total_timeout_s, read=cfg.first_token_timeout_s)
+# A model load (load=True) waits up to load_timeout_s with no first-token limit.
+def ollama_client(cfg: PrimaryLLM, load: bool = False) -> OpenAI:
+    if load:
+        timeout = Timeout(cfg.load_timeout_s)
+    else:
+        timeout = Timeout(cfg.total_timeout_s, read=cfg.first_token_timeout_s)
     return OpenAI(
         base_url=cfg.base_url.rstrip("/") + "/v1",
         api_key="ollama",  # Ollama ignores the key, but the SDK needs one
