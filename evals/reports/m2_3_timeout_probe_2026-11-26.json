@@ -1,0 +1,207 @@
+{
+  "rounds": [
+    {
+      "round": "without",
+      "before": {
+        "available_mib": 1827,
+        "page_file_used_mib": 659,
+        "page_file_total_mib": 9172,
+        "this_process_mib": 1192
+      },
+      "first_token_s": 7.801948100008303,
+      "total_s": 13.688680200022645,
+      "ollama_load_s": 5.2417356,
+      "after": {
+        "available_mib": 1589,
+        "page_file_used_mib": 815,
+        "page_file_total_mib": 9172,
+        "this_process_mib": 1189
+      },
+      "loaded": [
+        {
+          "name": "leo-qwen3:latest",
+          "size_mib": 3076,
+          "gpu_share": 1.0
+        }
+      ],
+      "embedder": {
+        "before": {
+          "available_mib": 2386,
+          "page_file_used_mib": 646,
+          "page_file_total_mib": 9172,
+          "this_process_mib": 61
+        },
+        "load_s": 124.2,
+        "after": {
+          "available_mib": 1094,
+          "page_file_used_mib": 659,
+          "page_file_total_mib": 9172,
+          "this_process_mib": 1189
+        }
+      },
+      "embedder_held": true
+    },
+    {
+      "round": "with",
+      "before": {
+        "available_mib": 2430,
+        "page_file_used_mib": 818,
+        "page_file_total_mib": 9172,
+        "this_process_mib": 1190
+      },
+      "first_token_s": 8.02485549999983,
+      "total_s": 8.152154000010341,
+      "ollama_load_s": 5.50617,
+      "after": {
+        "available_mib": 1661,
+        "page_file_used_mib": 819,
+        "page_file_total_mib": 9172,
+        "this_process_mib": 1191
+      },
+      "loaded": [
+        {
+          "name": "leo-qwen3:latest",
+          "size_mib": 3076,
+          "gpu_share": 1.0
+        }
+      ],
+      "embedder": {
+        "before": {
+          "available_mib": 2764,
+          "page_file_used_mib": 815,
+          "page_file_total_mib": 9172,
+          "this_process_mib": 62
+        },
+        "load_s": 62.1,
+        "after": {
+          "available_mib": 1642,
+          "page_file_used_mib": 808,
+          "page_file_total_mib": 9172,
+          "this_process_mib": 1187
+        }
+      },
+      "embedder_held": true
+    },
+    {
+      "round": "without",
+      "before": {
+        "available_mib": 2424,
+        "page_file_used_mib": 818,
+        "page_file_total_mib": 9172,
+        "this_process_mib": 1191
+      },
+      "first_token_s": 7.751733499986585,
+      "total_s": 7.865384500008076,
+      "ollama_load_s": 5.2424625,
+      "after": {
+        "available_mib": 1658,
+        "page_file_used_mib": 849,
+        "page_file_total_mib": 9172,
+        "this_process_mib": 1191
+      },
+      "loaded": [
+        {
+          "name": "leo-qwen3:latest",
+          "size_mib": 3076,
+          "gpu_share": 1.0
+        }
+      ],
+      "embedder": {
+        "before": {
+          "available_mib": 2787,
+          "page_file_used_mib": 819,
+          "page_file_total_mib": 9172,
+          "this_process_mib": 61
+        },
+        "load_s": 56.1,
+        "after": {
+          "available_mib": 1643,
+          "page_file_used_mib": 818,
+          "page_file_total_mib": 9172,
+          "this_process_mib": 1187
+        }
+      },
+      "embedder_held": true
+    },
+    {
+      "round": "with",
+      "before": {
+        "available_mib": 2400,
+        "page_file_used_mib": 816,
+        "page_file_total_mib": 9172,
+        "this_process_mib": 1190
+      },
+      "first_token_s": 7.759365400008392,
+      "total_s": 7.88914620000287,
+      "ollama_load_s": 5.247263,
+      "after": {
+        "available_mib": 1722,
+        "page_file_used_mib": 847,
+        "page_file_total_mib": 9172,
+        "this_process_mib": 1191
+      },
+      "loaded": [
+        {
+          "name": "leo-qwen3:latest",
+          "size_mib": 3076,
+          "gpu_share": 1.0
+        }
+      ],
+      "embedder": {
+        "before": {
+          "available_mib": 2892,
+          "page_file_used_mib": 849,
+          "page_file_total_mib": 9172,
+          "this_process_mib": 62
+        },
+        "load_s": 55.9,
+        "after": {
+          "available_mib": 1617,
+          "page_file_used_mib": 816,
+          "page_file_total_mib": 9172,
+          "this_process_mib": 1187
+        }
+      },
+      "embedder_held": true
+    },
+    {
+      "round": "with_warm_up",
+      "embedder": {
+        "before": {
+          "available_mib": 2947,
+          "page_file_used_mib": 847,
+          "page_file_total_mib": 9172,
+          "this_process_mib": 63
+        },
+        "load_s": 58.7,
+        "after": {
+          "available_mib": 1828,
+          "page_file_used_mib": 847,
+          "page_file_total_mib": 9172,
+          "this_process_mib": 1188
+        }
+      },
+      "warm_up_result_s": 7.89100000000326,
+      "elapsed_s": 7.885395999997854,
+      "loaded_right_after": [
+        {
+          "name": "leo-qwen3:latest",
+          "size_mib": 3076,
+          "gpu_share": 1.0
+        }
+      ],
+      "loaded_60_s_later": [
+        {
+          "name": "leo-qwen3:latest",
+          "size_mib": 3076,
+          "gpu_share": 1.0
+        }
+      ],
+      "embedder_held": true
+    }
+  ],
+  "ollama_timeouts": {
+    "first_token_s": 20.0,
+    "total_s": 60.0
+  }
+}
