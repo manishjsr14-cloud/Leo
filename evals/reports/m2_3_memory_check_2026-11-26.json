@@ -1,0 +1,1004 @@
+{
+  "config": {
+    "search_k": 5,
+    "recall_k": 3,
+    "min_similarity": 0.8,
+    "candidate_subjects": 5
+  },
+  "embedder_load_s": 89.99846250002156,
+  "warm_up_s": null,
+  "part_a": {
+    "saved": 33,
+    "stored": 30,
+    "replaced": 3,
+    "recall_k": 3,
+    "min_similarity": 0.8,
+    "questions": [
+      {
+        "id": "Q01",
+        "lang": "hinglish",
+        "expect": "F31",
+        "negation": true,
+        "text": "Kya main non-veg khata hoon?",
+        "rank": 2,
+        "hints": [
+          "Main Marathi aur Hindi dono bolta hoon.",
+          "I don't eat non-veg anymore.",
+          "Maine coffee chhod di hai, ab sirf green tea peeta hoon."
+        ],
+        "in_prompt": true,
+        "similarity": 0.8355102092027664,
+        "top1": 0.8390712738037109
+      },
+      {
+        "id": "Q02",
+        "lang": "en",
+        "expect": "F31",
+        "negation": true,
+        "text": "Do I eat meat?",
+        "rank": null,
+        "hints": [
+          "Mera gym Monday, Wednesday aur Friday ko hota hai.",
+          "Mere papa ko sugar hai, unke liye meetha mat suggest karna.",
+          "Mera beta Aarav class 3 mein padhta hai."
+        ],
+        "in_prompt": false,
+        "similarity": null,
+        "top1": 0.8274407684803009
+      },
+      {
+        "id": "Q03",
+        "lang": "hinglish",
+        "expect": "F32",
+        "negation": true,
+        "text": "Main kahan rehta hoon?",
+        "rank": 1,
+        "hints": [
+          "Ab main Bangalore mein rehta hoon, Pune chhod diya.",
+          "Main Marathi aur Hindi dono bolta hoon.",
+          "Mujhe migraine hota hai jab main bahut thaka hua hota hoon."
+        ],
+        "in_prompt": true,
+        "similarity": 0.8678633123636246,
+        "top1": 0.8678633123636246
+      },
+      {
+        "id": "Q04",
+        "lang": "en",
+        "expect": "F33",
+        "negation": true,
+        "text": "Do I still drink coffee?",
+        "rank": 1,
+        "hints": [
+          "Maine coffee chhod di hai, ab sirf green tea peeta hoon.",
+          "Mere papa ko sugar hai, unke liye meetha mat suggest karna.",
+          "Mera gym Monday, Wednesday aur Friday ko hota hai."
+        ],
+        "in_prompt": true,
+        "similarity": 0.8555449396371841,
+        "top1": 0.8555449396371841
+      },
+      {
+        "id": "Q05",
+        "lang": "hinglish",
+        "expect": "F03",
+        "text": "Mera blood group kya hai?",
+        "rank": 1,
+        "hints": [
+          "mera blood group B positive hai.",
+          "Mera beta Aarav class 3 mein padhta hai.",
+          "Meri behen ka naam Priya hai."
+        ],
+        "in_prompt": true,
+        "similarity": 0.8792467340826988,
+        "top1": 0.8792467340826988
+      },
+      {
+        "id": "Q06",
+        "lang": "en",
+        "expect": "F05",
+        "text": "When is my sister's birthday?",
+        "rank": 1,
+        "hints": [
+          "Meri behen ka birthday 12 March ko hai.",
+          "Mera gym Monday, Wednesday aur Friday ko hota hai.",
+          "mujhe chai mein cheeni nahi chahiye."
+        ],
+        "in_prompt": true,
+        "similarity": 0.8544570505619049,
+        "top1": 0.8544570505619049
+      },
+      {
+        "id": "Q07",
+        "lang": "hinglish",
+        "expect": "F06",
+        "text": "Mere bhai ka birthday kab hai?",
+        "rank": null,
+        "hints": [
+          "Meri behen ka birthday 12 March ko hai.",
+          "Mera beta Aarav class 3 mein padhta hai.",
+          "mera blood group B positive hai."
+        ],
+        "in_prompt": false,
+        "similarity": null,
+        "top1": 0.8467004001140594
+      },
+      {
+        "id": "Q08",
+        "lang": "en",
+        "expect": "F02",
+        "text": "What time do I like to have meetings?",
+        "rank": 2,
+        "hints": [
+          "Mera gym Monday, Wednesday aur Friday ko hota hai.",
+          "I prefer meetings after 11 am.",
+          "Mere papa ko sugar hai, unke liye meetha mat suggest karna."
+        ],
+        "in_prompt": true,
+        "similarity": 0.8286745399236679,
+        "top1": 0.8318228423595428
+      },
+      {
+        "id": "Q09",
+        "lang": "hinglish",
+        "expect": "F09",
+        "text": "Mujhe kis cheez se allergy hai?",
+        "rank": 1,
+        "hints": [
+          "Mujhe peanuts se allergy hai.",
+          "Mujhe migraine hota hai jab main bahut thaka hua hota hoon.",
+          "Mujhe horror movies bilkul pasand nahi hain."
+        ],
+        "in_prompt": true,
+        "similarity": 0.9071482196450233,
+        "top1": 0.9071482196450233
+      },
+      {
+        "id": "Q10",
+        "lang": "hinglish",
+        "expect": "F19",
+        "text": "Meri chai kaisi banani hai?",
+        "rank": 5,
+        "hints": [
+          "Meri behen ka naam Priya hai.",
+          "Meri wife ka naam Anjali hai.",
+          "Meri behen ka birthday 12 March ko hai."
+        ],
+        "in_prompt": false,
+        "similarity": 0.8077818602323532,
+        "top1": 0.87493596971035
+      },
+      {
+        "id": "Q11",
+        "lang": "en",
+        "expect": "F12",
+        "text": "What car do I drive?",
+        "rank": 1,
+        "hints": [
+          "my car is a white Honda City.",
+          "Mera gym Monday, Wednesday aur Friday ko hota hai.",
+          "Ab main Bangalore mein rehta hoon, Pune chhod diya."
+        ],
+        "in_prompt": true,
+        "similarity": 0.8233662396669388,
+        "top1": 0.8233662396669388
+      },
+      {
+        "id": "Q12",
+        "lang": "hinglish",
+        "expect": "F22",
+        "g09_style": true,
+        "text": "Thakaan se mujhe kya problem hoti hai?",
+        "rank": 2,
+        "hints": [
+          "Mujhe peanuts se allergy hai.",
+          "Mujhe migraine hota hai jab main bahut thaka hua hota hoon.",
+          "Mera beta Aarav class 3 mein padhta hai."
+        ],
+        "in_prompt": true,
+        "similarity": 0.8478028029203415,
+        "top1": 0.8479600846767426
+      },
+      {
+        "id": "Q13",
+        "lang": "en",
+        "expect": "F23",
+        "g09_style": true,
+        "text": "Why do I keep my afternoons light?",
+        "rank": 1,
+        "hints": [
+          "I get very tired after lunch, so I keep my afternoons light.",
+          "I usually go for a walk in the evening at 7.",
+          "I wake up at 6 am on weekdays."
+        ],
+        "in_prompt": true,
+        "similarity": 0.9044081941246986,
+        "top1": 0.9044081941246986
+      },
+      {
+        "id": "Q14",
+        "lang": "hinglish",
+        "expect": "F26",
+        "text": "Papa ke khane mein kya dhyan rakhna hai?",
+        "rank": 2,
+        "hints": [
+          "Mera beta Aarav class 3 mein padhta hai.",
+          "Mere papa ko sugar hai, unke liye meetha mat suggest karna.",
+          "Mujhe baarish mein Lonavala jaana bahut pasand hai."
+        ],
+        "in_prompt": true,
+        "similarity": 0.8359489589929581,
+        "top1": 0.8449595868587494
+      },
+      {
+        "id": "Q15",
+        "lang": "en",
+        "expect": "F20",
+        "text": "Which class is my son in?",
+        "rank": 1,
+        "hints": [
+          "Mera beta Aarav class 3 mein padhta hai.",
+          "Mera gym Monday, Wednesday aur Friday ko hota hai."
+        ],
+        "in_prompt": true,
+        "similarity": 0.8340452462434769,
+        "top1": 0.8340452462434769
+      },
+      {
+        "id": "Q16",
+        "lang": "hinglish",
+        "expect": "F18",
+        "text": "Main roz subah kitne baje uthta hoon?",
+        "rank": null,
+        "hints": [
+          "Ab main Bangalore mein rehta hoon, Pune chhod diya.",
+          "Main Marathi aur Hindi dono bolta hoon.",
+          "Mujhe migraine hota hai jab main bahut thaka hua hota hoon."
+        ],
+        "in_prompt": false,
+        "similarity": null,
+        "top1": 0.830303281545639
+      },
+      {
+        "id": "Q17",
+        "lang": "en",
+        "expect": "F13",
+        "text": "What kind of movies should you not suggest to me?",
+        "rank": 1,
+        "hints": [
+          "Mujhe horror movies bilkul pasand nahi hain.",
+          "Mere papa ko sugar hai, unke liye meetha mat suggest karna.",
+          "Main raat ko 11 baje tak so jaata hoon."
+        ],
+        "in_prompt": true,
+        "similarity": 0.8501233756542206,
+        "top1": 0.8501233756542206
+      },
+      {
+        "id": "Q18",
+        "lang": "hinglish",
+        "expect": "F15",
+        "text": "Meri wife ka naam kya hai?",
+        "rank": 1,
+        "hints": [
+          "Meri wife ka naam Anjali hai.",
+          "Meri behen ka naam Priya hai.",
+          "Meri behen ka birthday 12 March ko hai."
+        ],
+        "in_prompt": true,
+        "similarity": 0.9148957058787346,
+        "top1": 0.9148957058787346
+      },
+      {
+        "id": "Q19",
+        "lang": "en",
+        "expect": "F16",
+        "text": "Who is my doctor?",
+        "rank": 1,
+        "hints": [
+          "My doctor is Dr. Mehta at Sahyadri hospital.",
+          "Mera beta Aarav class 3 mein padhta hai.",
+          "Mujhe migraine hota hai jab main bahut thaka hua hota hoon."
+        ],
+        "in_prompt": true,
+        "similarity": 0.8476880937814713,
+        "top1": 0.8476880937814713
+      },
+      {
+        "id": "Q20",
+        "lang": "hinglish",
+        "expect": "F21",
+        "text": "Mujhe kaunsa khana sabse zyada pasand hai?",
+        "rank": null,
+        "hints": [
+          "Mujhe baarish mein Lonavala jaana bahut pasand hai.",
+          "Mujhe peanuts se allergy hai.",
+          "Mujhe migraine hota hai jab main bahut thaka hua hota hoon."
+        ],
+        "in_prompt": false,
+        "similarity": null,
+        "top1": 0.8700829297304153
+      }
+    ],
+    "no_memory": [
+      {
+        "id": "X01",
+        "lang": "en",
+        "text": "What is my favourite colour?",
+        "hints": 3,
+        "best": 0.8169306367635727
+      },
+      {
+        "id": "X02",
+        "lang": "hinglish",
+        "text": "Meri gaadi ka insurance kab khatam hota hai?",
+        "hints": 3,
+        "best": 0.854882225394249
+      },
+      {
+        "id": "X03",
+        "lang": "en",
+        "text": "What is my mother's name?",
+        "hints": 3,
+        "best": 0.8342684656381607
+      },
+      {
+        "id": "X04",
+        "lang": "hinglish",
+        "text": "Meri height kitni hai?",
+        "hints": 3,
+        "best": 0.852672889828682
+      }
+    ]
+  },
+  "passed": false,
+  "tokens": [
+    {
+      "id": "Q01",
+      "hints": 3,
+      "without": 368,
+      "with": 452,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 84
+    },
+    {
+      "id": "Q02",
+      "hints": 3,
+      "without": 344,
+      "with": 436,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 92
+    },
+    {
+      "id": "Q03",
+      "hints": 3,
+      "without": 365,
+      "with": 456,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 91
+    },
+    {
+      "id": "Q04",
+      "hints": 3,
+      "without": 345,
+      "with": 441,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 96
+    },
+    {
+      "id": "Q05",
+      "hints": 3,
+      "without": 364,
+      "with": 443,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 79
+    },
+    {
+      "id": "Q06",
+      "hints": 3,
+      "without": 346,
+      "with": 431,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 85
+    },
+    {
+      "id": "Q07",
+      "hints": 3,
+      "without": 366,
+      "with": 447,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 81
+    },
+    {
+      "id": "Q08",
+      "hints": 3,
+      "without": 348,
+      "with": 435,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 87
+    },
+    {
+      "id": "Q09",
+      "hints": 3,
+      "without": 367,
+      "with": 452,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 85
+    },
+    {
+      "id": "Q10",
+      "hints": 3,
+      "without": 366,
+      "with": 446,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 80
+    },
+    {
+      "id": "Q11",
+      "hints": 3,
+      "without": 345,
+      "with": 429,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 84
+    },
+    {
+      "id": "Q12",
+      "hints": 3,
+      "without": 368,
+      "with": 455,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 87
+    },
+    {
+      "id": "Q13",
+      "hints": 3,
+      "without": 347,
+      "with": 433,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 86
+    },
+    {
+      "id": "Q14",
+      "hints": 3,
+      "without": 370,
+      "with": 464,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 94
+    },
+    {
+      "id": "Q15",
+      "hints": 2,
+      "without": 346,
+      "with": 420,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 74
+    },
+    {
+      "id": "Q16",
+      "hints": 3,
+      "without": 370,
+      "with": 461,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 91
+    },
+    {
+      "id": "Q17",
+      "hints": 3,
+      "without": 350,
+      "with": 442,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 92
+    },
+    {
+      "id": "Q18",
+      "hints": 3,
+      "without": 365,
+      "with": 445,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 80
+    },
+    {
+      "id": "Q19",
+      "hints": 3,
+      "without": 344,
+      "with": 438,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 94
+    },
+    {
+      "id": "Q20",
+      "hints": 3,
+      "without": 372,
+      "with": 461,
+      "providers": [
+        "groq",
+        "groq"
+      ],
+      "added": 89
+    }
+  ],
+  "part_b": {
+    "messages": [
+      {
+        "id": "F01",
+        "triggered": true,
+        "recall_ms": 2936.1895000038203,
+        "write_ms": 23192.28899999871,
+        "expected_subject": "diet",
+        "remember": true,
+        "subject": "diet"
+      },
+      {
+        "id": "F02",
+        "triggered": true,
+        "recall_ms": 74.7218000178691,
+        "write_ms": 23190.3376999835,
+        "expected_subject": "meeting_time_preference",
+        "remember": true,
+        "subject": "meeting_time_preference"
+      },
+      {
+        "id": "F03",
+        "triggered": true,
+        "recall_ms": 170.65509999520145,
+        "write_ms": 22914.336399990134,
+        "expected_subject": "blood_group",
+        "remember": true,
+        "subject": "blood_group"
+      },
+      {
+        "id": "N01",
+        "triggered": true,
+        "recall_ms": 109.27559999981895,
+        "write_ms": 22767.748399986885,
+        "expected_subject": null,
+        "remember": false,
+        "subject": ""
+      },
+      {
+        "id": "F04",
+        "triggered": true,
+        "recall_ms": 28.51780000491999,
+        "write_ms": 22925.946199975442,
+        "expected_subject": "sister_name",
+        "remember": true,
+        "subject": "sister_name"
+      },
+      {
+        "id": "F05",
+        "triggered": true,
+        "recall_ms": 78.66309999371879,
+        "write_ms": 22851.168599998346,
+        "expected_subject": "sister_birthday",
+        "remember": true,
+        "subject": "sister_name"
+      },
+      {
+        "id": "F06",
+        "triggered": true,
+        "recall_ms": 50.31070002587512,
+        "write_ms": 22839.144199999282,
+        "expected_subject": "brother_birthday",
+        "remember": true,
+        "subject": "brother_birthday"
+      },
+      {
+        "id": "F07",
+        "triggered": true,
+        "recall_ms": 78.5570000007283,
+        "write_ms": 22819.278199982364,
+        "expected_subject": "home_city",
+        "remember": true,
+        "subject": "home_city"
+      },
+      {
+        "id": "N02",
+        "triggered": true,
+        "recall_ms": 30.34450000268407,
+        "write_ms": 22610.963600018295,
+        "expected_subject": null,
+        "remember": false,
+        "subject": ""
+      },
+      {
+        "id": "F08",
+        "triggered": false,
+        "recall_ms": 24.482999986503273,
+        "write_ms": 0.5944000149611384,
+        "expected_subject": "coffee",
+        "remember": null,
+        "subject": null
+      },
+      {
+        "id": "F09",
+        "triggered": true,
+        "recall_ms": 21.16750000277534,
+        "write_ms": 22867.832199990517,
+        "expected_subject": "allergy",
+        "remember": true,
+        "subject": "peanut_allergy"
+      },
+      {
+        "id": "F10",
+        "triggered": true,
+        "recall_ms": 74.61019998299889,
+        "write_ms": 22906.690700008767,
+        "expected_subject": "job",
+        "remember": true,
+        "subject": "occupation"
+      },
+      {
+        "id": "F11",
+        "triggered": true,
+        "recall_ms": 24.600000004284084,
+        "write_ms": 22647.924399992917,
+        "expected_subject": "gym_days",
+        "remember": true,
+        "subject": "gym_schedule"
+      },
+      {
+        "id": "N03",
+        "triggered": false,
+        "recall_ms": 50.15769999590702,
+        "write_ms": 0.0709999876562506,
+        "expected_subject": null,
+        "remember": null,
+        "subject": null
+      },
+      {
+        "id": "F12",
+        "triggered": true,
+        "recall_ms": 30.514099984429777,
+        "write_ms": 22859.805200016126,
+        "expected_subject": "car",
+        "remember": true,
+        "subject": "car_model"
+      },
+      {
+        "id": "F13",
+        "triggered": true,
+        "recall_ms": 90.3276999888476,
+        "write_ms": 23117.483899986837,
+        "expected_subject": "movie_preference",
+        "remember": true,
+        "subject": "horror_movie_preference"
+      },
+      {
+        "id": "F14",
+        "triggered": true,
+        "recall_ms": 88.13429999281652,
+        "write_ms": 23508.482499979436,
+        "expected_subject": "sport",
+        "remember": true,
+        "subject": "cricket_preference"
+      },
+      {
+        "id": "F15",
+        "triggered": true,
+        "recall_ms": 23.023299989290535,
+        "write_ms": 22666.13649998908,
+        "expected_subject": "wife_name",
+        "remember": true,
+        "subject": "wife_name"
+      },
+      {
+        "id": "N04",
+        "triggered": true,
+        "recall_ms": 27.58460000040941,
+        "write_ms": 22792.998599994462,
+        "expected_subject": null,
+        "remember": false,
+        "subject": ""
+      },
+      {
+        "id": "F16",
+        "triggered": true,
+        "recall_ms": 337.29809999931604,
+        "write_ms": 22769.060199992964,
+        "expected_subject": "doctor",
+        "remember": true,
+        "subject": "doctor_name"
+      },
+      {
+        "id": "F17",
+        "triggered": true,
+        "recall_ms": 22.987400006968528,
+        "write_ms": 23242.499999993015,
+        "expected_subject": "sleep_time",
+        "remember": true,
+        "subject": "sleep_time"
+      },
+      {
+        "id": "F18",
+        "triggered": false,
+        "recall_ms": 23.345000023255125,
+        "write_ms": 0.1260999997612089,
+        "expected_subject": "wake_time",
+        "remember": null,
+        "subject": null
+      },
+      {
+        "id": "F19",
+        "triggered": true,
+        "recall_ms": 23.231900006067008,
+        "write_ms": 22778.366700018523,
+        "expected_subject": "tea_sugar",
+        "remember": true,
+        "subject": "sugar_intake"
+      },
+      {
+        "id": "F20",
+        "triggered": true,
+        "recall_ms": 24.999799992656335,
+        "write_ms": 22875.01789999078,
+        "expected_subject": "son",
+        "remember": true,
+        "subject": "child_name"
+      },
+      {
+        "id": "N05",
+        "triggered": true,
+        "recall_ms": 37.953599996399134,
+        "write_ms": 23239.437000011094,
+        "expected_subject": null,
+        "remember": false,
+        "subject": ""
+      },
+      {
+        "id": "F21",
+        "triggered": true,
+        "recall_ms": 37.39389998372644,
+        "write_ms": 22697.1831000119,
+        "expected_subject": "favourite_cuisine",
+        "remember": true,
+        "subject": "cuisine_preference"
+      },
+      {
+        "id": "F22",
+        "triggered": true,
+        "recall_ms": 27.029399992898107,
+        "write_ms": 22850.812299991958,
+        "expected_subject": "migraine",
+        "remember": true,
+        "subject": "migraine"
+      },
+      {
+        "id": "F23",
+        "triggered": false,
+        "recall_ms": 40.08209999301471,
+        "write_ms": 0.10949998977594078,
+        "expected_subject": "afternoon_energy",
+        "remember": null,
+        "subject": null
+      },
+      {
+        "id": "F24",
+        "triggered": true,
+        "recall_ms": 27.050400007283315,
+        "write_ms": 22644.74479999626,
+        "expected_subject": "bank",
+        "remember": true,
+        "subject": "bank_name"
+      },
+      {
+        "id": "N06",
+        "triggered": true,
+        "recall_ms": 38.16150000784546,
+        "write_ms": 22650.753300025826,
+        "expected_subject": null,
+        "remember": false,
+        "subject": ""
+      },
+      {
+        "id": "F25",
+        "triggered": true,
+        "recall_ms": 26.03910001926124,
+        "write_ms": 22652.925200003665,
+        "expected_subject": "weekend_hobby",
+        "remember": true,
+        "subject": "language_learning"
+      },
+      {
+        "id": "F26",
+        "triggered": true,
+        "recall_ms": 33.234699978493154,
+        "write_ms": 22778.56890001567,
+        "expected_subject": "father_health",
+        "remember": true,
+        "subject": "father_diabetes"
+      },
+      {
+        "id": "F27",
+        "triggered": true,
+        "recall_ms": 25.31029999954626,
+        "write_ms": 23342.444400012027,
+        "expected_subject": "laptop",
+        "remember": false,
+        "subject": ""
+      },
+      {
+        "id": "F28",
+        "triggered": true,
+        "recall_ms": 55.332900024950504,
+        "write_ms": 22619.374400004745,
+        "expected_subject": "languages_spoken",
+        "remember": true,
+        "subject": "languages_spoken"
+      },
+      {
+        "id": "F29",
+        "triggered": false,
+        "recall_ms": 333.36079999571666,
+        "write_ms": 0.11320001794956625,
+        "expected_subject": "evening_walk",
+        "remember": null,
+        "subject": null
+      },
+      {
+        "id": "N07",
+        "triggered": true,
+        "recall_ms": 26.201500004390255,
+        "write_ms": 22820.75280000572,
+        "expected_subject": null,
+        "remember": false,
+        "subject": ""
+      },
+      {
+        "id": "F30",
+        "triggered": true,
+        "recall_ms": 21.99599999585189,
+        "write_ms": 22935.542899998836,
+        "expected_subject": "favourite_place",
+        "remember": true,
+        "subject": "travel_preference"
+      },
+      {
+        "id": "F31",
+        "triggered": true,
+        "recall_ms": 25.050299998838454,
+        "write_ms": 22780.09079999174,
+        "expected_subject": "diet",
+        "remember": true,
+        "subject": "diet"
+      },
+      {
+        "id": "F32",
+        "triggered": true,
+        "recall_ms": 24.497400008840486,
+        "write_ms": 22560.374100023182,
+        "expected_subject": "home_city",
+        "remember": true,
+        "subject": "home_city"
+      },
+      {
+        "id": "F33",
+        "triggered": false,
+        "recall_ms": 486.3972000021022,
+        "write_ms": 0.10830000974237919,
+        "expected_subject": "coffee",
+        "remember": null,
+        "subject": null
+      }
+    ],
+    "summary": {
+      "facts": 30,
+      "facts_stored": 24,
+      "facts_not_picked": [
+        "F08",
+        "F18",
+        "F23",
+        "F29",
+        "F33"
+      ],
+      "must_not": 7,
+      "kept_out": 7,
+      "must_not_picked": 6,
+      "replace_pairs": 3,
+      "replaced_ok": 2,
+      "replace_detail": [
+        "F01->F31 ok",
+        "F07->F32 ok",
+        "F08->F33 NOT done"
+      ],
+      "recall5": 0.7,
+      "hits": 14,
+      "questions": 20,
+      "stored": 24,
+      "calls": 34,
+      "providers": [
+        "groq"
+      ]
+    }
+  },
+  "timing": {
+    "recall_ms_part_a": {
+      "n": 20,
+      "median": 18.549650005297735,
+      "min": 15.587200003210455,
+      "max": 70.4676000168547
+    },
+    "recall_ms_part_b": {
+      "n": 40,
+      "median": 31.874399981461465,
+      "min": 21.16750000277534,
+      "max": 2936.1895000038203
+    },
+    "write_ms_not_picked": {
+      "n": 6,
+      "median": 0.11135000386275351,
+      "min": 0.0709999876562506,
+      "max": 0.5944000149611384
+    },
+    "write_ms_picked": {
+      "n": 34,
+      "median": 22829.9485000025,
+      "min": 22560.374100023182,
+      "max": 23508.482499979436
+    },
+    "extraction_s": {
+      "n": 34,
+      "median": 0.7419999999983702,
+      "min": 0.48399999999674037,
+      "max": 1.437000000005355
+    },
+    "suite_messages": 42,
+    "suite_picked": []
+  }
+}
