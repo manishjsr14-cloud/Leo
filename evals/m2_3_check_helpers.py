@@ -5,6 +5,7 @@ when its expected fact's text is among the search results (top 5, no threshold).
 Pass rule (part A, fixed in that file): Recall@5 >= 0.90 over the 20 questions.
 """
 
+import math
 import statistics
 from pathlib import Path
 
@@ -41,6 +42,12 @@ def suite_texts(scenarios: Path) -> list[str]:
     return [t["text"] for name in SUITE_FILES for t in load_yaml(scenarios / name)["turns"]]
 
 
+# The fix-round threshold rule: the smallest two-decimal value strictly above
+# the highest of the given similarities.
+def threshold_above(values: list[float]) -> float:
+    return (math.floor(max(values) * 100 + 1e-9) + 1) / 100
+
+
 # Median, min and max of a list of numbers, or None when empty.
 def spread(values: list[float]) -> dict | None:
     if not values:
@@ -62,30 +69,41 @@ def num(value) -> str:
     return "-" if value is None else f"{value:.3f}"
 
 
-# Part A report lines: one row per question, then the totals.
-def part_a_lines(a: dict) -> list[str]:
-    rows = a["questions"]
-    lines = ["## Part A (the pass rule): seeded store, real embedder", "",
-             (f"Facts saved: {a['saved']}; memories in the store: {a['stored']}; replaced: "
-             f"{a['replaced']}."), "",
+# Report lines for one question set: one row per question, then its totals.
+def question_set_lines(name: str, qset: dict, a: dict) -> list[str]:
+    rows = qset["questions"]
+    lines = [f"### Question set: {name}", "",
              "| Q | lang | kind | expect | rank in top 5 | similarity | top-1 | in prompt |",
              "|---|---|---|---|---|---|---|---|"]
     for r in rows:
-        kind = "negation" if r.get("negation") else "g09" if r.get("g09_style") else ""
+        kind = r.get("kind") or ("negation" if r.get("negation")
+                                 else "g09" if r.get("g09_style") else "")
         lines.append(f"| {r['id']} | {r['lang']} | {kind} | {r['expect']} | "
                      f"{r['rank'] or 'missed'} | {num(r['similarity'])} | {num(r['top1'])} | "
                      f"{'yes' if r['in_prompt'] else 'no'} |")
     hits = sum(1 for r in rows if r["rank"])
     hinglish = [r for r in rows if r["lang"] == "hinglish"]
-    lines += ["", (f"**Recall@5: {hits}/{len(rows)} = {recall_at(rows, 5):.2f}** "
-              f"(Hinglish {recall_at(hinglish, 5):.2f} of {len(hinglish)}); "
-              f"Recall@1 {recall_at(rows, 1):.2f}; Recall@3 {recall_at(rows, 3):.2f}."),
+    lines += ["", (f"**Recall@5 ({name}): {hits}/{len(rows)} = {recall_at(rows, 5):.2f}** "
+                   f"(Hinglish {recall_at(hinglish, 5):.2f} of {len(hinglish)}); "
+                   f"Recall@1 {recall_at(rows, 1):.2f}; Recall@3 {recall_at(rows, 3):.2f}."),
               (f"Expected fact among the prompt hints (top {a['recall_k']}, similarity >= "
-              f"{a['min_similarity']}): {sum(r['in_prompt'] for r in rows)}/{len(rows)}."), "",
-              "No-memory questions (recorded, not scored):", "",
-              "| X | lang | hints given | best similarity |", "|---|---|---|---|"]
+               f"{a['min_similarity']}): {sum(r['in_prompt'] for r in rows)}/{len(rows)}."), "",
+              "| no-memory | lang | hints given | top-1 similarity |", "|---|---|---|---|"]
     lines += [f"| {x['id']} | {x['lang']} | {x['hints']} | {num(x['best'])} |"
-              for x in a["no_memory"]]
+              for x in qset["no_memory"]]
+    return lines + [""]
+
+
+# Part A report lines: every question set, then the fix-round threshold.
+def part_a_lines(a: dict) -> list[str]:
+    lines = ["## Part A (the pass rule): seeded store, real embedder", "",
+             (f"Facts saved: {a['saved']}; active memories: {a['stored']}; replaced: "
+              f"{a['replaced']}."), ""]
+    for name, qset in a["sets"].items():
+        lines += question_set_lines(name, qset, a)
+    if a.get("threshold_from_fix") is not None:
+        lines.append(f"Threshold rule (fix set, highest no-memory top-1 similarity): "
+                     f"{a['threshold_from_fix']:.2f}.")
     return lines
 
 
@@ -105,7 +123,8 @@ def part_b_lines(b: dict) -> list[str]:
               f"{s['must_not']} (picked by the word rule: {s['must_not_picked']})."),
               (f"Replacements done (old text gone, new text stored): {s['replaced_ok']}/"
               f"{s['replace_pairs']} ({', '.join(s['replace_detail'])})."),
-              (f"Recall@5 on the store built by the write path: {s['recall5']:.2f} "
-              f"({s['hits']}/{s['questions']}); memories stored: {s['stored']}."),
+              *[f"Recall@5 ({name}) on the store built by the write path: {r['recall5']:.2f} "
+                f"({r['hits']}/{r['questions']})." for name, r in s["recall"].items()],
+              f"Active memories stored: {s['stored']}.",
               f"Extraction LLM calls: {s['calls']}; providers: {s['providers']}."]
     return lines

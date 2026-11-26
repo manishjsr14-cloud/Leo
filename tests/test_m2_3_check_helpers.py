@@ -40,11 +40,26 @@ def test_spread_and_fmt():
     assert h.spread([]) is None and h.fmt(None) == "-"
 
 
-# Part A on the real set with a fake model: 33 saves, 3 replaced, 30 stored,
-# 20 scored rows, and report lines that state Recall@5.
+FIX = h.load_yaml(Path(__file__).resolve().parent.parent
+                  / "evals/scenarios/m2_3_fix_questions.yaml")
+
+
+# Part A on both sets with a fake model: 33 saves, 3 replaced, 30 active, 20 + 12
+# scored rows, 4 + 6 no-memory rows, a threshold, and report lines for both sets.
 def test_part_a_dry_run(tmp_path):
     bank = make_bank(tmp_path)
-    a, times = part_a(bank, SET)
+    a, times = part_a(bank, SET, FIX)
     assert (a["saved"], a["replaced"], a["stored"]) == (33, 3, 30)
-    assert len(a["questions"]) == 20 and len(times) == 20 and len(a["no_memory"]) == 4
-    assert any(line.startswith("**Recall@5: ") for line in h.part_a_lines(a))
+    assert [len(a["sets"][n]["questions"]) for n in ("original", "fix")] == [20, 12]
+    assert [len(a["sets"][n]["no_memory"]) for n in ("original", "fix")] == [4, 6]
+    assert len(times) == 32 and a["threshold_from_fix"] is not None
+    lines = h.part_a_lines(a)
+    assert any(line.startswith("**Recall@5 (original): ") for line in lines)
+    assert any(line.startswith("**Recall@5 (fix): ") for line in lines)
+
+
+# The threshold rule: the smallest two-decimal value strictly above the highest.
+def test_threshold_above():
+    assert h.threshold_above([0.81, 0.853, 0.84]) == 0.86
+    assert h.threshold_above([0.85]) == 0.86
+    assert h.threshold_above([0.799]) == 0.80

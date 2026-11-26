@@ -1,7 +1,11 @@
 """M2.3 real check: long-term memory on the frozen check set. Writes a report.
 
-  python -m evals.m2_3_memory_check REPORT_STEM
+  python -m evals.m2_3_memory_check REPORT_STEM [--part-a-only]
   (writes evals/reports/REPORT_STEM.md and REPORT_STEM.json)
+
+Both question sets are scored: the original one and the fix round's fresh set
+(evals/scenarios/m2_3_fix_questions.yaml). --part-a-only runs part A alone (no
+LLM): used to measure the no-memory similarities for the fix-round threshold.
 
 Runs, on this machine: part A (the pass rule, no LLM), the prompt-token cost
 of the hints, part B (the real write path with the local model), and the
@@ -29,6 +33,7 @@ from leo.ml.embedder import load_embedder
 
 ROOT = Path(__file__).resolve().parent.parent
 SET = ROOT / "evals" / "scenarios" / "m2_3_memory_questions.yaml"
+FIX = ROOT / "evals" / "scenarios" / "m2_3_fix_questions.yaml"
 REPORTS = ROOT / "evals" / "reports"
 
 
@@ -42,20 +47,33 @@ def with_temp_bank(embedder, config, fn):
             conn.close()
 
 
-# Run every part and return the results as one dict.
-def measure() -> dict:
-    config, data = load_config(), h.load_yaml(SET)
+# Recall@5 of each question set, and whether it reaches the fix set's minimum.
+def set_results(a: dict, fix: dict) -> dict:
+    rule = fix["rerun_rule"]
+    return {name: {"recall5": h.recall_at(s["questions"], 5),
+                   "reached": h.recall_at(s["questions"], 5) >= rule["min"]}
+            for name, s in a["sets"].items()}
+
+
+# Run every part (or part A only) and return the results as one dict.
+def measure(part_a_only: bool = False) -> dict:
+    config, data, fix = load_config(), h.load_yaml(SET), h.load_yaml(FIX)
     start = time.perf_counter()
     embedder = load_embedder(config.embedder)
     load_s = time.perf_counter() - start
-    a, recall_times = with_temp_bank(embedder, config, lambda bank: part_a(bank, data))
+    a, recall_times = with_temp_bank(embedder, config, lambda bank: part_a(bank, data, fix))
+    head = {"config": config.memory.model_dump(), "embedder_load_s": load_s, "part_a": a,
+            "passed": h.passed(a["sets"]["original"]["questions"], data["pass_rule"]),
+            "sets": set_results(a, fix)}
+    if part_a_only:
+        return head
     warm_s = warm_up(config)
-    tokens = token_cost(a["questions"])
+    tokens = token_cost(a["sets"]["original"]["questions"])
 
     # Part B and its summary on one fresh bank.
     def run_b(bank):
         rows, calls = part_b(bank, data)
-        return rows, summarise_b(bank, data, rows, calls)
+        return rows, summarise_b(bank, data, rows, calls, fix)
 
     b_rows, b_summary = with_temp_bank(embedder, config, run_b)
     suite = h.suite_texts(ROOT / "evals" / "scenarios")
@@ -66,10 +84,8 @@ def measure() -> dict:
               "write_ms_picked": h.spread([r["write_ms"] for r in b_rows if r["triggered"]]),
               "extraction_s": b_summary.pop("extraction_s"),
               "suite_messages": len(suite), "suite_picked": picked}
-    return {"config": config.memory.model_dump(), "embedder_load_s": load_s, "warm_up_s": warm_s,
-            "part_a": a, "passed": h.passed(a["questions"], data["pass_rule"]),
-            "tokens": tokens, "part_b": {"messages": b_rows, "summary": b_summary},
-            "timing": timing}
+    return {**head, "warm_up_s": warm_s, "tokens": tokens,
+            "part_b": {"messages": b_rows, "summary": b_summary}, "timing": timing}
 
 
 # The token and timing sections of the report.
@@ -100,7 +116,7 @@ def cost_lines(r: dict) -> list[str]:
 # Run the check and write REPORT_STEM.md and REPORT_STEM.json.
 def main() -> None:
     stem = sys.argv[1]
-    r = measure()
+    r = measure(part_a_only="--part-a-only" in sys.argv[2:])
     REPORTS.mkdir(parents=True, exist_ok=True)
     (REPORTS / f"{stem}.json").write_text(json.dumps(r, indent=2, ensure_ascii=False, default=str),
                                           encoding="utf-8")
@@ -108,8 +124,15 @@ def main() -> None:
     lines = [f"# M2.3 memory check ({datetime.now():%Y-%m-%d %H:%M})", "", machine_line(),
              f"Commit: {git_state()}.", f"Check set: {SET.relative_to(ROOT).as_posix()}.",
              f"Memory settings: {r['config']}.", "",
-             f"**Result: {verdict}** (part A Recall@5 >= 0.90 on 20 questions).", "",
-             *h.part_a_lines(r["part_a"]), "", *cost_lines(r), "", *h.part_b_lines(r["part_b"])]
+             f"**Result: {verdict}** (part A Recall@5 >= 0.90 on the original 20 questions).",
+             "Fix-round rerun rule, Recall@5 >= 0.90: " + "; ".join(
+                 f"{name} {s['recall5']:.2f} ({'reached' if s['reached'] else 'below'})"
+                 for name, s in r["sets"].items()) + ".", "",
+             *h.part_a_lines(r["part_a"])]
+    if "part_b" in r:
+        lines += ["", *cost_lines(r), "", *h.part_b_lines(r["part_b"])]
+    else:
+        lines += ["", "Part A only (--part-a-only): no LLM call, no tokens, no part B."]
     (REPORTS / f"{stem}.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"{verdict}; wrote {stem}.md and {stem}.json")
 
