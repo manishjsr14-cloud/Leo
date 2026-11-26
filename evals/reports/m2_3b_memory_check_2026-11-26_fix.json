@@ -1,0 +1,5198 @@
+{
+ "original": {
+  "machine": "Machine: laptop (GPU: NVIDIA GeForce GTX 1650, 4096 MiB); power: plugged in (battery 100 %)",
+  "commit": "5059b58",
+  "db": "C:/Users/dell/AppData/Local/Temp/leo_evals/m2_3b_memory_check_2026-11-26_fix.db",
+  "rows": {
+   "1": [
+    "blood_group",
+    "My blood group is B positive.",
+    1,
+    null
+   ],
+   "2": [
+    "job_role",
+    "Main ek startup mein software tester hoon.",
+    0,
+    31
+   ],
+   "3": [
+    "home_city",
+    "I live in Pune, near Baner.",
+    0,
+    30
+   ],
+   "4": [
+    "peanut_allergy",
+    "Mujhe peanuts se allergy hai.",
+    1,
+    null
+   ],
+   "5": [
+    "diet",
+    "I'm vegetarian.",
+    0,
+    29
+   ],
+   "6": [
+    "sister_name",
+    "Meri behen ka naam Kavya hai.",
+    1,
+    null
+   ],
+   "7": [
+    "brother_name",
+    "My brother's name is Arjun.",
+    1,
+    null
+   ],
+   "8": [
+    "tea_sugar_preference",
+    "Mujhe chai bina cheeni ke pasand hai.",
+    1,
+    null
+   ],
+   "9": [
+    "car_make_model",
+    "I drive a white Honda City.",
+    1,
+    null
+   ],
+   "10": [
+    "doctor_name",
+    "Mera doctor Dr. Mehta hai, Kothrud wala.",
+    1,
+    null
+   ],
+   "11": [
+    "favorite_cricket_team",
+    "I support Mumbai Indians in the IPL.",
+    0,
+    39
+   ],
+   "12": [
+    "languages_known",
+    "Main Marathi aur Hindi dono bolta hoon.",
+    1,
+    null
+   ],
+   "13": [
+    "car_make_model",
+    "My work laptop is a ThinkPad.",
+    1,
+    null
+   ],
+   "14": [
+    "movie_preference",
+    "Mujhe horror movies pasand nahi hain.",
+    1,
+    null
+   ],
+   "15": [
+    "reminder_preference",
+    "I prefer reminders as phone notifications, not voice.",
+    1,
+    null
+   ],
+   "16": [
+    "gym",
+    "Mera gym Gold's Gym hai, Aundh mein.",
+    0,
+    32
+   ],
+   "17": [
+    "doctor_name",
+    "My manager is called Priya.",
+    1,
+    null
+   ],
+   "18": [
+    "hand_preference",
+    "Main left-handed hoon.",
+    1,
+    null
+   ],
+   "19": [
+    "hobby",
+    "I'm learning to play the guitar.",
+    0,
+    40
+   ],
+   "20": [
+    "pet_name",
+    "Mere dog ka naam Bruno hai.",
+    1,
+    null
+   ],
+   "21": [
+    "coffee_preference",
+    "I don't drink coffee.",
+    1,
+    null
+   ],
+   "22": [
+    "food_preference",
+    "Mera favourite khana rajma chawal hai.",
+    1,
+    null
+   ],
+   "23": [
+    "car_make_model",
+    "I use an iPhone.",
+    0,
+    41
+   ],
+   "24": [
+    "job_role",
+    "Mere papa retired teacher hain.",
+    1,
+    null
+   ],
+   "25": [
+    "job_role",
+    "I usually work from home.",
+    1,
+    null
+   ],
+   "26": [
+    "peanut_allergy",
+    "I'm also allergic to dust.",
+    1,
+    null
+   ],
+   "27": [
+    "sister_name",
+    "Meri choti behen ka naam Isha hai.",
+    1,
+    null
+   ],
+   "28": [
+    "movie_preference",
+    "Mujhe comedy movies bahut pasand hain.",
+    1,
+    null
+   ],
+   "29": [
+    "diet",
+    "I'm not vegetarian anymore, I eat chicken now.",
+    1,
+    null
+   ],
+   "30": [
+    "home_city",
+    "I moved to Bangalore last month.",
+    1,
+    null
+   ],
+   "31": [
+    "job_role",
+    "Ab main tester nahi hoon, ab developer hoon.",
+    1,
+    null
+   ],
+   "32": [
+    "gym",
+    "Maine Gold's Gym chhod diya, ab ghar pe workout karta hoon.",
+    1,
+    null
+   ],
+   "33": [
+    "meeting_preference",
+    "Mujhe meetings 11 baje ke baad pasand hain.",
+    1,
+    null
+   ],
+   "34": [
+    "wake_time",
+    "Main roz subah 6 baje uthta hoon.",
+    1,
+    null
+   ],
+   "35": [
+    "mother_birthday",
+    "My mother's birthday is on 12 March.",
+    1,
+    null
+   ],
+   "36": [
+    "wake_time",
+    "I'm going to the bank this afternoon.",
+    1,
+    null
+   ],
+   "37": [
+    "brother_name",
+    "My brother Arjun is an engineer.",
+    1,
+    null
+   ],
+   "38": [
+    "food_preference",
+    "Mujhe chai ke saath biscuit bhi pasand hai.",
+    1,
+    null
+   ],
+   "39": [
+    "favorite_cricket_team",
+    "I no longer support Mumbai Indians, I support CSK now.",
+    1,
+    null
+   ],
+   "40": [
+    "hobby",
+    "Ab main guitar nahi seekh raha, piano seekh raha hoon.",
+    1,
+    null
+   ],
+   "41": [
+    "car_make_model",
+    "I don't use an iPhone anymore, I switched to a Pixel.",
+    1,
+    null
+   ]
+  },
+  "embedder_load_s": 66.22674919999554,
+  "warm_up_s": 9.98499999998603,
+  "small_talk": [
+   {
+    "id": "S1",
+    "text": "Main theek hoon",
+    "reply": "Tum theek ho! Kya karna hai? 😊",
+    "turn_s": 5.770715599996038,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Acknowledge user's well-being\"}",
+      "prompt_tokens": 239,
+      "first_token_s": 2.3589999999967404,
+      "total_s": 2.7179999999934807
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Tum theek ho! Kya karna hai? 😊",
+      "prompt_tokens": 323,
+      "first_token_s": 2.6719999999913853,
+      "total_s": 3.0
+     }
+    ]
+   },
+   {
+    "id": "S2",
+    "text": "I agree",
+    "reply": "Thanks for agreeing! 😊",
+    "turn_s": 5.229068199987523,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Acknowledged your agreement.\"}",
+      "prompt_tokens": 236,
+      "first_token_s": 2.312000000005355,
+      "total_s": 2.687000000005355
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Thanks for agreeing! 😊",
+      "prompt_tokens": 300,
+      "first_token_s": 2.3589999999967404,
+      "total_s": 2.514999999984866
+     }
+    ]
+   },
+   {
+    "id": "S3",
+    "text": "I'm fine, thanks",
+    "reply": "You're welcome! 😊",
+    "turn_s": 5.4338699000072666,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"No action needed\"}",
+      "prompt_tokens": 239,
+      "first_token_s": 2.4690000000118744,
+      "total_s": 2.75
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "You're welcome! 😊",
+      "prompt_tokens": 303,
+      "first_token_s": 2.5,
+      "total_s": 2.6559999999881256
+     }
+    ]
+   },
+   {
+    "id": "S4",
+    "text": "I think so",
+    "reply": "I see. Let me know if you need anything else!",
+    "turn_s": 5.3519516000233125,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Acknowledged your thought.\"}",
+      "prompt_tokens": 237,
+      "first_token_s": 2.2660000000032596,
+      "total_s": 2.6570000000065193
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "I see. Let me know if you need anything else!",
+      "prompt_tokens": 301,
+      "first_token_s": 2.389999999984866,
+      "total_s": 2.687000000005355
+     }
+    ]
+   },
+   {
+    "id": "S5",
+    "text": "Haan main aa raha hoon",
+    "reply": "Haan, aaya! Kya kar rahe hain?",
+    "turn_s": 5.659580699983053,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Acknowledged your presence.\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.312000000005355,
+      "total_s": 2.64000000001397
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Haan, aaya! Kya kar rahe hain?",
+      "prompt_tokens": 326,
+      "first_token_s": 2.6719999999913853,
+      "total_s": 3.0
+     }
+    ]
+   }
+  ],
+  "records": {
+   "F01": {
+    "id": "F01",
+    "text": "My blood group is B positive.",
+    "reply": "Your blood group is B positive.",
+    "turn_s": 16.757020200020634,
+    "created": [
+     1
+    ],
+    "replaced": [],
+    "subjects": [
+     "blood_group"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"None of the specified agents are needed for this query.\"}",
+      "prompt_tokens": 241,
+      "first_token_s": 3.9530000000086147,
+      "total_s": 4.4689999999827705
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Your blood group is B positive.",
+      "prompt_tokens": 305,
+      "first_token_s": 4.5,
+      "total_s": 4.671999999991385
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"blood_group\"}",
+      "prompt_tokens": 377,
+      "first_token_s": 4.796999999991385,
+      "total_s": 5.187000000005355
+     }
+    ],
+    "group": "facts"
+   },
+   "F02": {
+    "id": "F02",
+    "text": "Main ek startup mein software tester hoon.",
+    "reply": "Note save kar diya.",
+    "turn_s": 13.61934599999222,
+    "created": [
+     2
+    ],
+    "replaced": [],
+    "subjects": [
+     "job_role"
+    ],
+    "agents": [
+     "productivity"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"productivity\"], \"task\": \"Add a note to track your daily testing tasks and deadlines.\"}",
+      "prompt_tokens": 243,
+      "first_token_s": 2.4060000000172295,
+      "total_s": 2.9839999999967404
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"add_note\": {\"text\": \"Daily testing tasks and deadlines for startup software testing\"}}",
+      "prompt_tokens": 341,
+      "first_token_s": 4.7039999999979045,
+      "total_s": 5.187999999994645
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"job_role\"}",
+      "prompt_tokens": 380,
+      "first_token_s": 4.844000000011874,
+      "total_s": 5.235000000015134
+     }
+    ],
+    "group": "facts"
+   },
+   "F03": {
+    "id": "F03",
+    "text": "I live in Pune, near Baner.",
+    "reply": "You live in Pune, near Baner.",
+    "turn_s": 10.82078989999718,
+    "created": [
+     3
+    ],
+    "replaced": [],
+    "subjects": [
+     "home_city"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Note that you live in Pune, near Baner.\"}",
+      "prompt_tokens": 243,
+      "first_token_s": 2.4059999999881256,
+      "total_s": 2.875
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "You live in Pune, near Baner.",
+      "prompt_tokens": 307,
+      "first_token_s": 2.422000000020489,
+      "total_s": 2.64000000001397
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"home_city\"}",
+      "prompt_tokens": 383,
+      "first_token_s": 4.812999999994645,
+      "total_s": 5.2189999999827705
+     }
+    ],
+    "group": "facts"
+   },
+   "F04": {
+    "id": "F04",
+    "text": "Mujhe peanuts se allergy hai.",
+    "reply": "Note save kar diya.",
+    "turn_s": 11.656444399995962,
+    "created": [
+     4
+    ],
+    "replaced": [],
+    "subjects": [
+     "peanut_allergy"
+    ],
+    "agents": [
+     "productivity"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"productivity\"], \"task\": \"Note down that the user has a peanut allergy for future reference.\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.4059999999881256,
+      "total_s": 3.0309999999881256
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"add_note\": {\"text\": \"User has a peanut allergy.\"}}",
+      "prompt_tokens": 341,
+      "first_token_s": 2.937000000005355,
+      "total_s": 3.312000000005355
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"peanut_allergy\"}",
+      "prompt_tokens": 385,
+      "first_token_s": 4.76600000000326,
+      "total_s": 5.219000000011874
+     }
+    ],
+    "group": "facts"
+   },
+   "F05": {
+    "id": "F05",
+    "text": "I'm vegetarian.",
+    "reply": "That's great! Do you have any specific dietary preferences or restrictions beyond being vegetarian?",
+    "turn_s": 10.866899799992098,
+    "created": [
+     5
+    ],
+    "replaced": [],
+    "subjects": [
+     "diet"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"You are vegetarian.\"}",
+      "prompt_tokens": 238,
+      "first_token_s": 2.485000000015134,
+      "total_s": 2.797000000020489
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "That's great! Do you have any specific dietary preferences or restrictions beyond being vegetarian?",
+      "prompt_tokens": 302,
+      "first_token_s": 2.39000000001397,
+      "total_s": 2.797000000020489
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"diet\"}",
+      "prompt_tokens": 385,
+      "first_token_s": 4.844000000011874,
+      "total_s": 5.219000000011874
+     }
+    ],
+    "group": "facts"
+   },
+   "F06": {
+    "id": "F06",
+    "text": "Meri behen ka naam Kavya hai.",
+    "reply": "Mere behen ka naam Kavya hai. 😊",
+    "turn_s": 11.755384399992181,
+    "created": [
+     6
+    ],
+    "replaced": [],
+    "subjects": [
+     "sister_name"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Note that the user's sister's name is Kavya.\"}",
+      "prompt_tokens": 245,
+      "first_token_s": 2.437000000005355,
+      "total_s": 2.9839999999967404
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Mere behen ka naam Kavya hai. 😊",
+      "prompt_tokens": 329,
+      "first_token_s": 2.7190000000118744,
+      "total_s": 3.0160000000032596
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"sister_name\"}",
+      "prompt_tokens": 394,
+      "first_token_s": 5.25,
+      "total_s": 5.671999999991385
+     }
+    ],
+    "group": "facts"
+   },
+   "F07": {
+    "id": "F07",
+    "text": "My brother's name is Arjun.",
+    "reply": "Oh, your brother's name is Arjun. That's nice to know!",
+    "turn_s": 11.34100970000145,
+    "created": [
+     7
+    ],
+    "replaced": [],
+    "subjects": [
+     "brother_name"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Note that your brother's name is Arjun.\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.437000000005355,
+      "total_s": 2.89000000001397
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Oh, your brother's name is Arjun. That's nice to know!",
+      "prompt_tokens": 306,
+      "first_token_s": 2.39000000001397,
+      "total_s": 2.76500000001397
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"brother_name\"}",
+      "prompt_tokens": 390,
+      "first_token_s": 5.171999999991385,
+      "total_s": 5.592999999993481
+     }
+    ],
+    "group": "facts"
+   },
+   "F08": {
+    "id": "F08",
+    "text": "Mujhe chai bina cheeni ke pasand hai.",
+    "reply": "Note save kar diya.",
+    "turn_s": 12.212131800013594,
+    "created": [
+     8
+    ],
+    "replaced": [],
+    "subjects": [
+     "tea_sugar_preference"
+    ],
+    "agents": [
+     "productivity"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"productivity\"], \"task\": \"Add a note to my list: Prefer chai without sugar.\"}",
+      "prompt_tokens": 247,
+      "first_token_s": 2.4689999999827705,
+      "total_s": 3.0469999999913853
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"add_note\": {\"text\": \"Prefer chai without sugar\"}}",
+      "prompt_tokens": 345,
+      "first_token_s": 3.0309999999881256,
+      "total_s": 3.375
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"tea_sugar_preference\"}",
+      "prompt_tokens": 397,
+      "first_token_s": 5.26600000000326,
+      "total_s": 5.7039999999979045
+     }
+    ],
+    "group": "facts"
+   },
+   "F09": {
+    "id": "F09",
+    "text": "I drive a white Honda City.",
+    "reply": "You drive a white Honda City.",
+    "turn_s": 11.075087300006999,
+    "created": [
+     9
+    ],
+    "replaced": [],
+    "subjects": [
+     "car_make_model"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Note that you drive a white Honda City.\"}",
+      "prompt_tokens": 241,
+      "first_token_s": 2.4219999999913853,
+      "total_s": 2.85999999998603
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "You drive a white Honda City.",
+      "prompt_tokens": 305,
+      "first_token_s": 2.4070000000065193,
+      "total_s": 2.5789999999979045
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"car_make_model\"}",
+      "prompt_tokens": 391,
+      "first_token_s": 5.125,
+      "total_s": 5.547000000020489
+     }
+    ],
+    "group": "facts"
+   },
+   "F10": {
+    "id": "F10",
+    "text": "Mera doctor Dr. Mehta hai, Kothrud wala.",
+    "reply": "Dr. Mehta, Kothrud wala, hai. Weather in Kothrud today: 10% chance of rain, 0.0 mm (Open-Meteo).",
+    "turn_s": 29.648500199982664,
+    "created": [
+     10
+    ],
+    "replaced": [],
+    "subjects": [
+     "doctor_name"
+    ],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Search for Dr. Mehta in Kothrud\"}",
+      "prompt_tokens": 249,
+      "first_token_s": 2.4210000000020955,
+      "total_s": 2.937000000005355
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"Dr. Mehta Kothrud\", \"max_results\": 5}}",
+      "prompt_tokens": 265,
+      "first_token_s": 4.155999999988126,
+      "total_s": 4.7189999999827705
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"get_weather\": {\"place\": \"Kothrud\"}}",
+      "prompt_tokens": 456,
+      "first_token_s": 3.4690000000118744,
+      "total_s": 3.7660000000032596
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"Dr. Mehta is located in Kothrud, Maharashtra, India. The weather in Kothrud shows a 10% chance of rain today with 0.0 mm of precipitation, a 70% chance of rain tomorrow with 6.2 mm of rain, and a 5% chance of rain on Saturday (November 21, 2026) with 0.0 mm of precipitation. This information is sourced from Open-Meteo. No specific details about Dr. Mehta were found in the search results.\"}}",
+      "prompt_tokens": 637,
+      "first_token_s": 3.562000000005355,
+      "total_s": 6.717999999993481
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Dr. Mehta, Kothrud wala, hai. Weather in Kothrud today: 10% chance of rain, 0.0 mm (Open-Meteo).",
+      "prompt_tokens": 597,
+      "first_token_s": 4.655999999988126,
+      "total_s": 5.655999999988126
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"doctor_name\"}",
+      "prompt_tokens": 399,
+      "first_token_s": 5.342999999993481,
+      "total_s": 5.73399999999674
+     }
+    ],
+    "group": "facts"
+   },
+   "F11": {
+    "id": "F11",
+    "text": "I support Mumbai Indians in the IPL.",
+    "reply": "That's awesome! Mumbai Indians are a great team to support.",
+    "turn_s": 11.402899699984118,
+    "created": [
+     11
+    ],
+    "replaced": [],
+    "subjects": [
+     "favorite_cricket_team"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"You support Mumbai Indians in the IPL.\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.4530000000086147,
+      "total_s": 2.859000000025844
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "That's awesome! Mumbai Indians are a great team to support.",
+      "prompt_tokens": 306,
+      "first_token_s": 2.4690000000118744,
+      "total_s": 2.797000000020489
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"favorite_cricket_team\"}",
+      "prompt_tokens": 394,
+      "first_token_s": 5.235000000015134,
+      "total_s": 5.672000000020489
+     }
+    ],
+    "group": "facts"
+   },
+   "F12": {
+    "id": "F12",
+    "text": "Main Marathi aur Hindi dono bolta hoon.",
+    "reply": "Aap dono boli mein bolo, main bhi samajh lega! 😊",
+    "turn_s": 11.823407999996562,
+    "created": [
+     12
+    ],
+    "replaced": [],
+    "subjects": [
+     "languages_known"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Confirmed that you speak both Marathi and Hindi.\"}",
+      "prompt_tokens": 246,
+      "first_token_s": 2.4059999999881256,
+      "total_s": 2.875
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Aap dono boli mein bolo, main bhi samajh lega! 😊",
+      "prompt_tokens": 330,
+      "first_token_s": 2.7189999999827705,
+      "total_s": 3.2339999999967404
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"languages_known\"}",
+      "prompt_tokens": 398,
+      "first_token_s": 5.25,
+      "total_s": 5.639999999984866
+     }
+    ],
+    "group": "facts"
+   },
+   "F13": {
+    "id": "F13",
+    "text": "My work laptop is a ThinkPad.",
+    "reply": "You have a ThinkPad work laptop.",
+    "turn_s": 10.859461299987743,
+    "created": [
+     13
+    ],
+    "replaced": [],
+    "subjects": [
+     "car_make_model"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"None needed.\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.390999999974156,
+      "total_s": 2.6719999999913853
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "You have a ThinkPad work laptop.",
+      "prompt_tokens": 306,
+      "first_token_s": 2.389999999984866,
+      "total_s": 2.577999999979511
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"car_make_model\"}",
+      "prompt_tokens": 394,
+      "first_token_s": 5.10899999999674,
+      "total_s": 5.530999999988126
+     }
+    ],
+    "group": "facts"
+   },
+   "F14": {
+    "id": "F14",
+    "text": "Mujhe horror movies pasand nahi hain.",
+    "reply": "Bas, horror films nahi pasand hai, woh toh nahi karega. 😊",
+    "turn_s": 11.58259590002126,
+    "created": [
+     14
+    ],
+    "replaced": [],
+    "subjects": [
+     "movie_preference"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Note that the user dislikes horror movies.\"}",
+      "prompt_tokens": 246,
+      "first_token_s": 2.4219999999913853,
+      "total_s": 2.827999999979511
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Bas, horror films nahi pasand hai, woh toh nahi karega. 😊",
+      "prompt_tokens": 330,
+      "first_token_s": 2.5780000000086147,
+      "total_s": 3.110000000015134
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"movie_preference\"}",
+      "prompt_tokens": 398,
+      "first_token_s": 5.187000000005355,
+      "total_s": 5.562000000005355
+     }
+    ],
+    "group": "facts"
+   },
+   "F15": {
+    "id": "F15",
+    "text": "I prefer reminders as phone notifications, not voice.",
+    "reply": "Got it! I'll send reminders as phone notifications, not voice.",
+    "turn_s": 11.2778818999941,
+    "created": [
+     15
+    ],
+    "replaced": [],
+    "subjects": [
+     "reminder_preference"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Update preference for reminders to be phone notifications only.\"}",
+      "prompt_tokens": 244,
+      "first_token_s": 2.437999999994645,
+      "total_s": 2.8910000000032596
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Got it! I'll send reminders as phone notifications, not voice.",
+      "prompt_tokens": 308,
+      "first_token_s": 2.437000000005355,
+      "total_s": 2.7809999999881256
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"reminder_preference\"}",
+      "prompt_tokens": 395,
+      "first_token_s": 5.14100000000326,
+      "total_s": 5.532000000006519
+     }
+    ],
+    "group": "facts"
+   },
+   "F16": {
+    "id": "F16",
+    "text": "Mera gym Gold's Gym hai, Aundh mein.",
+    "reply": "Mera gym Gold's Gym hai, Aundh mein. Kis din aur kis time pe?",
+    "turn_s": 17.311115099990275,
+    "created": [
+     16
+    ],
+    "replaced": [],
+    "subjects": [
+     "gym"
+    ],
+    "agents": [
+     "calendar"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"calendar\"], \"task\": \"Add my gym at Gold's Gym, Aundh, to my schedule\"}",
+      "prompt_tokens": 247,
+      "first_token_s": 2.4839999999967404,
+      "total_s": 3.1089999999967404
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"create_event\": {\"title\": \"Gym at Gold's Gym, Aundh\"}}",
+      "prompt_tokens": 379,
+      "first_token_s": 4.6710000000020955,
+      "total_s": 5.14000000001397
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Mera gym Gold's Gym hai, Aundh mein. Kis din aur kis time pe?",
+      "prompt_tokens": 368,
+      "first_token_s": 2.9060000000172295,
+      "total_s": 3.422000000020489
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 1, \"subject\": \"gym\"}",
+      "prompt_tokens": 398,
+      "first_token_s": 5.14100000000326,
+      "total_s": 5.546999999991385
+     }
+    ],
+    "group": "facts"
+   },
+   "F17": {
+    "id": "F17",
+    "text": "My manager is called Priya.",
+    "reply": "Hi, I know your manager is Priya.",
+    "turn_s": 11.196043000003556,
+    "created": [
+     17
+    ],
+    "replaced": [],
+    "subjects": [
+     "doctor_name"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Note that your manager is Priya.\"}",
+      "prompt_tokens": 241,
+      "first_token_s": 2.3910000000032596,
+      "total_s": 2.7969999999913853
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Hi, I know your manager is Priya.",
+      "prompt_tokens": 305,
+      "first_token_s": 2.4679999999934807,
+      "total_s": 2.7179999999934807
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"doctor_name\"}",
+      "prompt_tokens": 391,
+      "first_token_s": 5.203000000008615,
+      "total_s": 5.592999999993481
+     }
+    ],
+    "group": "facts"
+   },
+   "F18": {
+    "id": "F18",
+    "text": "Main left-handed hoon.",
+    "reply": "Aap left-handed hain, baat karte hain! 😊",
+    "turn_s": 11.272154700011015,
+    "created": [
+     18
+    ],
+    "replaced": [],
+    "subjects": [
+     "hand_preference"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"None\"}",
+      "prompt_tokens": 240,
+      "first_token_s": 2.4530000000086147,
+      "total_s": 2.7030000000086147
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Aap left-handed hain, baat karte hain! 😊",
+      "prompt_tokens": 324,
+      "first_token_s": 2.547000000020489,
+      "total_s": 2.937999999994645
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"hand_preference\"}",
+      "prompt_tokens": 390,
+      "first_token_s": 5.171999999991385,
+      "total_s": 5.562999999994645
+     }
+    ],
+    "group": "facts"
+   },
+   "F19": {
+    "id": "F19",
+    "text": "I'm learning to play the guitar.",
+    "reply": "Added 'Learn guitar basics' to your tasks.",
+    "turn_s": 11.952714899991406,
+    "created": [
+     19
+    ],
+    "replaced": [],
+    "subjects": [
+     "hobby"
+    ],
+    "agents": [
+     "productivity"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"productivity\"], \"task\": \"Create a learning plan for guitar with daily practice goals.\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.4690000000118744,
+      "total_s": 3.0160000000032596
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"add_task\": {\"title\": \"Learn guitar basics\"}}",
+      "prompt_tokens": 339,
+      "first_token_s": 2.937000000005355,
+      "total_s": 3.2339999999967404
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"hobby\"}",
+      "prompt_tokens": 392,
+      "first_token_s": 5.187999999994645,
+      "total_s": 5.610000000015134
+     }
+    ],
+    "group": "facts"
+   },
+   "F20": {
+    "id": "F20",
+    "text": "Mere dog ka naam Bruno hai.",
+    "reply": "Mere dog ka naam Bruno hai. 😊",
+    "turn_s": 11.366061399981845,
+    "created": [
+     20
+    ],
+    "replaced": [],
+    "subjects": [
+     "pet_name"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Note: Your dog's name is Bruno.\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.4059999999881256,
+      "total_s": 2.8280000000086147
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Mere dog ka naam Bruno hai. 😊",
+      "prompt_tokens": 326,
+      "first_token_s": 2.562999999994645,
+      "total_s": 2.812999999994645
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"pet_name\"}",
+      "prompt_tokens": 391,
+      "first_token_s": 5.25,
+      "total_s": 5.64100000000326
+     }
+    ],
+    "group": "facts"
+   },
+   "F21": {
+    "id": "F21",
+    "text": "I don't drink coffee.",
+    "reply": "Okay, I noted that you don't drink coffee.",
+    "turn_s": 11.264600000024075,
+    "created": [
+     21
+    ],
+    "replaced": [],
+    "subjects": [
+     "coffee_preference"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Note that the user does not drink coffee.\"}",
+      "prompt_tokens": 240,
+      "first_token_s": 2.5,
+      "total_s": 2.9219999999913853
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Okay, I noted that you don't drink coffee.",
+      "prompt_tokens": 304,
+      "first_token_s": 2.4219999999913853,
+      "total_s": 2.687999999994645
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"coffee_preference\"}",
+      "prompt_tokens": 389,
+      "first_token_s": 5.172000000020489,
+      "total_s": 5.562000000005355
+     }
+    ],
+    "group": "facts"
+   },
+   "F22": {
+    "id": "F22",
+    "text": "Mera favourite khana rajma chawal hai.",
+    "reply": "Rajma chawal hai maine bhi pasand kari hai! 😊",
+    "turn_s": 11.727963099983754,
+    "created": [
+     22
+    ],
+    "replaced": [],
+    "subjects": [
+     "food_preference"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Note that rajma chawal is the user's favorite food.\"}",
+      "prompt_tokens": 246,
+      "first_token_s": 2.5,
+      "total_s": 3.062000000005355
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Rajma chawal hai maine bhi pasand kari hai! 😊",
+      "prompt_tokens": 330,
+      "first_token_s": 2.625,
+      "total_s": 3.077999999979511
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"food_preference\"}",
+      "prompt_tokens": 396,
+      "first_token_s": 5.10899999999674,
+      "total_s": 5.5
+     }
+    ],
+    "group": "facts"
+   },
+   "F23": {
+    "id": "F23",
+    "text": "I use an iPhone.",
+    "reply": "That's great! Do you need help with anything specific on your iPhone?",
+    "turn_s": 11.24337939999532,
+    "created": [
+     23
+    ],
+    "replaced": [],
+    "subjects": [
+     "car_make_model"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"None needed for this message.\"}",
+      "prompt_tokens": 239,
+      "first_token_s": 2.3910000000032596,
+      "total_s": 2.75
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "That's great! Do you need help with anything specific on your iPhone?",
+      "prompt_tokens": 303,
+      "first_token_s": 2.5160000000032596,
+      "total_s": 2.875
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"car_make_model\"}",
+      "prompt_tokens": 388,
+      "first_token_s": 5.140999999974156,
+      "total_s": 5.562999999994645
+     }
+    ],
+    "group": "facts"
+   },
+   "F24": {
+    "id": "F24",
+    "text": "Mere papa retired teacher hain.",
+    "reply": "Aapke papa retired teacher hain. 😊",
+    "turn_s": 11.391686999995727,
+    "created": [
+     24
+    ],
+    "replaced": [],
+    "subjects": [
+     "job_role"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Note that the user's father is a retired teacher.\"}",
+      "prompt_tokens": 243,
+      "first_token_s": 2.375,
+      "total_s": 2.875
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Aapke papa retired teacher hain. 😊",
+      "prompt_tokens": 327,
+      "first_token_s": 2.562000000005355,
+      "total_s": 2.8429999999934807
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"job_role\"}",
+      "prompt_tokens": 393,
+      "first_token_s": 5.187999999994645,
+      "total_s": 5.577999999979511
+     }
+    ],
+    "group": "facts"
+   },
+   "F25": {
+    "id": "F25",
+    "text": "I usually work from home.",
+    "reply": "That's fine! Working from home is common. Let me know if you need anything.",
+    "turn_s": 10.868400300008943,
+    "created": [
+     25
+    ],
+    "replaced": [],
+    "subjects": [
+     "job_role"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Note: You usually work from home.\"}",
+      "prompt_tokens": 240,
+      "first_token_s": 2.4530000000086147,
+      "total_s": 2.8589999999967404
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "That's fine! Working from home is common. Let me know if you need anything.",
+      "prompt_tokens": 304,
+      "first_token_s": 2.4679999999934807,
+      "total_s": 2.9059999999881256
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"job_role\"}",
+      "prompt_tokens": 384,
+      "first_token_s": 4.657000000006519,
+      "total_s": 5.046999999991385
+     }
+    ],
+    "group": "facts"
+   },
+   "P01": {
+    "id": "P01",
+    "text": "Kal mujhe Mumbai jaana hai.",
+    "reply": "Kis time pe?",
+    "turn_s": 9.682613599987235,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "calendar"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"calendar\"], \"task\": \"Mumbai trip for tomorrow added to calendar\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.4530000000086147,
+      "total_s": 2.9059999999881256
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"create_event\": {\"title\": \"Mumbai Trip\"}}",
+      "prompt_tokens": 347,
+      "first_token_s": 3.110000000015134,
+      "total_s": 3.4070000000065193
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Kis time pe?",
+      "prompt_tokens": 359,
+      "first_token_s": 2.9210000000020955,
+      "total_s": 3.0460000000020955
+     }
+    ],
+    "group": "plans"
+   },
+   "P02": {
+    "id": "P02",
+    "text": "I have a dentist appointment on Friday.",
+    "reply": "Kis time pe?",
+    "turn_s": 8.690682500018738,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "calendar"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a dentist appointment on Friday to my calendar.\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.4059999999881256,
+      "total_s": 2.9059999999881256
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"create_event\": {\"title\": \"Dentist Appointment\"}}",
+      "prompt_tokens": 349,
+      "first_token_s": 2.8589999999967404,
+      "total_s": 3.1710000000020955
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Kis time pe?",
+      "prompt_tokens": 339,
+      "first_token_s": 2.4539999999979045,
+      "total_s": 2.562999999994645
+     }
+    ],
+    "group": "plans"
+   },
+   "P03": {
+    "id": "P03",
+    "text": "Meri parso shaam ko meeting hai.",
+    "reply": "Parso shaam ke time pe meeting hai?",
+    "turn_s": 9.50901690000319,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "calendar"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a meeting for Parso in the evening to my calendar.\"}",
+      "prompt_tokens": 244,
+      "first_token_s": 2.4219999999913853,
+      "total_s": 3.0
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"create_event\": {\"title\": \"Meeting with Parso\"}}",
+      "prompt_tokens": 377,
+      "first_token_s": 3.3280000000086147,
+      "total_s": 3.64000000001397
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Parso shaam ke time pe meeting hai?",
+      "prompt_tokens": 361,
+      "first_token_s": 2.5940000000118744,
+      "total_s": 2.8289999999979045
+     }
+    ],
+    "group": "plans"
+   },
+   "P04": {
+    "id": "P04",
+    "text": "I'm meeting Kavya for lunch tomorrow.",
+    "reply": "Kis time pe?",
+    "turn_s": 8.979853199998615,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "calendar"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a meeting with Kavya for lunch tomorrow to the calendar.\"}",
+      "prompt_tokens": 244,
+      "first_token_s": 2.3439999999827705,
+      "total_s": 2.937999999994645
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"create_event\": {\"title\": \"Meeting with Kavya for lunch\"}}",
+      "prompt_tokens": 355,
+      "first_token_s": 3.047000000020489,
+      "total_s": 3.437999999994645
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Kis time pe?",
+      "prompt_tokens": 341,
+      "first_token_s": 2.4530000000086147,
+      "total_s": 2.5780000000086147
+     }
+    ],
+    "group": "plans"
+   },
+   "P05": {
+    "id": "P05",
+    "text": "Aaj main office late jaunga.",
+    "reply": "Aaj office late jaunga? Konservapar?",
+    "turn_s": 9.158391700009815,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "calendar"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"calendar\"], \"task\": \"Mark today's office visit as late.\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.375,
+      "total_s": 2.827999999979511
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"create_event\": {\"title\": \"Office Visit\"}}",
+      "prompt_tokens": 347,
+      "first_token_s": 3.0,
+      "total_s": 3.312000000005355
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Aaj office late jaunga? Konservapar?",
+      "prompt_tokens": 359,
+      "first_token_s": 2.6719999999913853,
+      "total_s": 2.98499999998603
+     }
+    ],
+    "group": "plans"
+   },
+   "P06": {
+    "id": "P06",
+    "text": "Remind me to call Arjun at 6 pm.",
+    "reply": "Done! Added 'Call with Arjun' on Fri 27 Nov, 6:00-7:00 pm.",
+    "turn_s": 6.832688199996483,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "calendar"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a reminder to call Arjun at 6 PM\"}",
+      "prompt_tokens": 246,
+      "first_token_s": 2.562999999994645,
+      "total_s": 3.0789999999979045
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"create_event\": {\"title\": \"Call with Arjun\"}}",
+      "prompt_tokens": 367,
+      "first_token_s": 3.3439999999827705,
+      "total_s": 3.6559999999881256
+     }
+    ],
+    "group": "plans"
+   },
+   "P07": {
+    "id": "P07",
+    "text": "Is weekend main Lonavala ja raha hoon.",
+    "reply": "You're going to Lonavala this weekend. When exactly?",
+    "turn_s": 10.333181199996034,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "calendar"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a weekend trip to Lonavala to the calendar.\"}",
+      "prompt_tokens": 246,
+      "first_token_s": 2.5310000000172295,
+      "total_s": 3.0780000000086147
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"create_event\": {\"title\": \"Weekend Trip to Lonavala\"}}",
+      "prompt_tokens": 374,
+      "first_token_s": 3.3429999999934807,
+      "total_s": 3.7339999999967404
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "You're going to Lonavala this weekend. When exactly?",
+      "prompt_tokens": 423,
+      "first_token_s": 3.1719999999913853,
+      "total_s": 3.4839999999967404
+     }
+    ],
+    "group": "plans"
+   },
+   "P08": {
+    "id": "P08",
+    "text": "My flight to Delhi is on 5 December.",
+    "reply": "You're free on Thu 26 Nov: 6:00 am-11:00 pm.",
+    "turn_s": 6.298153400013689,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "calendar"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a flight to Delhi on 5 December to the calendar.\"}",
+      "prompt_tokens": 244,
+      "first_token_s": 2.4530000000086147,
+      "total_s": 3.0320000000065193
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"find_free_slots\": {\"range\": \"next_7_days\"}}",
+      "prompt_tokens": 373,
+      "first_token_s": 2.937000000005355,
+      "total_s": 3.26500000001397
+     }
+    ],
+    "group": "plans"
+   },
+   "N1": {
+    "id": "N1",
+    "text": "I'm also allergic to dust.",
+    "reply": "Saved the note.",
+    "turn_s": 15.20905489998404,
+    "created": [
+     26
+    ],
+    "replaced": [],
+    "subjects": [
+     "peanut_allergy"
+    ],
+    "agents": [
+     "productivity"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"productivity\"], \"task\": \"Add 'dust allergy' to personal health notes.\"}",
+      "prompt_tokens": 241,
+      "first_token_s": 2.359000000025844,
+      "total_s": 2.9060000000172295
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"add_note\": {\"text\": \"allergic to dust\"}}",
+      "prompt_tokens": 338,
+      "first_token_s": 2.875,
+      "total_s": 3.187999999994645
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"Added note: 'allergic to dust' to personal health notes.\"}}",
+      "prompt_tokens": 381,
+      "first_token_s": 2.5929999999934807,
+      "total_s": 3.1089999999967404
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"peanut_allergy\"}",
+      "prompt_tokens": 392,
+      "first_token_s": 5.2189999999827705,
+      "total_s": 5.64100000000326
+     }
+    ],
+    "group": "same_topic_no_cue"
+   },
+   "N2": {
+    "id": "N2",
+    "text": "Meri choti behen ka naam Isha hai.",
+    "reply": "Tumhari choti behen Isha hai. 😊",
+    "turn_s": 11.623982899996918,
+    "created": [
+     27
+    ],
+    "replaced": [],
+    "subjects": [
+     "sister_name"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Note down that the user's younger sister's name is Isha.\"}",
+      "prompt_tokens": 246,
+      "first_token_s": 2.4679999999934807,
+      "total_s": 3.01500000001397
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Tumhari choti behen Isha hai. 😊",
+      "prompt_tokens": 330,
+      "first_token_s": 2.625,
+      "total_s": 2.937000000005355
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"sister_name\"}",
+      "prompt_tokens": 395,
+      "first_token_s": 5.203000000008615,
+      "total_s": 5.60899999999674
+     }
+    ],
+    "group": "same_topic_no_cue"
+   },
+   "N3": {
+    "id": "N3",
+    "text": "Mujhe comedy movies bahut pasand hain.",
+    "reply": "Comedy movies ka kya favorite hai? 😊",
+    "turn_s": 11.178307299996959,
+    "created": [
+     28
+    ],
+    "replaced": [],
+    "subjects": [
+     "movie_preference"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"None\"}",
+      "prompt_tokens": 246,
+      "first_token_s": 2.4839999999967404,
+      "total_s": 2.7179999999934807
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Comedy movies ka kya favorite hai? 😊",
+      "prompt_tokens": 330,
+      "first_token_s": 2.5780000000086147,
+      "total_s": 2.8280000000086147
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"movie_preference\"}",
+      "prompt_tokens": 397,
+      "first_token_s": 5.172000000020489,
+      "total_s": 5.547000000020489
+     }
+    ],
+    "group": "same_topic_no_cue"
+   },
+   "U1": {
+    "id": "U1",
+    "text": "I'm not vegetarian anymore, I eat chicken now.",
+    "reply": "I see. You're now eating chicken. No updates needed.",
+    "turn_s": 11.126814400020521,
+    "created": [
+     29
+    ],
+    "replaced": [
+     5
+    ],
+    "subjects": [
+     "diet"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"None\"}",
+      "prompt_tokens": 245,
+      "first_token_s": 2.3910000000032596,
+      "total_s": 2.625
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "I see. You're now eating chicken. No updates needed.",
+      "prompt_tokens": 309,
+      "first_token_s": 2.562000000005355,
+      "total_s": 2.875
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 1, \"subject\": \"diet\"}",
+      "prompt_tokens": 446,
+      "first_token_s": 5.187000000005355,
+      "total_s": 5.546999999991385
+     }
+    ],
+    "group": "updates"
+   },
+   "U2": {
+    "id": "U2",
+    "text": "I moved to Bangalore last month.",
+    "reply": "That's great! Bangalore sounds like a great place to live. Have you settled into your new home yet?",
+    "turn_s": 12.112461700016866,
+    "created": [
+     30
+    ],
+    "replaced": [
+     3
+    ],
+    "subjects": [
+     "home_city"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"You mentioned moving to Bangalore last month. Let me know if you'd like help with anything related to your life there, like finding places to visit, local events, or adjusting to the climate.\"}",
+      "prompt_tokens": 241,
+      "first_token_s": 2.437999999994645,
+      "total_s": 3.5939999999827705
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "That's great! Bangalore sounds like a great place to live. Have you settled into your new home yet?",
+      "prompt_tokens": 305,
+      "first_token_s": 2.4690000000118744,
+      "total_s": 2.984000000025844
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 1, \"subject\": \"home_city\"}",
+      "prompt_tokens": 451,
+      "first_token_s": 5.094000000011874,
+      "total_s": 5.469000000011874
+     }
+    ],
+    "group": "updates"
+   },
+   "U3": {
+    "id": "U3",
+    "text": "Ab main tester nahi hoon, ab developer hoon.",
+    "reply": "Aap ab developer hain! Kya karna chahte hain?",
+    "turn_s": 11.859068699995987,
+    "created": [
+     31
+    ],
+    "replaced": [
+     2
+    ],
+    "subjects": [
+     "job_role"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"You are now a developer. Let me know if you need help with coding, debugging, or any development-related tasks!\"}",
+      "prompt_tokens": 247,
+      "first_token_s": 2.4530000000086147,
+      "total_s": 3.2339999999967404
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Aap ab developer hain! Kya karna chahte hain?",
+      "prompt_tokens": 331,
+      "first_token_s": 2.5939999999827705,
+      "total_s": 2.9839999999967404
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 1, \"subject\": \"job_role\"}",
+      "prompt_tokens": 441,
+      "first_token_s": 5.171999999991385,
+      "total_s": 5.562999999994645
+     }
+    ],
+    "group": "updates"
+   },
+   "U4": {
+    "id": "U4",
+    "text": "Maine Gold's Gym chhod diya, ab ghar pe workout karta hoon.",
+    "reply": "'home workout' aapki tasks list mein daal diya.",
+    "turn_s": 15.425986300018849,
+    "created": [
+     32
+    ],
+    "replaced": [
+     16
+    ],
+    "subjects": [
+     "gym"
+    ],
+    "agents": [
+     "productivity"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"productivity\"], \"task\": \"Add home workout as a new routine in my productivity list.\"}",
+      "prompt_tokens": 255,
+      "first_token_s": 2.5160000000032596,
+      "total_s": 3.0940000000118744
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"add_task\": {\"title\": \"home workout\"}}",
+      "prompt_tokens": 353,
+      "first_token_s": 2.875,
+      "total_s": 3.140999999974156
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"Added 'home workout' as a new task in the productivity list.\"}}",
+      "prompt_tokens": 397,
+      "first_token_s": 2.5780000000086147,
+      "total_s": 3.0940000000118744
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 1, \"subject\": \"gym\"}",
+      "prompt_tokens": 465,
+      "first_token_s": 5.64000000001397,
+      "total_s": 6.0310000000172295
+     }
+    ],
+    "group": "updates"
+   },
+   "B1": {
+    "id": "B1",
+    "text": "Mujhe meetings 11 baje ke baad pasand hain.",
+    "reply": "Fri 27 Nov (whole day) mein aapke calendar mein kuch nahi hai.",
+    "turn_s": 12.260445899999468,
+    "created": [
+     33
+    ],
+    "replaced": [],
+    "subjects": [
+     "meeting_preference"
+    ],
+    "agents": [
+     "calendar"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"calendar\"], \"task\": \"Show all meetings scheduled after 11 am.\"}",
+      "prompt_tokens": 251,
+      "first_token_s": 2.4839999999967404,
+      "total_s": 2.9839999999967404
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"get_events\": {\"range\": \"day\"}}",
+      "prompt_tokens": 373,
+      "first_token_s": 3.3910000000032596,
+      "total_s": 3.625
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"meeting_preference\"}",
+      "prompt_tokens": 400,
+      "first_token_s": 5.187999999994645,
+      "total_s": 5.562999999994645
+     }
+    ],
+    "group": "boundary"
+   },
+   "B2": {
+    "id": "B2",
+    "text": "Main roz subah 6 baje uthta hoon.",
+    "reply": "'wake up at 6 AM' aapki tasks list mein daal diya.",
+    "turn_s": 11.876380000001518,
+    "created": [
+     34
+    ],
+    "replaced": [],
+    "subjects": [
+     "wake_time"
+    ],
+    "agents": [
+     "productivity"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"productivity\"], \"task\": \"Add a daily task to wake up at 6 AM\"}",
+      "prompt_tokens": 247,
+      "first_token_s": 2.5160000000032596,
+      "total_s": 3.062000000005355
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"add_task\": {\"title\": \"wake up at 6 AM\"}}",
+      "prompt_tokens": 345,
+      "first_token_s": 2.937999999994645,
+      "total_s": 3.2809999999881256
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"wake_time\"}",
+      "prompt_tokens": 394,
+      "first_token_s": 5.092999999993481,
+      "total_s": 5.453000000008615
+     }
+    ],
+    "group": "boundary"
+   },
+   "B3": {
+    "id": "B3",
+    "text": "My mother's birthday is on 12 March.",
+    "reply": "Kis din aur kis time pe?",
+    "turn_s": 15.11207679999643,
+    "created": [
+     35
+    ],
+    "replaced": [],
+    "subjects": [
+     "mother_birthday"
+    ],
+    "agents": [
+     "calendar"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a birthday event for mother on 12 March\"}",
+      "prompt_tokens": 245,
+      "first_token_s": 2.4219999999913853,
+      "total_s": 2.9530000000086147
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"create_event\": {\"title\": \"Mother's Birthday\"}}",
+      "prompt_tokens": 373,
+      "first_token_s": 3.264999999984866,
+      "total_s": 3.5929999999934807
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Kis din aur kis time pe?",
+      "prompt_tokens": 346,
+      "first_token_s": 2.687999999994645,
+      "total_s": 2.9059999999881256
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"mother_birthday\"}",
+      "prompt_tokens": 393,
+      "first_token_s": 5.187000000005355,
+      "total_s": 5.594000000011874
+     }
+    ],
+    "group": "boundary"
+   },
+   "Q01": {
+    "id": "Q01",
+    "text": "What's my blood group?",
+    "reply": "Your blood group is B positive.",
+    "turn_s": 15.815082899993286,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Find out the user's blood group\"}",
+      "prompt_tokens": 240,
+      "first_token_s": 2.35999999998603,
+      "total_s": 2.7969999999913853
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"how to find out my blood group\", \"max_results\": 5}}",
+      "prompt_tokens": 253,
+      "first_token_s": 2.687000000005355,
+      "total_s": 3.264999999984866
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"I attempted to find information about determining a person's blood group through a web search, but the results provided were unrelated to the query. The search results discuss topics such as Pune's monsoon and Lonavala weekend trips, which do not offer any insight into blood group determination. Therefore, no relevant information was found.\"}}",
+      "prompt_tokens": 444,
+      "first_token_s": 3.4690000000118744,
+      "total_s": 5.2810000000172295
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Your blood group is B positive.",
+      "prompt_tokens": 557,
+      "first_token_s": 4.25,
+      "total_s": 4.421999999991385
+     }
+    ],
+    "group": "questions"
+   },
+   "Q02": {
+    "id": "Q02",
+    "text": "Mujhe kis cheez se allergy hai?",
+    "reply": "Mujhe peanuts se allergy hai.",
+    "turn_s": 14.437194500002079,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Search for common allergies and symptoms\"}",
+      "prompt_tokens": 245,
+      "first_token_s": 2.4219999999913853,
+      "total_s": 2.8280000000086147
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"common allergies and symptoms\", \"max_results\": 5}}",
+      "prompt_tokens": 257,
+      "first_token_s": 2.7189999999827705,
+      "total_s": 3.2030000000086147
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"The search for common allergies and symptoms did not yield relevant results. The retrieved results pertain to weather in Pune and travel tips for Lonavala, not medical information about allergies. A more targeted search or a different query may be needed to find reliable information on common allergies and their symptoms.\"}}",
+      "prompt_tokens": 445,
+      "first_token_s": 3.5469999999913853,
+      "total_s": 5.202999999979511
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Mujhe peanuts se allergy hai.",
+      "prompt_tokens": 573,
+      "first_token_s": 2.985000000015134,
+      "total_s": 3.187999999994645
+     }
+    ],
+    "group": "questions"
+   },
+   "Q03": {
+    "id": "Q03",
+    "text": "Where do I live now?",
+    "reply": "You moved to Bangalore last month.",
+    "turn_s": 6.3788159000105225,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"I cannot determine your current location.\"}",
+      "prompt_tokens": 240,
+      "first_token_s": 2.4839999999967404,
+      "total_s": 2.8589999999967404
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "You moved to Bangalore last month.",
+      "prompt_tokens": 420,
+      "first_token_s": 3.3280000000086147,
+      "total_s": 3.4839999999967404
+     }
+    ],
+    "group": "questions"
+   },
+   "Q04": {
+    "id": "Q04",
+    "text": "Meri behen ka naam kya hai?",
+    "reply": "Meri behen ka naam Kavya hai.",
+    "turn_s": 6.524749999982305,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"None of the agents are needed for this query.\"}",
+      "prompt_tokens": 244,
+      "first_token_s": 2.4839999999967404,
+      "total_s": 2.937000000005355
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Meri behen ka naam Kavya hai.",
+      "prompt_tokens": 450,
+      "first_token_s": 3.327999999979511,
+      "total_s": 3.577999999979511
+     }
+    ],
+    "group": "questions"
+   },
+   "Q05": {
+    "id": "Q05",
+    "text": "What do I do for work?",
+    "reply": "You have two open tasks: 'Buy milk' and 'Pay electricity bill'. You also need to book the Lonavala homestay before Friday. The 'Buy milk' task has a 25-minute timer set.",
+    "turn_s": 16.75727120001102,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "productivity"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"productivity\"], \"task\": \"Suggest a work plan based on current tasks and priorities.\"}",
+      "prompt_tokens": 241,
+      "first_token_s": 2.4219999999913853,
+      "total_s": 2.98499999998603
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"list_tasks\": {\"include_done\": false}}",
+      "prompt_tokens": 339,
+      "first_token_s": 2.9059999999881256,
+      "total_s": 3.140999999974156
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"list_notes\": {\"limit\": 5}}",
+      "prompt_tokens": 401,
+      "first_token_s": 2.764999999984866,
+      "total_s": 3.0
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"start_timer\": {\"minutes\": 25, \"label\": \"Buy milk\"}}",
+      "prompt_tokens": 448,
+      "first_token_s": 2.5929999999934807,
+      "total_s": 3.014999999984866
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "You have two open tasks: 'Buy milk' and 'Pay electricity bill'. You also need to book the Lonavala homestay before Friday. The 'Buy milk' task has a 25-minute timer set.",
+      "prompt_tokens": 443,
+      "first_token_s": 3.4060000000172295,
+      "total_s": 4.51600000000326
+     }
+    ],
+    "group": "questions"
+   },
+   "Q06": {
+    "id": "Q06",
+    "text": "Mera manager kaun hai?",
+    "reply": "Mere manager kaun hai? Priya hai.",
+    "turn_s": 15.252359000005526,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Find who my manager is\"}",
+      "prompt_tokens": 241,
+      "first_token_s": 2.437000000005355,
+      "total_s": 2.812000000005355
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"mera manager kaun hai\", \"max_results\": 5}}",
+      "prompt_tokens": 252,
+      "first_token_s": 2.75,
+      "total_s": 3.2810000000172295
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"The search results did not provide information about who your manager is. The results pertain to weather and travel in Pune and Lonavala, which are unrelated to identifying a manager.\"}}",
+      "prompt_tokens": 442,
+      "first_token_s": 3.5939999999827705,
+      "total_s": 4.671999999991385
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Mere manager kaun hai? Priya hai.",
+      "prompt_tokens": 570,
+      "first_token_s": 4.187000000005355,
+      "total_s": 4.452999999979511
+     }
+    ],
+    "group": "questions"
+   },
+   "Q07": {
+    "id": "Q07",
+    "text": "Do I eat meat?",
+    "reply": "Yes, you eat meat. You said you're not vegetarian anymore and now eat chicken.",
+    "turn_s": 27.930001799977617,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Find out if eating meat is recommended or common in general health or dietary guidelines.\"}",
+      "prompt_tokens": 239,
+      "first_token_s": 2.5160000000032596,
+      "total_s": 3.1559999999881256
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"is eating meat recommended in general health or dietary guidelines\", \"max_results\": 5}}",
+      "prompt_tokens": 260,
+      "first_token_s": 2.687000000005355,
+      "total_s": 3.312000000005355
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"general health dietary guidelines on eating meat\", \"max_results\": 5}}",
+      "prompt_tokens": 454,
+      "first_token_s": 3.562999999994645,
+      "total_s": 4.125
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"are meat eating recommendations in major health organizations like WHO or CDC\", \"max_results\": 5}}",
+      "prompt_tokens": 645,
+      "first_token_s": 3.562999999994645,
+      "total_s": 4.26600000000326
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"Major health organizations such as the WHO and CDC do not provide specific dietary guidelines that recommend or discourage meat eating as a general rule. Instead, they emphasize balanced diets that include a variety of foods, including both animal and plant-based sources, to meet nutritional needs. The inclusion of meat in a diet is generally considered acceptable and part of a balanced diet, especially when it comes to protein intake. However, recommendations often encourage moderation and consider individual health conditions, such as cardiovascular health or specific medical needs. Ultimately, dietary choices should be made based on personal health, cultural practices, and individual preferences, with guidance from healthcare professionals when needed.\"}}",
+      "prompt_tokens": 841,
+      "first_token_s": 3.562999999994645,
+      "total_s": 7.094000000011874
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Yes, you eat meat. You said you're not vegetarian anymore and now eat chicken.",
+      "prompt_tokens": 873,
+      "first_token_s": 5.453000000008615,
+      "total_s": 5.921999999991385
+     }
+    ],
+    "group": "questions"
+   },
+   "Q08": {
+    "id": "Q08",
+    "text": "Mere doctor ka naam kya hai?",
+    "reply": "Mere doctor ka naam Dr. Mehta hai.",
+    "turn_s": 16.092416900006356,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Search for the name of the doctor associated with the user.\"}",
+      "prompt_tokens": 243,
+      "first_token_s": 2.375,
+      "total_s": 2.9219999999913853
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"mere doctor ka naam kya hai\", \"max_results\": 5}}",
+      "prompt_tokens": 260,
+      "first_token_s": 4.10899999999674,
+      "total_s": 4.717999999993481
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"No relevant information was found about the name of a doctor associated with the user. The search results pertained to weather in Pune and weekend trips to Lonavala, not medical professionals.\"}}",
+      "prompt_tokens": 451,
+      "first_token_s": 3.6089999999967404,
+      "total_s": 4.73399999999674
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Mere doctor ka naam Dr. Mehta hai.",
+      "prompt_tokens": 574,
+      "first_token_s": 3.3910000000032596,
+      "total_s": 3.6559999999881256
+     }
+    ],
+    "group": "questions"
+   },
+   "Q09": {
+    "id": "Q09",
+    "text": "Which IPL team do I support?",
+    "reply": "You support Mumbai Indians in the IPL.",
+    "turn_s": 14.226278799993452,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Find out which IPL team is most supported by the user based on available data or preferences.\"}",
+      "prompt_tokens": 241,
+      "first_token_s": 2.422000000020489,
+      "total_s": 3.125
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"most supported IPL team user preference\", \"max_results\": 5}}",
+      "prompt_tokens": 264,
+      "first_token_s": 2.687999999994645,
+      "total_s": 3.25
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"No reliable information was found about which IPL team is most supported by users based on preferences. The search results related to Pune monsoon and Lonavala weekend trips do not provide any data about IPL team support or user preferences.\"}}",
+      "prompt_tokens": 454,
+      "first_token_s": 3.4690000000118744,
+      "total_s": 4.796999999991385
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "You support Mumbai Indians in the IPL.",
+      "prompt_tokens": 555,
+      "first_token_s": 2.8440000000118744,
+      "total_s": 3.0320000000065193
+     }
+    ],
+    "group": "questions"
+   },
+   "Q10": {
+    "id": "Q10",
+    "text": "Meri gaadi kaunsi hai?",
+    "reply": "Main nahi jaanta kya hai tuke gaadi ka naam.",
+    "turn_s": 6.642322599975159,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"None of the agents are needed for this query.\"}",
+      "prompt_tokens": 243,
+      "first_token_s": 2.35999999998603,
+      "total_s": 2.812999999994645
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Main nahi jaanta kya hai tuke gaadi ka naam.",
+      "prompt_tokens": 446,
+      "first_token_s": 3.4530000000086147,
+      "total_s": 3.812000000005355
+     }
+    ],
+    "group": "questions"
+   },
+   "Q11": {
+    "id": "Q11",
+    "text": "What's my dog called?",
+    "reply": "Your dog is called Bruno.",
+    "turn_s": 6.076681499980623,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"None of the specified agents are needed to answer this question.\"}",
+      "prompt_tokens": 240,
+      "first_token_s": 2.422000000020489,
+      "total_s": 2.922000000020489
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Your dog is called Bruno.",
+      "prompt_tokens": 418,
+      "first_token_s": 3.0,
+      "total_s": 3.140999999974156
+     }
+    ],
+    "group": "questions"
+   },
+   "Q12": {
+    "id": "Q12",
+    "text": "Main chai kaise peeta hoon?",
+    "reply": "'prepare step-by-step guide on how to drink chai properly' aapki tasks list mein daal diya.",
+    "turn_s": 6.464764199976344,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "productivity"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"productivity\"], \"task\": \"Prepare a step-by-step guide on how to drink chai properly.\"}",
+      "prompt_tokens": 243,
+      "first_token_s": 2.3910000000032596,
+      "total_s": 3.0
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"add_task\": {\"title\": \"prepare step-by-step guide on how to drink chai properly\"}}",
+      "prompt_tokens": 342,
+      "first_token_s": 2.9839999999967404,
+      "total_s": 3.4530000000086147
+     }
+    ],
+    "group": "questions"
+   },
+   "Q13": {
+    "id": "Q13",
+    "text": "What's my favourite food?",
+    "reply": "Your favourite food is rajma chawal.",
+    "turn_s": 6.27548020001268,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"None of the specified agents are needed to answer the question about a user's favorite food.\"}",
+      "prompt_tokens": 240,
+      "first_token_s": 2.4219999999913853,
+      "total_s": 3.062999999994645
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Your favourite food is rajma chawal.",
+      "prompt_tokens": 426,
+      "first_token_s": 2.9690000000118744,
+      "total_s": 3.2030000000086147
+     }
+    ],
+    "group": "questions"
+   },
+   "Q14": {
+    "id": "Q14",
+    "text": "Mere papa kya karte the?",
+    "reply": "Mere papa retired teacher the.",
+    "turn_s": 16.078299500019057,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Search about what my father used to do.\"}",
+      "prompt_tokens": 244,
+      "first_token_s": 2.4690000000118744,
+      "total_s": 2.937999999994645
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"mere papa kya karte the\", \"max_results\": 5}}",
+      "prompt_tokens": 258,
+      "first_token_s": 2.7039999999979045,
+      "total_s": 3.2660000000032596
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"The search query about what my father used to do did not yield relevant results. The returned results pertain to weather in Pune and weekend trips to Lonavala, and do not address the activities of a father. No specific information about a person's past activities was found in the provided data sources.\"}}",
+      "prompt_tokens": 450,
+      "first_token_s": 3.5,
+      "total_s": 5.187000000005355
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Mere papa retired teacher the.",
+      "prompt_tokens": 574,
+      "first_token_s": 4.437000000005355,
+      "total_s": 4.625
+     }
+    ],
+    "group": "questions"
+   },
+   "Q15": {
+    "id": "Q15",
+    "text": "Do I like scary films?",
+    "reply": "No, you don't like scary films. You prefer comedy movies.",
+    "turn_s": 6.389217999996617,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"None\"}",
+      "prompt_tokens": 240,
+      "first_token_s": 2.452999999979511,
+      "total_s": 2.702999999979511
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "No, you don't like scary films. You prefer comedy movies.",
+      "prompt_tokens": 425,
+      "first_token_s": 3.3440000000118744,
+      "total_s": 3.672000000020489
+     }
+    ],
+    "group": "questions"
+   },
+   "X01": {
+    "id": "X01",
+    "text": "What's my mother's name?",
+    "reply": "I don't know your mother's name.",
+    "turn_s": 6.159066599997459,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"I cannot provide personal information such as your mother's name.\"}",
+      "prompt_tokens": 241,
+      "first_token_s": 2.3440000000118744,
+      "total_s": 2.8440000000118744
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "I don't know your mother's name.",
+      "prompt_tokens": 426,
+      "first_token_s": 3.0780000000086147,
+      "total_s": 3.297000000020489
+     }
+    ],
+    "group": "unanswerable"
+   },
+   "X02": {
+    "id": "X02",
+    "text": "Mera passport number kya hai?",
+    "reply": "Mera passport number nahi hai.",
+    "turn_s": 6.106128500017803,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"I cannot provide personal information such as a passport number.\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.35999999998603,
+      "total_s": 2.8440000000118744
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Mera passport number nahi hai.",
+      "prompt_tokens": 451,
+      "first_token_s": 3.047000000020489,
+      "total_s": 3.234000000025844
+     }
+    ],
+    "group": "unanswerable"
+   },
+   "X03": {
+    "id": "X03",
+    "text": "Which school did I go to?",
+    "reply": "I don't know which school you went to. That information is not in the facts or memories provided.",
+    "turn_s": 21.38678569998592,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Find out which school I attended.\"}",
+      "prompt_tokens": 241,
+      "first_token_s": 2.4839999999967404,
+      "total_s": 2.9059999999881256
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"how to find out which school I attended\", \"max_results\": 5}}",
+      "prompt_tokens": 253,
+      "first_token_s": 2.6719999999913853,
+      "total_s": 3.2660000000032596
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"how to find out my own school attendance record\", \"max_results\": 5}}",
+      "prompt_tokens": 445,
+      "first_token_s": 3.5780000000086147,
+      "total_s": 4.1710000000020955
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"I cannot determine which school you attended based on the provided search results. The results are unrelated to personal school attendance records. To find out which school you attended, you would need to consult personal records, such as school documents, enrollment records, or communications from your family or past school contacts.\"}}",
+      "prompt_tokens": 638,
+      "first_token_s": 3.5309999999881256,
+      "total_s": 5.203000000008615
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "I don't know which school you went to. That information is not in the facts or memories provided.",
+      "prompt_tokens": 720,
+      "first_token_s": 5.265999999974156,
+      "total_s": 5.796999999991385
+     }
+    ],
+    "group": "unanswerable"
+   },
+   "X04": {
+    "id": "X04",
+    "text": "Mera favourite colour kaunsa hai?",
+    "reply": "Mera favourite colour kaunsa hai? - Main nahi jaanta, kabhi nahi kaha tha.",
+    "turn_s": 6.712079600023571,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"None\"}",
+      "prompt_tokens": 243,
+      "first_token_s": 2.4070000000065193,
+      "total_s": 2.6410000000032596
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Mera favourite colour kaunsa hai? - Main nahi jaanta, kabhi nahi kaha tha.",
+      "prompt_tokens": 453,
+      "first_token_s": 3.4839999999967404,
+      "total_s": 4.0460000000020955
+     }
+    ],
+    "group": "unanswerable"
+   },
+   "X05": {
+    "id": "X05",
+    "text": "Do I have any cousins in Delhi?",
+    "reply": "I don't have any information about cousins in Delhi.",
+    "turn_s": 15.808675000007497,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Search for cousins of the user in Delhi\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.422000000020489,
+      "total_s": 2.875
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"cousins in Delhi\", \"max_results\": 5}}",
+      "prompt_tokens": 256,
+      "first_token_s": 2.687000000005355,
+      "total_s": 3.187000000005355
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"A web search for 'cousins in Delhi' did not yield relevant results. The search results pertained to weather in Pune and travel tips for Lonavala, with no information about family connections or cousins in Delhi. Therefore, no evidence or data was found to confirm the existence of cousins in Delhi.\"}}",
+      "prompt_tokens": 445,
+      "first_token_s": 3.5320000000065193,
+      "total_s": 5.282000000006519
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "I don't have any information about cousins in Delhi.",
+      "prompt_tokens": 559,
+      "first_token_s": 4.14100000000326,
+      "total_s": 4.422000000020489
+     }
+    ],
+    "group": "unanswerable"
+   }
+  },
+  "questions": [
+   {
+    "id": "Q01",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q02",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q03",
+    "gate": true,
+    "rank": 2,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q04",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q05",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q06",
+    "gate": true,
+    "rank": 3,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q07",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q08",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q09",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q10",
+    "gate": true,
+    "rank": null,
+    "hit5": false,
+    "hit3": false
+   },
+   {
+    "id": "Q11",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q12",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q13",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q14",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q15",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   }
+  ],
+  "unanswerable": [
+   {
+    "id": "X01",
+    "text": "What's my mother's name?",
+    "reply": "I don't know your mother's name.",
+    "gate": true,
+    "dont_know": true
+   },
+   {
+    "id": "X02",
+    "text": "Mera passport number kya hai?",
+    "reply": "Mera passport number nahi hai.",
+    "gate": true,
+    "dont_know": false
+   },
+   {
+    "id": "X03",
+    "text": "Which school did I go to?",
+    "reply": "I don't know which school you went to. That information is not in the facts or memories provided.",
+    "gate": true,
+    "dont_know": true
+   },
+   {
+    "id": "X04",
+    "text": "Mera favourite colour kaunsa hai?",
+    "reply": "Mera favourite colour kaunsa hai? - Main nahi jaanta, kabhi nahi kaha tha.",
+    "gate": true,
+    "dont_know": false
+   },
+   {
+    "id": "X05",
+    "text": "Do I have any cousins in Delhi?",
+    "reply": "I don't have any information about cousins in Delhi.",
+    "gate": true,
+    "dont_know": true
+   }
+  ],
+  "parts": [
+   [
+    "lasting facts stored: 32/32 = 1.00 (min 0.90)",
+    true
+   ],
+   [
+    "plans/events stored: 0 (max 0)",
+    true
+   ],
+   [
+    "cued updates replaced: 4/4",
+    true
+   ],
+   [
+    "uncued same-topic messages that replaced: 0/3",
+    true
+   ],
+   [
+    "Recall@5: 14/15 = 0.93 (min 0.90)",
+    true
+   ],
+   [
+    "unanswerable replies with a don't-know phrase: 3/5; without one (the user judges): ['X02', 'X04']",
+    null
+   ]
+  ]
+ },
+ "fixround": {
+  "machine": "Machine: laptop (GPU: NVIDIA GeForce GTX 1650, 4096 MiB); power: plugged in (battery 100 %)",
+  "commit": "5059b58",
+  "db": "C:/Users/dell/AppData/Local/Temp/leo_evals/m2_3b_memory_check_2026-11-26_fix.db",
+  "rows": {
+   "1": [
+    "blood_group",
+    "My blood group is B positive.",
+    1,
+    null
+   ],
+   "2": [
+    "job_role",
+    "Main ek startup mein software tester hoon.",
+    0,
+    31
+   ],
+   "3": [
+    "home_city",
+    "I live in Pune, near Baner.",
+    0,
+    30
+   ],
+   "4": [
+    "peanut_allergy",
+    "Mujhe peanuts se allergy hai.",
+    1,
+    null
+   ],
+   "5": [
+    "diet",
+    "I'm vegetarian.",
+    0,
+    29
+   ],
+   "6": [
+    "sister_name",
+    "Meri behen ka naam Kavya hai.",
+    1,
+    null
+   ],
+   "7": [
+    "brother_name",
+    "My brother's name is Arjun.",
+    1,
+    null
+   ],
+   "8": [
+    "tea_sugar_preference",
+    "Mujhe chai bina cheeni ke pasand hai.",
+    1,
+    null
+   ],
+   "9": [
+    "car_make_model",
+    "I drive a white Honda City.",
+    1,
+    null
+   ],
+   "10": [
+    "doctor_name",
+    "Mera doctor Dr. Mehta hai, Kothrud wala.",
+    1,
+    null
+   ],
+   "11": [
+    "favorite_cricket_team",
+    "I support Mumbai Indians in the IPL.",
+    0,
+    39
+   ],
+   "12": [
+    "languages_known",
+    "Main Marathi aur Hindi dono bolta hoon.",
+    1,
+    null
+   ],
+   "13": [
+    "car_make_model",
+    "My work laptop is a ThinkPad.",
+    1,
+    null
+   ],
+   "14": [
+    "movie_preference",
+    "Mujhe horror movies pasand nahi hain.",
+    1,
+    null
+   ],
+   "15": [
+    "reminder_preference",
+    "I prefer reminders as phone notifications, not voice.",
+    1,
+    null
+   ],
+   "16": [
+    "gym",
+    "Mera gym Gold's Gym hai, Aundh mein.",
+    0,
+    32
+   ],
+   "17": [
+    "doctor_name",
+    "My manager is called Priya.",
+    1,
+    null
+   ],
+   "18": [
+    "hand_preference",
+    "Main left-handed hoon.",
+    1,
+    null
+   ],
+   "19": [
+    "hobby",
+    "I'm learning to play the guitar.",
+    0,
+    40
+   ],
+   "20": [
+    "pet_name",
+    "Mere dog ka naam Bruno hai.",
+    1,
+    null
+   ],
+   "21": [
+    "coffee_preference",
+    "I don't drink coffee.",
+    1,
+    null
+   ],
+   "22": [
+    "food_preference",
+    "Mera favourite khana rajma chawal hai.",
+    1,
+    null
+   ],
+   "23": [
+    "car_make_model",
+    "I use an iPhone.",
+    0,
+    41
+   ],
+   "24": [
+    "job_role",
+    "Mere papa retired teacher hain.",
+    1,
+    null
+   ],
+   "25": [
+    "job_role",
+    "I usually work from home.",
+    1,
+    null
+   ],
+   "26": [
+    "peanut_allergy",
+    "I'm also allergic to dust.",
+    1,
+    null
+   ],
+   "27": [
+    "sister_name",
+    "Meri choti behen ka naam Isha hai.",
+    1,
+    null
+   ],
+   "28": [
+    "movie_preference",
+    "Mujhe comedy movies bahut pasand hain.",
+    1,
+    null
+   ],
+   "29": [
+    "diet",
+    "I'm not vegetarian anymore, I eat chicken now.",
+    1,
+    null
+   ],
+   "30": [
+    "home_city",
+    "I moved to Bangalore last month.",
+    1,
+    null
+   ],
+   "31": [
+    "job_role",
+    "Ab main tester nahi hoon, ab developer hoon.",
+    1,
+    null
+   ],
+   "32": [
+    "gym",
+    "Maine Gold's Gym chhod diya, ab ghar pe workout karta hoon.",
+    1,
+    null
+   ],
+   "33": [
+    "meeting_preference",
+    "Mujhe meetings 11 baje ke baad pasand hain.",
+    1,
+    null
+   ],
+   "34": [
+    "wake_time",
+    "Main roz subah 6 baje uthta hoon.",
+    1,
+    null
+   ],
+   "35": [
+    "mother_birthday",
+    "My mother's birthday is on 12 March.",
+    1,
+    null
+   ],
+   "36": [
+    "wake_time",
+    "I'm going to the bank this afternoon.",
+    1,
+    null
+   ],
+   "37": [
+    "brother_name",
+    "My brother Arjun is an engineer.",
+    1,
+    null
+   ],
+   "38": [
+    "food_preference",
+    "Mujhe chai ke saath biscuit bhi pasand hai.",
+    1,
+    null
+   ],
+   "39": [
+    "favorite_cricket_team",
+    "I no longer support Mumbai Indians, I support CSK now.",
+    1,
+    null
+   ],
+   "40": [
+    "hobby",
+    "Ab main guitar nahi seekh raha, piano seekh raha hoon.",
+    1,
+    null
+   ],
+   "41": [
+    "car_make_model",
+    "I don't use an iPhone anymore, I switched to a Pixel.",
+    1,
+    null
+   ]
+  },
+  "embedder_load_s": 66.22674919999554,
+  "warm_up_s": 9.98499999998603,
+  "small_talk": [
+   {
+    "id": "S1",
+    "text": "Main theek hoon",
+    "reply": "Tum theek ho! Kya karna hai? 😊",
+    "turn_s": 5.770715599996038,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Acknowledge user's well-being\"}",
+      "prompt_tokens": 239,
+      "first_token_s": 2.3589999999967404,
+      "total_s": 2.7179999999934807
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Tum theek ho! Kya karna hai? 😊",
+      "prompt_tokens": 323,
+      "first_token_s": 2.6719999999913853,
+      "total_s": 3.0
+     }
+    ]
+   },
+   {
+    "id": "S2",
+    "text": "I agree",
+    "reply": "Thanks for agreeing! 😊",
+    "turn_s": 5.229068199987523,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Acknowledged your agreement.\"}",
+      "prompt_tokens": 236,
+      "first_token_s": 2.312000000005355,
+      "total_s": 2.687000000005355
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Thanks for agreeing! 😊",
+      "prompt_tokens": 300,
+      "first_token_s": 2.3589999999967404,
+      "total_s": 2.514999999984866
+     }
+    ]
+   },
+   {
+    "id": "S3",
+    "text": "I'm fine, thanks",
+    "reply": "You're welcome! 😊",
+    "turn_s": 5.4338699000072666,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"No action needed\"}",
+      "prompt_tokens": 239,
+      "first_token_s": 2.4690000000118744,
+      "total_s": 2.75
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "You're welcome! 😊",
+      "prompt_tokens": 303,
+      "first_token_s": 2.5,
+      "total_s": 2.6559999999881256
+     }
+    ]
+   },
+   {
+    "id": "S4",
+    "text": "I think so",
+    "reply": "I see. Let me know if you need anything else!",
+    "turn_s": 5.3519516000233125,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Acknowledged your thought.\"}",
+      "prompt_tokens": 237,
+      "first_token_s": 2.2660000000032596,
+      "total_s": 2.6570000000065193
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "I see. Let me know if you need anything else!",
+      "prompt_tokens": 301,
+      "first_token_s": 2.389999999984866,
+      "total_s": 2.687000000005355
+     }
+    ]
+   },
+   {
+    "id": "S5",
+    "text": "Haan main aa raha hoon",
+    "reply": "Haan, aaya! Kya kar rahe hain?",
+    "turn_s": 5.659580699983053,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Acknowledged your presence.\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.312000000005355,
+      "total_s": 2.64000000001397
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Haan, aaya! Kya kar rahe hain?",
+      "prompt_tokens": 326,
+      "first_token_s": 2.6719999999913853,
+      "total_s": 3.0
+     }
+    ]
+   }
+  ],
+  "records": {
+   "P09": {
+    "id": "P09",
+    "text": "Agle Monday mujhe Delhi jaana hai.",
+    "reply": "Agla Monday Delhi jana hai? Kis time pe?",
+    "turn_s": 9.50865010000416,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "calendar"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"calendar\"], \"task\": \"Monday ko Delhi jana wala event calendar mein daal do\"}",
+      "prompt_tokens": 244,
+      "first_token_s": 2.51500000001397,
+      "total_s": 3.0780000000086147
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"create_event\": {\"title\": \"Travel to Delhi\"}}",
+      "prompt_tokens": 355,
+      "first_token_s": 3.0469999999913853,
+      "total_s": 3.327999999979511
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Agla Monday Delhi jana hai? Kis time pe?",
+      "prompt_tokens": 361,
+      "first_token_s": 2.75,
+      "total_s": 3.0310000000172295
+     }
+    ],
+    "group": "fix_plans"
+   },
+   "P10": {
+    "id": "P10",
+    "text": "I'm going to the bank this afternoon.",
+    "reply": "Kis din aur kis time pe?",
+    "turn_s": 14.914280500001041,
+    "created": [
+     36
+    ],
+    "replaced": [],
+    "subjects": [
+     "wake_time"
+    ],
+    "agents": [
+     "calendar"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a bank visit event for this afternoon to my calendar.\"}",
+      "prompt_tokens": 243,
+      "first_token_s": 2.4690000000118744,
+      "total_s": 3.0160000000032596
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"create_event\": {\"title\": \"Bank Visit\"}}",
+      "prompt_tokens": 371,
+      "first_token_s": 3.1570000000065193,
+      "total_s": 3.4070000000065193
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Kis din aur kis time pe?",
+      "prompt_tokens": 344,
+      "first_token_s": 2.60999999998603,
+      "total_s": 2.812999999994645
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"wake_time\"}",
+      "prompt_tokens": 393,
+      "first_token_s": 5.187000000005355,
+      "total_s": 5.562000000005355
+     }
+    ],
+    "group": "fix_plans"
+   },
+   "P11": {
+    "id": "P11",
+    "text": "Kal raat main late aaunga.",
+    "reply": "Kis time pe?",
+    "turn_s": 9.322134099988034,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "calendar"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"calendar\"], \"task\": \"Mark late arrival for tonight in the calendar.\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.4530000000086147,
+      "total_s": 2.922000000020489
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"create_event\": {\"title\": \"Late Arrival\"}}",
+      "prompt_tokens": 380,
+      "first_token_s": 3.26500000001397,
+      "total_s": 3.51500000001397
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Kis time pe?",
+      "prompt_tokens": 359,
+      "first_token_s": 2.7030000000086147,
+      "total_s": 2.8280000000086147
+     }
+    ],
+    "group": "fix_plans"
+   },
+   "S01": {
+    "id": "S01",
+    "text": "Main bilkul theek hoon, thanks.",
+    "reply": "Aap theek hain, thanks! 😊",
+    "turn_s": 5.711478999990504,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Acknowledge user's well-being\"}",
+      "prompt_tokens": 244,
+      "first_token_s": 2.4060000000172295,
+      "total_s": 2.76500000001397
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Aap theek hain, thanks! 😊",
+      "prompt_tokens": 328,
+      "first_token_s": 2.6719999999913853,
+      "total_s": 2.9219999999913853
+     }
+    ],
+    "group": "fix_small_talk"
+   },
+   "S02": {
+    "id": "S02",
+    "text": "I see, okay.",
+    "reply": "Got it. How can I help you today?",
+    "turn_s": 5.594044799974654,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Understood, waiting for your next instruction.\"}",
+      "prompt_tokens": 239,
+      "first_token_s": 2.4210000000020955,
+      "total_s": 2.8429999999934807
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Got it. How can I help you today?",
+      "prompt_tokens": 303,
+      "first_token_s": 2.4679999999934807,
+      "total_s": 2.7030000000086147
+     }
+    ],
+    "group": "fix_small_talk"
+   },
+   "S03": {
+    "id": "S03",
+    "text": "Haan, sahi hai.",
+    "reply": "Haan, sahi hai! 😊",
+    "turn_s": 5.423654900019756,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Acknowledged.\"}",
+      "prompt_tokens": 241,
+      "first_token_s": 2.3280000000086147,
+      "total_s": 2.610000000015134
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Haan, sahi hai! 😊",
+      "prompt_tokens": 325,
+      "first_token_s": 2.5940000000118744,
+      "total_s": 2.797000000020489
+     }
+    ],
+    "group": "fix_small_talk"
+   },
+   "S04": {
+    "id": "S04",
+    "text": "I'm good.",
+    "reply": "I'm glad to hear that! How can I help you today?",
+    "turn_s": 5.5131492000073195,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Acknowledge user's well-being\"}",
+      "prompt_tokens": 238,
+      "first_token_s": 2.3280000000086147,
+      "total_s": 2.672000000020489
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "I'm glad to hear that! How can I help you today?",
+      "prompt_tokens": 302,
+      "first_token_s": 2.4690000000118744,
+      "total_s": 2.812999999994645
+     }
+    ],
+    "group": "fix_small_talk"
+   },
+   "S05": {
+    "id": "S05",
+    "text": "Mujhe nahi pata.",
+    "reply": "Mujhe nahi pata bhai, kya chahe?",
+    "turn_s": 6.242301799997222,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Nahi pata ka kya matlab hai? Kriya ya sawal batao taaki main madad kar sakun.\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.4070000000065193,
+      "total_s": 3.2820000000065193
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Mujhe nahi pata bhai, kya chahe?",
+      "prompt_tokens": 326,
+      "first_token_s": 2.5780000000086147,
+      "total_s": 2.937999999994645
+     }
+    ],
+    "group": "fix_small_talk"
+   },
+   "S06": {
+    "id": "S06",
+    "text": "I'm just checking.",
+    "reply": "Sure! Anything specific you'd like to check on?",
+    "turn_s": 5.538745099998778,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"No action needed.\"}",
+      "prompt_tokens": 239,
+      "first_token_s": 2.4060000000172295,
+      "total_s": 2.7190000000118744
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Sure! Anything specific you'd like to check on?",
+      "prompt_tokens": 303,
+      "first_token_s": 2.562000000005355,
+      "total_s": 2.812000000005355
+     }
+    ],
+    "group": "fix_small_talk"
+   },
+   "N4": {
+    "id": "N4",
+    "text": "My brother Arjun is an engineer.",
+    "reply": "That's interesting! What would you like to know about Arjun or engineering?",
+    "turn_s": 10.898928699985845,
+    "created": [
+     37
+    ],
+    "replaced": [],
+    "subjects": [
+     "brother_name"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Note that Arjun is an engineer.\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.452999999979511,
+      "total_s": 2.8589999999967404
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "That's interesting! What would you like to know about Arjun or engineering?",
+      "prompt_tokens": 306,
+      "first_token_s": 2.4839999999967404,
+      "total_s": 2.875
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"brother_name\"}",
+      "prompt_tokens": 387,
+      "first_token_s": 4.703000000008615,
+      "total_s": 5.110000000015134
+     }
+    ],
+    "group": "fix_same_topic_no_cue"
+   },
+   "N5": {
+    "id": "N5",
+    "text": "Mujhe chai ke saath biscuit bhi pasand hai.",
+    "reply": "Chai aur biscuit ke saath hi pasand hai! 😊",
+    "turn_s": 11.662171700008912,
+    "created": [
+     38
+    ],
+    "replaced": [],
+    "subjects": [
+     "food_preference"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"Note that chai with biscuits is a preferred combination.\"}",
+      "prompt_tokens": 249,
+      "first_token_s": 2.5469999999913853,
+      "total_s": 3.0
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Chai aur biscuit ke saath hi pasand hai! 😊",
+      "prompt_tokens": 333,
+      "first_token_s": 2.7810000000172295,
+      "total_s": 3.125
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 0, \"subject\": \"food_preference\"}",
+      "prompt_tokens": 398,
+      "first_token_s": 5.10999999998603,
+      "total_s": 5.48499999998603
+     }
+    ],
+    "group": "fix_same_topic_no_cue"
+   },
+   "U5": {
+    "id": "U5",
+    "text": "I no longer support Mumbai Indians, I support CSK now.",
+    "reply": "Got it! You're now supporting CSK instead of Mumbai Indians.",
+    "turn_s": 11.709844099998008,
+    "created": [
+     39
+    ],
+    "replaced": [
+     11
+    ],
+    "subjects": [
+     "favorite_cricket_team"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"No action needed.\"}",
+      "prompt_tokens": 247,
+      "first_token_s": 2.547000000020489,
+      "total_s": 2.8440000000118744
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Got it! You're now supporting CSK instead of Mumbai Indians.",
+      "prompt_tokens": 311,
+      "first_token_s": 2.515999999974156,
+      "total_s": 2.8439999999827705
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 1, \"subject\": \"favorite_cricket_team\"}",
+      "prompt_tokens": 473,
+      "first_token_s": 5.5,
+      "total_s": 5.922000000020489
+     }
+    ],
+    "group": "fix_updates"
+   },
+   "U6": {
+    "id": "U6",
+    "text": "Ab main guitar nahi seekh raha, piano seekh raha hoon.",
+    "reply": "'piano learning' aapki tasks list mein daal diya.",
+    "turn_s": 15.210080800025025,
+    "created": [
+     40
+    ],
+    "replaced": [
+     19
+    ],
+    "subjects": [
+     "hobby"
+    ],
+    "agents": [
+     "productivity"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"productivity\"], \"task\": \"Piano learning added to your task list.\"}",
+      "prompt_tokens": 252,
+      "first_token_s": 2.437000000005355,
+      "total_s": 2.9530000000086147
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"add_task\": {\"title\": \"piano learning\"}}",
+      "prompt_tokens": 346,
+      "first_token_s": 2.9219999999913853,
+      "total_s": 3.2339999999967404
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"Added task 'piano learning' to the task list.\"}}",
+      "prompt_tokens": 392,
+      "first_token_s": 2.5780000000086147,
+      "total_s": 3.0469999999913853
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 1, \"subject\": \"hobby\"}",
+      "prompt_tokens": 457,
+      "first_token_s": 5.51500000001397,
+      "total_s": 5.89000000001397
+     }
+    ],
+    "group": "fix_updates"
+   },
+   "U7": {
+    "id": "U7",
+    "text": "I don't use an iPhone anymore, I switched to a Pixel.",
+    "reply": "That's great! You're now using a Pixel.",
+    "turn_s": 11.843103799998062,
+    "created": [
+     41
+    ],
+    "replaced": [
+     23
+    ],
+    "subjects": [
+     "car_make_model"
+    ],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"None\"}",
+      "prompt_tokens": 248,
+      "first_token_s": 2.5309999999881256,
+      "total_s": 2.764999999984866
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "That's great! You're now using a Pixel.",
+      "prompt_tokens": 312,
+      "first_token_s": 2.4690000000118744,
+      "total_s": 2.7190000000118744
+     },
+     {
+      "node": "memory",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"replaces\": 1, \"subject\": \"car_make_model\"}",
+      "prompt_tokens": 466,
+      "first_token_s": 5.546999999991385,
+      "total_s": 5.953000000008615
+     }
+    ],
+    "group": "fix_updates"
+   },
+   "R1": {
+    "id": "R1",
+    "text": "Is saal se main Marathi classes le raha hoon.",
+    "reply": "'Marathi classes' aapki tasks list mein daal diya.",
+    "turn_s": 6.315789999993285,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "productivity"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"productivity\"], \"task\": \"Add Marathi classes to your task list for this year.\"}",
+      "prompt_tokens": 248,
+      "first_token_s": 2.5,
+      "total_s": 3.062000000005355
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"add_task\": {\"title\": \"Marathi classes\"}}",
+      "prompt_tokens": 346,
+      "first_token_s": 2.922000000020489,
+      "total_s": 3.2030000000086147
+     }
+    ],
+    "group": "fix_reported_only"
+   },
+   "Q16": {
+    "id": "Q16",
+    "text": "Which phone do I use?",
+    "reply": "Added 'suggest phone based on needs and budget' to your tasks.",
+    "turn_s": 6.261046100000385,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "productivity"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"productivity\"], \"task\": \"Suggest a phone based on my needs and budget.\"}",
+      "prompt_tokens": 240,
+      "first_token_s": 2.375,
+      "total_s": 2.922000000020489
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"add_task\": {\"title\": \"suggest phone based on needs and budget\"}}",
+      "prompt_tokens": 337,
+      "first_token_s": 2.9219999999913853,
+      "total_s": 3.312000000005355
+     }
+    ],
+    "group": "fix_questions"
+   },
+   "Q17": {
+    "id": "Q17",
+    "text": "Mera bhai kya karta hai?",
+    "reply": "Mera bhai ka kya karta hai, yeh info nahi hai.",
+    "turn_s": 15.77779510000255,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Find out what my brother does\"}",
+      "prompt_tokens": 244,
+      "first_token_s": 2.4219999999913853,
+      "total_s": 2.812999999994645
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"mera bhai kya karta hai\", \"max_results\": 5}}",
+      "prompt_tokens": 256,
+      "first_token_s": 2.6559999999881256,
+      "total_s": 3.265999999974156
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"The search results did not provide any information about what your brother does. The results pertain to weather in Pune and travel tips for Lonavala, which are unrelated to the query.\"}}",
+      "prompt_tokens": 449,
+      "first_token_s": 3.562999999994645,
+      "total_s": 4.64100000000326
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Mera bhai ka kya karta hai, yeh info nahi hai.",
+      "prompt_tokens": 574,
+      "first_token_s": 4.578000000008615,
+      "total_s": 5.01600000000326
+     }
+    ],
+    "group": "fix_questions"
+   },
+   "Q18": {
+    "id": "Q18",
+    "text": "What instrument am I learning?",
+    "reply": "You are learning piano.",
+    "turn_s": 6.522957400011364,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"None of the specified agents are needed to answer the question about the instrument being learned.\"}",
+      "prompt_tokens": 240,
+      "first_token_s": 2.4219999999913853,
+      "total_s": 3.0469999999913853
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "You are learning piano.",
+      "prompt_tokens": 434,
+      "first_token_s": 3.3440000000118744,
+      "total_s": 3.4690000000118744
+     }
+    ],
+    "group": "fix_questions"
+   },
+   "Q19": {
+    "id": "Q19",
+    "text": "Main kaunsi IPL team support karta hoon?",
+    "reply": "You support CSK now.",
+    "turn_s": 15.981479100009892,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Find which IPL team I support based on common fan affiliations or public data.\"}",
+      "prompt_tokens": 246,
+      "first_token_s": 2.39000000001397,
+      "total_s": 3.0310000000172295
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"common IPL team fan affiliations and public support data\", \"max_results\": 5}}",
+      "prompt_tokens": 267,
+      "first_token_s": 2.6410000000032596,
+      "total_s": 3.2660000000032596
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"No relevant data was found about common IPL team fan affiliations or public support data in the search results. The provided results pertain to Pune monsoon and Lonavala travel, not IPL team support. Further research or specific fan community data would be needed to identify which IPL team a person supports.\"}}",
+      "prompt_tokens": 461,
+      "first_token_s": 3.5940000000118744,
+      "total_s": 5.25
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "You support CSK now.",
+      "prompt_tokens": 569,
+      "first_token_s": 4.26600000000326,
+      "total_s": 4.407000000006519
+     }
+    ],
+    "group": "fix_questions"
+   },
+   "Q20": {
+    "id": "Q20",
+    "text": "Am I allergic to anything?",
+    "reply": "Yes, you are allergic to peanuts and dust.",
+    "turn_s": 13.884152299986454,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Search for common allergies and symptoms\"}",
+      "prompt_tokens": 240,
+      "first_token_s": 2.4690000000118744,
+      "total_s": 2.85999999998603
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"common allergies and symptoms\", \"max_results\": 5}}",
+      "prompt_tokens": 252,
+      "first_token_s": 2.6719999999913853,
+      "total_s": 3.1410000000032596
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"The search for common allergies and symptoms did not yield relevant results. The provided results are about Pune monsoon and Lonavala weekend trips, which are unrelated to allergies. No trustworthy information about common allergies or symptoms was found in the search results.\"}}",
+      "prompt_tokens": 440,
+      "first_token_s": 3.5469999999913853,
+      "total_s": 4.921999999991385
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Yes, you are allergic to peanuts and dust.",
+      "prompt_tokens": 543,
+      "first_token_s": 2.6710000000020955,
+      "total_s": 2.9059999999881256
+     }
+    ],
+    "group": "fix_questions"
+   },
+   "Q21": {
+    "id": "Q21",
+    "text": "Mere manager ka naam batao.",
+    "reply": "Mere manager ka naam nahi hai.",
+    "turn_s": 13.919767499988666,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Search for the name of the manager of the user's organization or team.\"}",
+      "prompt_tokens": 243,
+      "first_token_s": 2.375,
+      "total_s": 3.0
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"mera manager ka naam batao\", \"max_results\": 5}}",
+      "prompt_tokens": 263,
+      "first_token_s": 2.7339999999967404,
+      "total_s": 3.2969999999913853
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"No relevant information was found about the name of the manager of the user's organization or team in the search results. The results pertain to weather and travel guides and do not address personal or organizational management details.\"}}",
+      "prompt_tokens": 455,
+      "first_token_s": 3.452999999979511,
+      "total_s": 4.655999999988126
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Mere manager ka naam nahi hai.",
+      "prompt_tokens": 494,
+      "first_token_s": 2.7190000000118744,
+      "total_s": 2.937999999994645
+     }
+    ],
+    "group": "fix_questions"
+   },
+   "Q22": {
+    "id": "Q22",
+    "text": "What's my sister called?",
+    "reply": "Your sister is called Kavya.",
+    "turn_s": 15.262047500000335,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Find out the name of the user's sister\"}",
+      "prompt_tokens": 240,
+      "first_token_s": 2.3439999999827705,
+      "total_s": 2.812999999994645
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"how to find out the name of my sister\", \"max_results\": 5}}",
+      "prompt_tokens": 255,
+      "first_token_s": 2.6410000000032596,
+      "total_s": 3.2660000000032596
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"I attempted to search for information on how to find out the name of my sister, but the results did not provide any relevant information. The search results were about Pune monsoon and Lonavala weekend trips, which are unrelated to the query. There is no publicly available or reliable method to determine a person's sibling's name without direct information from that person. Thus, the name of the user's sister cannot be determined from available data.\"}}",
+      "prompt_tokens": 448,
+      "first_token_s": 3.5940000000118744,
+      "total_s": 5.969000000011874
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Your sister is called Kavya.",
+      "prompt_tokens": 548,
+      "first_token_s": 3.0,
+      "total_s": 3.187000000005355
+     }
+    ],
+    "group": "fix_questions"
+   },
+   "Q23": {
+    "id": "Q23",
+    "text": "Mujhe kaunsa khana sabse zyada pasand hai?",
+    "reply": "Mujhe koi khana ki baat nahi hai, main kuch bhi nahi jaanta. 😊",
+    "turn_s": 15.539815099997213,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Search for the most popular food according to user preferences and taste trends.\"}",
+      "prompt_tokens": 251,
+      "first_token_s": 2.3910000000032596,
+      "total_s": 2.9839999999967404
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"most popular food according to user preferences and taste trends\", \"max_results\": 5}}",
+      "prompt_tokens": 270,
+      "first_token_s": 2.7820000000065193,
+      "total_s": 3.3910000000032596
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"The search for the most popular food according to user preferences and taste trends did not yield relevant results. The retrieved results pertain to monsoon weather in Pune and weekend trips in Lonavala, which are unrelated to food preferences or taste trends. No credible information about popular foods based on user preferences was found in the provided data sources.\"}}",
+      "prompt_tokens": 464,
+      "first_token_s": 3.5309999999881256,
+      "total_s": 5.405999999988126
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Mujhe koi khana ki baat nahi hai, main kuch bhi nahi jaanta. 😊",
+      "prompt_tokens": 586,
+      "first_token_s": 3.062000000005355,
+      "total_s": 3.7030000000086147
+     }
+    ],
+    "group": "fix_questions"
+   },
+   "Q24": {
+    "id": "Q24",
+    "text": "Do I take sugar in my tea?",
+    "reply": "No, you don't take sugar in your tea. You like tea without sugar.",
+    "turn_s": 14.199212300009094,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Find out whether adding sugar is recommended in tea\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.4839999999967404,
+      "total_s": 2.9530000000086147
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"is adding sugar recommended in tea\", \"max_results\": 5}}",
+      "prompt_tokens": 257,
+      "first_token_s": 2.7660000000032596,
+      "total_s": 3.297000000020489
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"The search results did not provide any information on whether adding sugar is recommended in tea. The results returned are about Pune monsoon and Lonavala weekend trips, which are unrelated to the topic.\"}}",
+      "prompt_tokens": 447,
+      "first_token_s": 3.5309999999881256,
+      "total_s": 4.702999999979511
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "No, you don't take sugar in your tea. You like tea without sugar.",
+      "prompt_tokens": 566,
+      "first_token_s": 2.7969999999913853,
+      "total_s": 3.2030000000086147
+     }
+    ],
+    "group": "fix_questions"
+   },
+   "Q25": {
+    "id": "Q25",
+    "text": "Main kahan rehta hoon?",
+    "reply": "Main kahan rehta hoon? - Main kahi bhi nahi pata, kyonki ye nahi bataya gaya.",
+    "turn_s": 7.208030800014967,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"No action needed. The user's location is not within the scope of available agents.\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.4679999999934807,
+      "total_s": 3.1089999999967404
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Main kahan rehta hoon? - Main kahi bhi nahi pata, kyonki ye nahi bataya gaya.",
+      "prompt_tokens": 444,
+      "first_token_s": 3.312000000005355,
+      "total_s": 4.062000000005355
+     }
+    ],
+    "group": "fix_questions"
+   },
+   "Q26": {
+    "id": "Q26",
+    "text": "What languages do I speak?",
+    "reply": "I speak Marathi and Hindi.",
+    "turn_s": 14.499400600005174,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Find out the languages I am capable of speaking.\"}",
+      "prompt_tokens": 240,
+      "first_token_s": 2.4530000000086147,
+      "total_s": 2.9690000000118744
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"list of languages I am capable of speaking\", \"max_results\": 1}}",
+      "prompt_tokens": 255,
+      "first_token_s": 2.6559999999881256,
+      "total_s": 3.2660000000032596
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"The search query about languages I am capable of speaking did not yield relevant results. The retrieved data is unrelated to the topic and appears to be about Pune's monsoon weather. There is no information available about the languages I can speak.\"}}",
+      "prompt_tokens": 378,
+      "first_token_s": 2.9690000000118744,
+      "total_s": 4.344000000011874
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "I speak Marathi and Hindi.",
+      "prompt_tokens": 491,
+      "first_token_s": 3.7189999999827705,
+      "total_s": 3.8910000000032596
+     }
+    ],
+    "group": "fix_questions"
+   },
+   "Q27": {
+    "id": "Q27",
+    "text": "Mere papa pehle kya the?",
+    "reply": "Mere papa pehle retired teacher the.",
+    "turn_s": 15.79895110000507,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Search about the previous occupation or roles of a person named 'Papa' in a general context.\"}",
+      "prompt_tokens": 245,
+      "first_token_s": 2.422000000020489,
+      "total_s": 3.1560000000172295
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"Papa previous occupation or roles\", \"max_results\": 5}}",
+      "prompt_tokens": 270,
+      "first_token_s": 2.889999999984866,
+      "total_s": 3.4059999999881256
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"No relevant information was found about the previous occupation or roles of a person named 'Papa' in a general context. The search results pertained to topics like monsoon in Pune and weekend trips in Lonavala, which are unrelated to the query.\"}}",
+      "prompt_tokens": 460,
+      "first_token_s": 3.6089999999967404,
+      "total_s": 5.092999999993481
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Mere papa pehle retired teacher the.",
+      "prompt_tokens": 572,
+      "first_token_s": 3.7969999999913853,
+      "total_s": 4.062000000005355
+     }
+    ],
+    "group": "fix_questions"
+   },
+   "X06": {
+    "id": "X06",
+    "text": "What's my wife's name?",
+    "reply": "I don't know your wife's name.",
+    "turn_s": 6.5655316000047605,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [], \"task\": \"I cannot provide personal information such as your wife's name.\"}",
+      "prompt_tokens": 241,
+      "first_token_s": 2.4690000000118744,
+      "total_s": 2.985000000015134
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "I don't know your wife's name.",
+      "prompt_tokens": 430,
+      "first_token_s": 3.3280000000086147,
+      "total_s": 3.547000000020489
+     }
+    ],
+    "group": "fix_unanswerable"
+   },
+   "X07": {
+    "id": "X07",
+    "text": "Meri height kitni hai?",
+    "reply": "Mera height kya hai, main nahi pata. 😊",
+    "turn_s": 14.78777190000983,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "research"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"research\"], \"task\": \"Search for the user's height\"}",
+      "prompt_tokens": 241,
+      "first_token_s": 2.4059999999881256,
+      "total_s": 2.812999999994645
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"web_search\": {\"query\": \"how to find my own height\", \"max_results\": 1}}",
+      "prompt_tokens": 253,
+      "first_token_s": 2.6559999999881256,
+      "total_s": 3.2189999999827705
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"done\": {\"summary\": \"I attempted to find information about how to determine one's own height, but the search result provided was unrelated to the query. No reliable source or method for finding personal height was found in the result. Personal height information is typically self-reported or measured, and not retrievable through general web searches.\"}}",
+      "prompt_tokens": 374,
+      "first_token_s": 2.9690000000118744,
+      "total_s": 4.6560000000172295
+     },
+     {
+      "node": "responder",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "Mera height kya hai, main nahi pata. 😊",
+      "prompt_tokens": 508,
+      "first_token_s": 3.672000000020489,
+      "total_s": 4.047000000020489
+     }
+    ],
+    "group": "fix_unanswerable"
+   },
+   "X08": {
+    "id": "X08",
+    "text": "When did I last visit a dentist?",
+    "reply": "Nothing on your calendar in Thu 26 Nov (whole day).",
+    "turn_s": 6.22605470000417,
+    "created": [],
+    "replaced": [],
+    "subjects": [],
+    "agents": [
+     "calendar"
+    ],
+    "calls": [
+     {
+      "node": "supervisor",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"agents\": [\"calendar\"], \"task\": \"Find the last dental visit in my calendar.\"}",
+      "prompt_tokens": 242,
+      "first_token_s": 2.390999999974156,
+      "total_s": 2.875
+     },
+     {
+      "node": "agent",
+      "provider": "ollama",
+      "fallback": null,
+      "text": "{\"get_events\": {\"range\": \"today\"}}",
+      "prompt_tokens": 367,
+      "first_token_s": 3.0469999999913853,
+      "total_s": 3.2969999999913853
+     }
+    ],
+    "group": "fix_unanswerable"
+   }
+  },
+  "questions": [
+   {
+    "id": "Q16",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q17",
+    "gate": true,
+    "rank": null,
+    "hit5": false,
+    "hit3": false
+   },
+   {
+    "id": "Q18",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q19",
+    "gate": true,
+    "rank": 3,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q20",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q21",
+    "gate": false,
+    "rank": 1,
+    "hit5": false,
+    "hit3": false
+   },
+   {
+    "id": "Q22",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q23",
+    "gate": true,
+    "rank": null,
+    "hit5": false,
+    "hit3": false
+   },
+   {
+    "id": "Q24",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q25",
+    "gate": true,
+    "rank": null,
+    "hit5": false,
+    "hit3": false
+   },
+   {
+    "id": "Q26",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   },
+   {
+    "id": "Q27",
+    "gate": true,
+    "rank": 1,
+    "hit5": true,
+    "hit3": true
+   }
+  ],
+  "unanswerable": [
+   {
+    "id": "X06",
+    "text": "What's my wife's name?",
+    "reply": "I don't know your wife's name.",
+    "gate": true,
+    "dont_know": true
+   },
+   {
+    "id": "X07",
+    "text": "Meri height kitni hai?",
+    "reply": "Mera height kya hai, main nahi pata. 😊",
+    "gate": true,
+    "dont_know": true
+   },
+   {
+    "id": "X08",
+    "text": "When did I last visit a dentist?",
+    "reply": "Nothing on your calendar in Thu 26 Nov (whole day).",
+    "gate": true,
+    "dont_know": false
+   }
+  ],
+  "parts": [
+   [
+    "cued updates replaced: 3/3 {'U5': True, 'U6': True, 'U7': True}",
+    true
+   ],
+   [
+    "uncued same-topic messages that replaced: none",
+    true
+   ],
+   [
+    "plans stored: ['P10']",
+    false
+   ],
+   [
+    "small-talk lines stored: none",
+    true
+   ],
+   [
+    "Recall@5 on Q16-Q27: 8/12 = 0.67 (min 0.90)",
+    false
+   ],
+   [
+    "unanswerable replies with a don't-know phrase: 2/3; without one (the user judges): ['X08']",
+    null
+   ]
+  ]
+ }
+}
