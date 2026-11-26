@@ -61,7 +61,8 @@ embedder:                          # shared embedder (section 8.1); CPU only, th
 memory:                            # long-term memory (M2.3, section 7)
   search_k: 5                      # nearest memories looked at for each message (Recall@5)
   recall_k: 3                      # at most 3 go into the reply prompt as hints
-  min_similarity: 0.80             # starting value, set before any run (not measured); a change is a logged change
+  min_similarity: 0.88             # M2.3 fix-round threshold rule (m2_3_fix_questions.yaml): smallest 2-decimal value above
+                                   # the highest fresh no-memory top-1 (0.874, m2_3_fix_threshold_2026-11-26.md); was 0.80
   candidate_subjects: 5            # subjects of the nearest memories shown to the extraction step
 
 agent:
