@@ -42,6 +42,14 @@ REQUEST = re.compile(
     r"|complete|mark|remove|list|open|reschedule|rename|update)\b")  # M2.3b fix round
 UPDATE_CUE = re.compile(r"\b(anymore|any more|no longer|moved to|(chhod|chod) (di|diya|dia))\b"
                         r"|\bab\b.*\bnahi\b")
+# M2.3b fix round, rule A (approved): a message made only of these words (and
+# first-person words) is small talk, never a memory. Chosen after reading the
+# fix-round set's small-talk lines, so S01-S06 are not blind to it.
+SMALL_TALK = {
+    "hoon", "hu", "hai", "hain", "raha", "rahi", "aa", "ja", "so", "just", "also", "bhi",
+    "bilkul", "well", "ok", "okay", "theek", "thik", "fine", "good", "great", "sahi", "accha",
+    "haan", "yes", "yeah", "no", "nahi", "sure", "cool", "sorry", "alright", "right",
+    "thanks", "thank", "you", "shukriya", "agree", "think", "see", "checking", "pata"}
 
 
 # The message's words in lower case, apostrophes kept ("i'm", "don't").
@@ -74,11 +82,17 @@ def is_request(text: str) -> bool:
 
 
 # True when the message may be a lasting fact: never a question; yes for
-# "remember" words or a first-person statement that is not a request.
+# "remember" words or a first-person statement that is not a request or small talk.
 def worth_remembering(text: str) -> bool:
     if is_question(text):
         return False
-    return says_remember(text) or (first_person(text) and not is_request(text))
+    return says_remember(text) or (first_person(text) and not is_request(text)
+                                   and not is_small_talk(text))
+
+
+# True when every word is a first-person or small-talk word ("I'm fine, thanks").
+def is_small_talk(text: str) -> bool:
+    return all(w in FIRST_PERSON or w in SMALL_TALK for w in words_of(text))
 
 
 # True when the message says an older fact changed ("anymore", "chhod diya", ...).

@@ -9,6 +9,7 @@ from leo.language.memory_words import (
     is_personal_question,
     is_question,
     is_request,
+    is_small_talk,
     worth_remembering,
 )
 
@@ -106,3 +107,17 @@ def test_personal_question_gate(text, personal):
 def test_hinglish_is_reads_as_a_question():
     assert is_question("Is saal main Goa ja raha hoon.")
     assert not worth_remembering("Is saal main Goa ja raha hoon.")
+
+
+# M2.3b fix round, rule A: small talk is not stored (none from the check sets).
+@pytest.mark.parametrize("text", ["I'm okay, thank you.", "Haan main theek hoon.",
+                                  "I see.", "Main bhi agree", "I'm sorry."])
+def test_small_talk_is_not_picked(text):
+    assert is_small_talk(text) and not worth_remembering(text)
+
+
+# A fact with one real word is not small talk.
+@pytest.mark.parametrize("text", ["I'm left-handed.", "Main shakahari hoon.",
+                                  "I'm good at chess.", "Mujhe nahi pasand spinach."])
+def test_facts_are_not_small_talk(text):
+    assert not is_small_talk(text) and worth_remembering(text)
