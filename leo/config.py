@@ -2,167 +2,56 @@
 
 config.yaml holds models, URLs and thresholds. .env holds secrets.
 Both are checked with Pydantic so a typo fails at startup, not mid-request.
+The section models live in leo/config_llm.py, config_sections.py and
+config_tools.py (split to keep files short); they are imported here, so
+callers keep importing everything from leo.config.
 """
 
 from pathlib import Path
-from typing import Literal
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+from leo.config_base import Strict
+from leo.config_llm import DesktopLLM, FallbackLLM, LLMConfig, PrimaryLLM
+from leo.config_sections import (
+    AgentConfig,
+    EmbedderConfig,
+    GraphConfig,
+    ServerConfig,
+    StorageConfig,
+    TracingConfig,
+)
+from leo.config_tools import CalendarConfig, LanguageConfig, ResearchConfig
+from leo.paths import PROJECT_ROOT
+
+__all__ = [
+    "CONFIG_PATH",
+    "ENV_PATH",
+    "PROJECT_ROOT",
+    "AgentConfig",
+    "CalendarConfig",
+    "DesktopLLM",
+    "EmbedderConfig",
+    "FallbackLLM",
+    "GraphConfig",
+    "LLMConfig",
+    "LanguageConfig",
+    "LeoConfig",
+    "PrimaryLLM",
+    "ResearchConfig",
+    "Secrets",
+    "ServerConfig",
+    "StorageConfig",
+    "Strict",
+    "TracingConfig",
+    "load_config",
+    "load_secrets",
+]
+
 CONFIG_PATH = PROJECT_ROOT / "config.yaml"
 ENV_PATH = PROJECT_ROOT / ".env"
-
-
-class Strict(BaseModel):
-    """Base for config sections: unknown keys are an error, so typos are caught."""
-
-    model_config = ConfigDict(extra="forbid")
-
-
-class PrimaryLLM(Strict):
-    """The local model on the laptop GPU."""
-
-    provider: Literal["ollama"]
-    model: str
-    base_url: str
-    num_ctx: int = Field(gt=0)
-    think: bool
-    temperature: float = Field(ge=0, le=2)   # sent on every request (M1 exit check)
-    first_token_timeout_s: float = Field(gt=0)
-    total_timeout_s: float = Field(gt=0)
-    max_bad_outputs: int = Field(ge=1)
-    warm_up: bool = True          # one tiny request at startup loads the model (M1 cleanup)
-
-
-class DesktopLLM(Strict):
-    """The optional backup model on the gaming desktop."""
-
-    provider: Literal["ollama"]
-    model: str
-    base_url: str
-    num_ctx: int = Field(gt=0)
-    think: bool
-
-
-class FallbackLLM(Strict):
-    """The Groq cloud model used when the local model fails."""
-
-    provider: Literal["groq"]
-    model: str
-    base_url: str
-    reasoning_effort: Literal["low", "medium", "high"]
-    timeout_s: float = Field(gt=0)
-    max_retries: int = Field(ge=0)
-
-
-class LLMConfig(Strict):
-    """All LLM tiers plus the risk threshold for escalation."""
-
-    primary: PrimaryLLM
-    desktop: DesktopLLM
-    fallback: FallbackLLM
-    escalate_risk_threshold: float = Field(ge=0, le=1)
-
-
-class ServerConfig(Strict):
-    """Where the API listens and how devices log in."""
-
-    host: str
-    port: int = Field(gt=0, lt=65536)
-    auth: Literal["device_tokens"]
-
-
-class GraphConfig(Strict):
-    """Limits for the LangGraph agent loop."""
-
-    max_hops: int = Field(ge=1)
-
-
-class StorageConfig(Strict):
-    """Where Leo's SQLite file lives. A relative path is under the project folder."""
-
-    db_path: Path
-
-    # The database path as an absolute path (relative paths start at the project folder).
-    def resolved_db_path(self) -> Path:
-        return self.db_path if self.db_path.is_absolute() else PROJECT_ROOT / self.db_path
-
-
-class EmbedderConfig(Strict):
-    """The shared e5 embedder (section 8.1). CPU only: the GPU is kept for Ollama."""
-
-    model: str
-    device: Literal["cpu"]
-    dimension: int = Field(gt=0)
-    cache_dir: Path
-    query_prefix: str
-    passage_prefix: str
-    cache_size: int = Field(ge=1)
-
-    # The model cache folder as an absolute path (relative paths start at the project folder).
-    def resolved_cache_dir(self) -> Path:
-        return self.cache_dir if self.cache_dir.is_absolute() else PROJECT_ROOT / self.cache_dir
-
-
-class AgentConfig(Strict):
-    """Limits for one specialist agent run."""
-
-    max_steps: int = Field(ge=1)
-
-
-class TracingConfig(Strict):
-    """Langfuse tracing. Without include_text, traces hold no message text."""
-
-    include_text: bool = False
-    timeout_s: int = Field(default=5, ge=1)
-
-
-class ResearchConfig(Strict):
-    """URLs and limits for web search, page reading and weather."""
-
-    geocoding_url: str
-    forecast_url: str
-    timezone: str
-    timeout_s: float = Field(gt=0)
-    max_redirects: int = Field(ge=0, le=10)
-    max_page_bytes: int = Field(gt=0)
-    max_page_chars: int = Field(gt=0)
-
-
-class LanguageConfig(Strict):
-    """Time parser zone, and the share of Hindi words that tags a message Hinglish."""
-
-    timezone: str
-    hinglish_min_ratio: float = Field(gt=0, le=1)
-
-
-class CalendarConfig(Strict):
-    """Calendar agent: default event length and the part-of-day windows."""
-
-    default_event_minutes: int = Field(ge=1)
-    day_parts: dict[Literal["morning", "afternoon", "evening", "night"], tuple[int, int]]
-    waking_hours: tuple[int, int]  # free time for a whole day is looked for only here
-    rain_skip_percent: int = Field(ge=0, le=100)  # "if it won't rain": no event above this
-
-    # Each window must be whole hours inside the day, start before end.
-    @field_validator("day_parts")
-    @classmethod
-    def windows_inside_day(cls, parts: dict) -> dict:
-        for name, (start, end) in parts.items():
-            if not 0 <= start < end <= 24:
-                raise ValueError(f"day_parts.{name} must be 0 <= start < end <= 24")
-        return parts
-
-    # Waking hours are whole hours inside the day, start before end.
-    @field_validator("waking_hours")
-    @classmethod
-    def waking_inside_day(cls, hours: tuple[int, int]) -> tuple[int, int]:
-        if not 0 <= hours[0] < hours[1] <= 24:
-            raise ValueError("waking_hours must be 0 <= start < end <= 24")
-        return hours
 
 
 class LeoConfig(Strict):
