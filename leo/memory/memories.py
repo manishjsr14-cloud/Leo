@@ -9,6 +9,10 @@ apart (0.984 in M2.2), so the subject key, not similarity, decides a replacement
 
 Stored texts are embedded as passages; messages are searched as queries
 (the e5 prefixes, section 8.1). Similarity is 1 - cosine distance.
+M2.3 fix round: the passage embedded is "<subject in words>: <fact>", e.g.
+"brother birthday: My brother's birthday is on 5 June.", so a question in
+Hinglish or with another word also meets the subject's English words. The
+stored text stays the user's own words.
 """
 
 import re
@@ -57,6 +61,11 @@ def clean_subject(subject: str) -> str | None:
     return key if SUBJECT.match(key) else None
 
 
+# The text that is embedded for a memory: its subject in words, then the fact.
+def passage_text(subject: str, text: str) -> str:
+    return f"{subject.replace('_', ' ')}: {text.strip()}"
+
+
 # Save one fact under its subject. Returns (memory id, True if an older fact on
 # the same subject was replaced). The text is embedded before anything is written.
 def save_memory(bank: MemoryBank, subject: str, text: str, language: str,
@@ -64,7 +73,7 @@ def save_memory(bank: MemoryBank, subject: str, text: str, language: str,
     key = clean_subject(subject)
     if key is None or not text.strip():
         raise ValueError(f"bad memory: subject={subject!r}")
-    vector = bank.embedder.embed_passages([text.strip()])[0]
+    vector = bank.embedder.embed_passages([passage_text(key, text)])[0]
     stamp = now.isoformat(timespec="seconds")
     old = bank.conn.execute("SELECT id FROM memories WHERE subject = ?", (key,)).fetchone()
     with bank.conn:

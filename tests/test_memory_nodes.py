@@ -36,8 +36,8 @@ def decision(remember: bool, subject: str = "") -> dict:
 
 # Recall puts memories at or above the threshold into state["memories"].
 def test_recall_gives_hints_above_threshold(tmp_path):
-    table = {"Do I eat meat?": [1, 0, 0, 0], "I don't eat non-veg anymore.": [1, 0.1, 0, 0],
-             "My car is red.": [0, 1, 0, 0]}
+    table = {"Do I eat meat?": [1, 0, 0, 0], "diet: I don't eat non-veg anymore.": [1, 0.1, 0, 0],
+             "car: My car is red.": [0, 1, 0, 0]}
     bank = make_bank(tmp_path, table, min_similarity=0.8)
     save_memory(bank, "diet", "I don't eat non-veg anymore.", "en", NOW)
     save_memory(bank, "car", "My car is red.", "en", NOW)
@@ -47,7 +47,7 @@ def test_recall_gives_hints_above_threshold(tmp_path):
 
 # No memory at or above the threshold: no hints.
 def test_recall_without_close_memory_gives_none(tmp_path):
-    bank = make_bank(tmp_path, {"hi": [1, 0, 0, 0], "My car is red.": [0, 1, 0, 0]})
+    bank = make_bank(tmp_path, {"hi": [1, 0, 0, 0], "car: My car is red.": [0, 1, 0, 0]})
     save_memory(bank, "car", "My car is red.", "en", NOW)
     assert memory_recall_node(turn("hi"), bank) == {"memories": []}
 
@@ -147,7 +147,8 @@ def test_only_the_users_words_reach_memory(tmp_path):
 def traced_spans(tmp_path, include_text: bool) -> str:
     tracer = FakeTracer()
     tracing.set_tracer(tracer, include_text)
-    table = {"I prefer meetings after 11 am.": [1, 0, 0, 0], "When do I like meetings?": [1, 0, 0, 0]}
+    table = {"meeting time preference: I prefer meetings after 11 am.": [1, 0, 0, 0],
+             "When do I like meetings?": [1, 0, 0, 0]}
     bank = make_bank(tmp_path, table)
     chat = FakeChat(decision(True, "meeting_time_preference"))
     memory_write_node(turn("I prefer meetings after 11 am."), bank, chat, now=lambda: NOW)

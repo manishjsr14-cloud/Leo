@@ -50,11 +50,14 @@ def test_different_subjects_are_both_kept(tmp_path):
     assert vector_count(bank) == 2
 
 
-# Stored facts are embedded as passages (the e5 "passage: " prefix).
-def test_facts_are_embedded_as_passages(tmp_path):
+# Stored facts are embedded as passages (the e5 "passage: " prefix), with the
+# subject in words first (M2.3 fix round); the stored text is the user's words only.
+def test_facts_are_embedded_with_their_subject(tmp_path):
     bank = make_bank(tmp_path)
-    save_memory(bank, "diet", EATS, "en", NOW)
-    assert bank.embedder.model.encoded == [f"passage: {EATS}"]
+    save_memory(bank, "brother_birthday", "My brother's birthday is on 5 June.", "en", NOW)
+    assert bank.embedder.model.encoded == [
+        "passage: brother birthday: My brother's birthday is on 5 June."]
+    assert all_memories(bank)[0]["text"] == "My brother's birthday is on 5 June."
 
 
 # Subject keys are short snake_case; anything else is refused.

@@ -23,7 +23,8 @@ def unit(vector: list[float]) -> list[float]:
 
 class TableModel:
     """Stands in for SentenceTransformer: a text's vector comes from a table
-    (prefix removed), else from its length and letters. Counts encoded texts."""
+    (e5 prefix removed; stored facts are keyed "<subject words>: <fact>"), else
+    from its length and letters. Counts encoded texts."""
 
     def __init__(self, table: dict[str, list[float]] | None = None):
         self.table = {k: unit(v) for k, v in (table or {}).items()}
