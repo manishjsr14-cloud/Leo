@@ -9,6 +9,7 @@ import pytest
 from leo.language.memory_events import (
     is_plan_or_event,
     names_date_or_time,
+    plan_reason,
     says_lasting,
 )
 
@@ -39,3 +40,37 @@ def test_facts_without_dates_are_not_plans(text):
 def test_lasting_words_override_the_time_rule(text):
     assert names_date_or_time(text, NOW) and says_lasting(text)
     assert not is_plan_or_event(text, NOW)
+
+
+# M2.3b follow-up: a part of today or a coming weekend is a plan (not check-set lines).
+@pytest.mark.parametrize("text", [
+    "I have a dentist visit this afternoon.", "Aaj shaam mujhe Pune jaana hai.",
+    "Agle weekend main shaadi mein jaunga.", "Next weekend I'm helping my cousin move.",
+    "I'm cooking pasta tonight."])
+def test_part_of_today_and_weekend_are_plans(text):
+    assert plan_reason(text, NOW) in ("part of today or weekend", "time parser")
+    assert is_plan_or_event(text, NOW)
+
+
+# A part of the day without "this" / "aaj" / "is" / "agle" / "next" is a habit, not a plan.
+@pytest.mark.parametrize("text", ["I read at night.", "Main shaam ko walk karta hoon.",
+                                  "I go hiking on weekends."])
+def test_parts_of_the_day_in_habits_are_not_plans(text):
+    assert plan_reason(text, NOW) is None and not is_plan_or_event(text, NOW)
+
+
+# The override words still win over the new words.
+def test_override_wins_over_part_of_today():
+    text = "I always call my mother this evening."
+    assert plan_reason(text, NOW) == "part of today or weekend"
+    assert not is_plan_or_event(text, NOW)
+
+
+# plan_reason names the part of the rule that read the time.
+@pytest.mark.parametrize("text, reason", [
+    ("My exam is on 14 April.", "day-and-month date"), ("Agle hafte mera interview hai.",
+                                                        "coming period"),
+    ("This evening I have yoga.", "part of today or weekend"),
+    ("Kal mera interview hai.", "time parser"), ("I live in Nashik.", None)])
+def test_plan_reason(text, reason):
+    assert plan_reason(text, NOW) == reason

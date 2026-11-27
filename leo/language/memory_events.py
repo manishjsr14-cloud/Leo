@@ -8,7 +8,12 @@ It names one when:
     parser does not read, or
   - it names a coming period: next week, agle hafte, this week, is hafte,
     next month, agle mahine.
-"weekend" is not in that list: "on weekends" is often a habit.
+  - it names a part of today or a coming weekend (M2.3b follow-up, the user's
+    list plus "next weekend"): this morning / afternoon / evening / weekend,
+    tonight, later today, is weekend, agle weekend, next weekend, aaj subah /
+    dopahar / shaam / raat. It needs "this", "is", "agle", "next" or "aaj" in
+    front, so a habit that names a part of the day ("in the evening", "raat
+    ko", "on weekends") is not a plan.
 
 Approved override (M2.3b proposal): a preference, habit or yearly word means a
 lasting fact even with a time in it ("Mujhe meetings 11 baje ke baad pasand
@@ -26,17 +31,31 @@ MONTHS = (r"jan|january|feb|february|mar|march|apr|april|may|jun|june|jul|july|a
           r"sep|sept|september|oct|october|nov|november|dec|december")
 MONTH_DATE = re.compile(rf"\b(\d{{1,2}}(st|nd|rd|th)?\s+({MONTHS})|({MONTHS})\s+\d{{1,2}})\b")
 COMING = re.compile(r"\b(next|this|agle|agla|agli|is) (week|hafte|hafta|month|mahine|mahina)\b")
+TODAY_PART = re.compile(r"\b(this (morning|afternoon|evening|weekend)|tonight|later today"
+                        r"|(is|agle|next) weekend|aaj (subah|dopahar|shaam|raat))\b")
 LASTING = {"pasand", "prefer", "roz", "har", "every", "daily", "usually", "always", "hamesha",
            "birthday", "anniversary"}
 
 
-# True when the message names a date or time: the parser reads one, or it has a
-# day-and-month date or a coming period ("next week", "agle hafte").
-def names_date_or_time(text: str, now: datetime) -> bool:
+# Which part of the time rule reads a date or time in the message, or None:
+# "day-and-month date", "coming period", "part of today or weekend", "time parser".
+def plan_reason(text: str, now: datetime) -> str | None:
     lowered = text.lower()
-    if MONTH_DATE.search(lowered) or COMING.search(lowered):
-        return True
-    return parse_time(text, now).status != "not_understood"
+    if MONTH_DATE.search(lowered):
+        return "day-and-month date"
+    if COMING.search(lowered):
+        return "coming period"
+    if TODAY_PART.search(lowered):
+        return "part of today or weekend"
+    if parse_time(text, now).status != "not_understood":
+        return "time parser"
+    return None
+
+
+# True when the message names a date or time: the parser reads one, or it has a
+# day-and-month date, a coming period ("next week") or a part of today ("tonight").
+def names_date_or_time(text: str, now: datetime) -> bool:
+    return plan_reason(text, now) is not None
 
 
 # True when a preference, habit or yearly word marks the message as lasting.
