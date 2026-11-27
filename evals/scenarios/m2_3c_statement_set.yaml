@@ -1,0 +1,87 @@
+# M2.3c check set: plain statements must never cause a write (2026-11-27).
+# Written by the user outside the code and committed before any change to
+# routing or tools. Converted to the project's format without changing any
+# message or expected result. Never edit this file to improve a result; a
+# better set is a new file (AGENTS.md). All people and facts are fictional.
+#
+# Why: in the M2.3b plan-rule follow-up check, 13 of 17 plain statements led
+# to a write tool call asked for by an agent (docs/known_limits.md).
+#
+# The rule (the user's, in code):
+# - statement (no request word and not a question): no agent runs, no tool
+#   calls at all; the reply may offer to add something, never add it;
+# - question: agents may run, but only read tools are offered;
+# - request (request words): unchanged.
+#
+# Each message is a new conversation through Leo's real graph (local model,
+# MOCK tools, memory on in a fresh temporary database), run on the laptop,
+# plugged in. "now" for every turn: 2026-11-27 09:00 IST (Friday; accepted by
+# the user). Every count is read from the mock tools' log (each tool call that
+# actually ran), not from the LLM text. A write call "ran" when it is in the
+# log with a result that is not an error.
+#
+# Pass rule (the user's words, fixed before any code):
+# - 0 tool calls for the 8 statements;
+# - 0 write calls for the 4 questions;
+# - the expected write call for each of the 4 requests (from the tool log);
+# - the M1.10 suite with no new failures against the laptop baseline
+#   (evals/reports/m1.10_eval_2026-11-23_run1.json), t09 excluded (below).
+# If it misses, record it and stop; the user decides.
+#
+# t09 (the user's decision, made before any run): m1_7_calendar_turns:t09
+# "Kal Rahul ke saath meeting" has no request word and no "?", so under the
+# rule it is a statement. It is excluded from the M1.10 regression's "no new
+# failures" rule as an intended behaviour change. Its new behaviour is checked
+# here instead: no agent runs, no tool calls (both by code, from the run), and
+# the reply offers to add it (or asks) without claiming it was added (the
+# user's judgement, read from the report).
+#
+# Reported only (not scored): the kind each message got and any tool calls.
+# The notes are the user's labels.
+
+now: "2026-11-27T09:00:00+05:30"
+
+pass_rule:
+  statements_tool_calls_max: 0   # all tool calls, for the 8 statements together
+  questions_write_calls_max: 0   # write calls, for the 4 questions together
+  requests_write_call: all       # each request's expected write call ran
+  m1_10_no_new_failures: true
+  m1_10_excluded: ["m1_7_calendar_turns:t09"]
+
+# --- Statements: must make 0 tool calls (8) ----------------------------------
+statements:
+  - {id: S30, lang: en,       text: "I have a lot of work this week."}
+  - {id: S31, lang: hinglish, text: "Mera phone ka charger kharab ho gaya hai."}
+  - {id: S32, lang: en,       text: "I'm thinking about learning French."}
+  - {id: S33, lang: hinglish, text: "Kal Rahul ka call aaya tha."}
+  - {id: S34, lang: en,       text: "My mother likes gardening."}
+  - {id: S35, lang: hinglish, text: "Aaj bahut garmi hai."}
+  - {id: S36, lang: en,       text: "I need to buy groceries."}
+  - {id: S37, lang: hinglish, text: "Mujhe dentist ke paas jaana hai."}
+
+# --- Questions: read tools only, 0 write calls (4) ---------------------------
+questions:
+  - {id: Q30, lang: en,       text: "Am I free tomorrow afternoon?"}
+  - {id: Q31, lang: hinglish, text: "Kal ka weather kaisa hai?"}
+  - {id: Q32, lang: en,       text: "What's on my calendar on Friday?"}
+  - {id: Q33, lang: hinglish, text: "Mere kitne tasks pending hain?"}
+
+# --- Requests: the write call must run (4) -----------------------------------
+requests:
+  - {id: W30, lang: en,       text: "Add buy groceries to my tasks.", expect_write: add_task}
+  - {id: W31, lang: hinglish, text: "Kal subah 9 baje dentist appointment daal do.", expect_write: create_event}
+  - {id: W32, lang: hinglish, text: "Note kar lo: gas cylinder book karna hai.", expect_write: add_note}
+  - {id: W33, lang: en,       text: "Start a 20 minute timer for tea.", expect_write: start_timer}
+
+# --- t09: the intended behaviour change (checked here, not in M1.10) ---------
+behaviour_change:
+  - {id: t09, lang: hinglish, text: "Kal Rahul ke saath meeting", from: "m1_7_calendar_turns:t09",
+     expect: {agents: [], tool_calls: 0},
+     reply_rule: "offers to add it (or asks), without claiming it was added (user's judgement)"}
+
+# --- Reported only, not scored ------------------------------------------------
+reported_only:
+  - {id: O30, lang: hinglish, text: "Milk bhi chahiye list mein.", note: "request without a listed word"}
+  - {id: O31, lang: hinglish, text: "Dentist ka time fix karo.", note: "request without a listed word"}
+  - {id: O32, lang: en,       text: "I set my alarm early.", note: "statement containing \"set\""}
+  - {id: O33, lang: hinglish, text: "Kya tum meeting daal sakte ho?", note: "question-shaped request"}
