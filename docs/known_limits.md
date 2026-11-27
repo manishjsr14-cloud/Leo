@@ -119,3 +119,7 @@ Each M1 cleanup item ticks its line in the commit that fixes it.
 ## Statements, questions and requests (M2.3c)
 
 - [ ] Leo can offer to add something after a plain statement, but the user's "haan" / "yes" is itself a statement, so an offer cannot be accepted yet: there is no conversation state or confirmation step (open: fixed by M2.4 checkpointing and M2.5 human approval)
+- [ ] A request word after a first-person subject made a statement a request: in the first M2.3c check, O32 "I set my alarm early." was read as a request and ran `add_task("early alarm")` (`m2_3c_statement_check_2026-11-27.md`, laptop; mock tools) (open: M2.3c fix round b)
+- [ ] With fix b (a request word directly after "I" / "main" does not count), "Can I add milk?" is a question, not a request: it gets only read tools and adds nothing; "Can you add milk?" still works (by design of the fix round; open)
+- [ ] t09 "Kal Rahul ke saath meeting" is a statement under the M2.3c rule; in the first M2.3c check no agent and no tool ran, but the model's reply stated an invented fact, "Last night Rahul ke saath meeting nahi thi." (reading "kal" as yesterday), a miss by the user's judgement (`m2_3c_statement_check_2026-11-27.md`, laptop) (open: M2.3c fix round a)
+

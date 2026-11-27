@@ -1,0 +1,53 @@
+# M2.3c fix-round set (2026-11-27). Written by Claude AFTER the fix-round design
+# (fixes a and b, approved by the user), so it is NOT blind to the fixes; the
+# report says so. Committed before any fix code. Never edit this file to improve
+# a result; a better set is a new file (AGENTS.md). All people are fictional.
+#
+# Changed before commit (logged): the first event line was "Friday ko Neha ke
+# saath lunch hai."; with "now" a Friday the parser asks "Kaunsa Friday" for it,
+# so it could not get an offer. Written as "Sunday ko ..." instead. The user
+# added "Kal Rahul ke saath call." (expected: the parser's "kal" question).
+#
+# Each message is a new conversation through Leo's real graph (local model,
+# MOCK tools, memory on in a fresh temporary database), on the laptop, plugged
+# in. "now" for every turn: 2026-11-27 09:00 IST (Friday). Tool counts come
+# from the mock tools' log (each tool call that actually ran).
+#
+# Pass rule (the user's, fixed before the fix code):
+# - event statements: the reply is the code-written offer, and the date shown
+#   in it is the date the Indian time parser reads at "now" (with the time or
+#   part of day if given); "Kal Rahul ke saath call." gets the parser's "kal"
+#   question; 0 tool calls each;
+# - "I + request word" statements: 0 tool calls each;
+# - requests: the expected write call ran (in the log, result not an error).
+# Then the M2.3c check and the M1.10 regression are rerun. If it still misses,
+# M2.3c closes with known limits.
+
+now: "2026-11-27T09:00:00+05:30"
+
+pass_rule:
+  event_statements: offer_or_ask_and_no_tool_calls
+  first_person_statements_tool_calls_max: 0
+  requests_write_call: all
+
+# --- Event-like statements: the offer (or the parser's question), 0 tool calls -
+event_statements:
+  - {id: E01, lang: hinglish, text: "Sunday ko Neha ke saath lunch hai.", expect: offer}
+  - {id: E02, lang: en,       text: "My flight to Delhi is on Monday morning.", expect: offer}
+  - {id: E03, lang: hinglish, text: "Parso 4 baje interview hai.", expect: offer}
+  - {id: E04, lang: en,       text: "I have a doctor's appointment tomorrow at 11.", expect: offer}
+  - {id: E05, lang: hinglish, text: "Kal Rahul ke saath call.", expect: ask}
+
+# --- Statements with "I + request word": 0 tool calls -------------------------
+first_person_statements:
+  - {id: N01, lang: en,       text: "I set my watch five minutes fast."}
+  - {id: N02, lang: en,       text: "I check my email first thing in the morning."}
+  - {id: N03, lang: hinglish, text: "Main delete kar deta hoon purane photos har mahine."}
+  - {id: N04, lang: en,       text: "I update my diary every Sunday."}
+
+# --- Normal requests: the write call must run ---------------------------------
+requests:
+  - {id: A01, lang: en,       text: "Add call the bank to my tasks.", expect_write: add_task}
+  - {id: A02, lang: en,       text: "Set a 10 minute timer for the rice.", expect_write: start_timer}
+  - {id: A03, lang: hinglish, text: "Parso shaam 6 baje gym session daal do.", expect_write: create_event}
+  - {id: A04, lang: en,       text: "Can you add eggs to my list?", expect_write: add_task}
