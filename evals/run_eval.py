@@ -68,7 +68,7 @@ def record(key: str, result: dict, known: dict[str, str]) -> dict:
     scored = score(result)
     return with_v2({"key": key, "lang": turn["lang"], "text": turn["text"],
                     "reply": result["reply"], "plan": result["plan"], "stops": result["stops"],
-                    "steps": result["steps"], "calls": calls, "llm_calls": len(calls),
+                    "steps": result["steps"], "tool_log": result["tool_log"], "calls": calls, "llm_calls": len(calls),
                     "turn_s": result["wall"],
                     "fallback_calls": sum(c["provider"] != "ollama" for c in calls),
                     "from": known.get(key), "known": key in known,

@@ -42,3 +42,26 @@ def test_llm_routed_turn_records_the_same_plan(monkeypatch):
                             {"complete_task": {"task_id": 1}})
     assert result["plan"] == [["productivity"]] and scored["routing_ok"] is True
     assert any(c["node"] == "supervisor" for c in result["calls"])
+
+
+# The run keeps the mock tools' log: each tool call that actually ran (M2.3c).
+def test_run_records_the_mock_tool_log(monkeypatch):
+    result, _, _ = run("K01", monkeypatch,
+                       {"agents": ["productivity"], "task": "complete the milk task"},
+                       {"complete_task": {"task_id": 1}}, "Milk ho gaya.")
+    assert [c["tool"] for c in result["tool_log"]] == ["complete_task"]
+    assert result["tool_log"][0]["args"] == {"task_id": 1}
+
+
+# The report's turn details list the log, and say "none" when no tool ran.
+def test_report_details_show_the_tool_log():
+    from evals.eval_report import details
+
+    turn = {"key": "f:t", "lang": "en", "verdict": "pass", "text": "hi", "reply": "hello",
+            "lang_why": "", "lang_v2_why": "", "verdict_v2": "pass", "plan": [[]], "stops": {},
+            "calls": [], "steps": [], "tool_fails": [], "reply_fails": []}
+    logged = details({**turn, "tool_log": [{"tool": "add_task", "args": {"title": "milk"},
+                                            "result": {"id": 3}}]})
+    assert "- `add_task({'title': 'milk'})` -> `{'id': 3}`" in logged
+    empty = details({**turn, "tool_log": []})
+    assert empty[empty.index("Mock tools' log (calls that ran):") + 1] == "- none"

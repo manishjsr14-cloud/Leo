@@ -75,7 +75,8 @@ def run_one(turn: dict, data: dict, config, now: datetime, memory=None) -> dict:
     tools = tool_fails(turn, plans[0] if plans else None, attempted, [c.tool for c in log], stops)
     return {"turn": turn, "reply": reply, "wall": wall, "calls": chat.calls, "plan": plans,
             "steps": attempted, "stops": stops, "lang": (lang_pass, lang_why),
-            "reply_fails": reply_fails(reply, turn, attempted), "tool_fails": tools}
+            "reply_fails": reply_fails(reply, turn, attempted), "tool_fails": tools,
+            "tool_log": [c.model_dump(mode="json") for c in log]}  # calls that ran (M2.3c)
 
 
 # The done rule from the turn file header, item by item: (text, passed or None).

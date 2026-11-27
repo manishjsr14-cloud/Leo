@@ -6,7 +6,8 @@ the memory database is a fresh file in <temp>/leo_evals/ (evals/eval_paths.py),
 never Leo's own database or leo_data/. Each turn starts a new conversation, so the only
 thing carried from turn to turn is what long-term memory stored.
 For each turn it records which memories the turn created and replaced (row
-ids before and after), the reply, the LLM calls and the time taken.
+ids before and after), the reply, the LLM calls, the mock tools' log (each
+tool call that actually ran, M2.3c) and the time taken.
 """
 
 import time
@@ -50,8 +51,9 @@ def mock_data() -> dict:
 
 
 # Leo's graph with mock tools, the given memory bank, and a fixed "now" for agents.
-def memory_graph(bank, config, now: datetime, chat: TimedChat, data: dict):
-    log, steps, runs = [], config.agent.max_steps, []
+# Every mock tool call that runs is appended to `log` (M2.3c).
+def memory_graph(bank, config, now: datetime, chat: TimedChat, data: dict, log: list):
+    steps, runs = config.agent.max_steps, []
     agents = {
         "productivity": tagged(productivity_agent(chat, by_name(mock_productivity_tools(log)),
                                                   steps), "productivity", runs),
@@ -71,8 +73,8 @@ def memory_rows(bank) -> dict[int, tuple]:
 
 # Run one message as a new conversation. Returns what it did to memory and its reply.
 def run_message(message: dict, bank, config, now: datetime, data: dict) -> dict:
-    chat = MemoryTimedChat()
-    graph, runs = memory_graph(bank, config, now, chat, data)
+    chat, log = MemoryTimedChat(), []
+    graph, runs = memory_graph(bank, config, now, chat, data, log)
     before = memory_rows(bank)
     start = time.perf_counter()
     try:
@@ -87,4 +89,5 @@ def run_message(message: dict, bank, config, now: datetime, data: dict) -> dict:
     return {"id": message["id"], "text": message["text"], "reply": reply, "turn_s": wall,
             "created": created, "replaced": replaced,
             "subjects": [after[i][0] for i in created],
-            "agents": [name for name, _ in runs], "calls": chat.calls}
+            "agents": [name for name, _ in runs], "calls": chat.calls,
+            "tool_log": [c.model_dump(mode="json") for c in log]}  # calls that ran (M2.3c)

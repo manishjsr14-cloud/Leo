@@ -63,6 +63,9 @@ def details(r: dict) -> list[str]:
              f"Plan: {r['plan']}; stops: {r['stops'] or 'no agent run'}",
              "LLM calls: " + ", ".join(call_label(c) for c in r["calls"]), "", "Tool calls:"]
     lines += [f"- `{s['tool']}({s['args']})` -> `{s['result']}`" for s in r["steps"]] or ["- none"]
+    lines += ["", "Mock tools' log (calls that ran):"]  # M2.3c
+    lines += [f"- `{c['tool']}({c['args']})` -> `{c['result']}`"
+              for c in r.get("tool_log", [])] or ["- none"]
     lines += [f"- tool check failed: {f}" for f in r["tool_fails"]]
     lines += [f"- reply check failed: {f}" for f in r["reply_fails"]]
     return lines + [""]
