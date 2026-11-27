@@ -23,7 +23,6 @@ from evals import m2_3b_plans_scoring as ps
 from evals.eval_paths import EVAL_DB_DIR
 from evals.git_state import git_state
 from evals.m2_3b_check_turns import mock_data, run_message
-from evals.m2_3b_report import result_line
 from evals.machine import machine_line
 from leo.llm import gateway
 from leo.llm.warmup import load_model
@@ -48,6 +47,13 @@ def checked(message: dict, group: str, bank, config, now, mocks) -> dict:
     print(f"{message['id']}: created {record['created']}", flush=True)
     return {**record, "group": group, "kept_out_by": ps.kept_out_by(message["text"], now),
             "plan_rule_alone": ps.plan_rule(message["text"], now)}
+
+
+# The overall result from the pass-rule parts (this set has a pass rule, not a done rule).
+def result_line(parts: list) -> str:
+    if all(ok for _, ok in parts):
+        return "**Result: PASSED** (every part of the pass rule met)."
+    return "**Result: NOT MET** (at least one part of the pass rule missed)."
 
 
 # One table row per message.

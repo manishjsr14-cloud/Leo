@@ -5,6 +5,7 @@ from datetime import datetime
 
 import pytest
 
+from evals.m2_3b_plans_check import result_line
 from evals.m2_3b_plans_scoring import kept_out_by, parts, plan_rule
 
 NOW = datetime(2026, 11, 27, 9, 0)
@@ -37,3 +38,9 @@ def test_parts():
     assert [ok for _, ok in parts(rule, data, good)] == [True, True]
     bad = {"A": {"created": [3]}, "B": {"created": [1]}, "C": {"created": []}}
     assert [ok for _, ok in parts(rule, data, bad)] == [False, False]
+
+
+# The check's result line speaks of the pass rule.
+def test_result_line_says_pass_rule():
+    assert "pass rule met" in result_line([("a", True)])
+    assert "pass rule missed" in result_line([("a", True), ("b", False)])
