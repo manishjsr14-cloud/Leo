@@ -13,8 +13,10 @@
 # (leo/graph/events_reply.py).
 # Version 6 (M1 cleanup item 4 follow-up): not_changed, added to the events reply
 # when the message asked for a change but only get_events ran.
+# Version 7 (M2.3c fix round a): calendar_offer and part_* for the code-written
+# offer after a statement that names a coming event (leo/graph/offer_reply.py).
 name: replies
-version: 6
+version: 7
 en:
   create_event: "Done! Added '{title}' on {when}."
   move_event: "Done! Moved '{title}' to {when}."
@@ -38,6 +40,11 @@ en:
   events_at: "On your calendar: {events}."
   no_events: "Nothing on your calendar in {span}."
   not_changed: " The change you asked for was not made; your calendar is as it was."
+  calendar_offer: "{when}: should I add this to your calendar?"
+  part_morning: "morning"
+  part_afternoon: "afternoon"
+  part_evening: "evening"
+  part_night: "night"
 hinglish:
   create_event: "Ho gaya! '{title}' {when} calendar mein daal diya."
   move_event: "Ho gaya! '{title}' ko {when} pe shift kar diya."
@@ -61,3 +68,8 @@ hinglish:
   events_at: "Aapke calendar mein hai: {events}."
   no_events: "{span} mein aapke calendar mein kuch nahi hai."
   not_changed: " Aapne jo change bola tha woh nahi hua; calendar pehle jaisa hi hai."
+  calendar_offer: "{when} — kya main ise calendar mein daal doon?"
+  part_morning: "subah"
+  part_afternoon: "dopahar"
+  part_evening: "shaam"
+  part_night: "raat"

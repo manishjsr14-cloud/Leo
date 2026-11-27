@@ -78,12 +78,14 @@ def add_memory_nodes(graph: StateGraph, bank: MemoryBank, chat: Callable) -> Non
 
 # Build and compile the graph. chat defaults to the real LLM gateway;
 # agents maps an agent name to its node function; memory (M2.3) adds the
-# memory_recall and memory_write nodes, and without it the graph is as before.
+# memory_recall and memory_write nodes, and without it the graph is as before;
+# now (M2.3c) gives the responder the current time (default: the real clock).
 def build_graph(
     chat: Callable | None = None,
     agents: dict[str, Callable] | None = None,
     config: LeoConfig | None = None,
     memory: MemoryBank | None = None,
+    now: Callable | None = None,
 ):
     chat = chat or gateway.chat
     agents = agents or {}
@@ -95,7 +97,7 @@ def build_graph(
 
     # Responder node with the LLM filled in.
     def responder(state: LeoState, config: RunnableConfig) -> dict:
-        return responder_node(state, chat, cloud_requested(config))
+        return responder_node(state, chat, cloud_requested(config), now() if now else None)
 
     # The next planned agent, or the responder when the plan is used up or
     # max_hops agents have run.

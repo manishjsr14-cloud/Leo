@@ -18,18 +18,22 @@ Devanagari reply to a Roman-script message is asked for again once, in Roman
 letters. A single successful write gets a code-written reply instead, with no
 LLM call (leo/graph/quick_reply.py). After a plain statement (M2.3c) the code
 adds STATEMENT_NOTE: nothing was added; the reply may offer, never claim.
+A statement that names a coming event gets a code-written offer or the time
+parser's question instead (leo/graph/offer_reply.py, M2.3c fix round a);
+`now` is the graph's current time (evals pass a fixed one).
 """
 
 import json
 import re
 from collections.abc import Callable
-from datetime import date
+from datetime import date, datetime
 
 from langchain_core.messages import AIMessage, convert_to_openai_messages
 
 from leo.agents.calendar_condition import hold_words
 from leo.graph.calendar_reply import calendar_reply
 from leo.graph.memory_hints import memory_hints
+from leo.graph.offer_reply import offer_reply
 from leo.graph.quick_reply import quick_reply
 from leo.graph.result_words import refused_words, result_in_words, still_on_calendar
 from leo.graph.state import LeoState, latest_user_text
@@ -128,8 +132,10 @@ def reply_message(text: str, result=None) -> AIMessage:
 
 # The reply: code-written for a single successful write, else from the LLM,
 # asked once more in Roman letters if it came back in Devanagari for Roman text.
-def responder_node(state: LeoState, chat: Callable, force_cloud: bool = False) -> dict:
-    text = quick_reply(state) or calendar_reply(state)
+def responder_node(state: LeoState, chat: Callable, force_cloud: bool = False,
+                   now: datetime | None = None) -> dict:
+    text = (offer_reply(state, now or current_time())  # M2.3c fix round a
+            or quick_reply(state) or calendar_reply(state))
     if text is not None:
         return {"messages": [reply_message(text)]}
     messages = responder_messages(state)

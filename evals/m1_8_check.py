@@ -57,7 +57,8 @@ def run_one(turn: dict, data: dict, config, now: datetime, memory=None) -> dict:
                            "research", runs),
         "calendar": tagged(calendar_agent(chat, calendar, steps, config.calendar,
                                           now=lambda: now), "calendar", runs)}
-    graph = build_graph(chat, agents=agents, config=config, memory=memory)  # memory: M2.3b
+    graph = build_graph(chat, agents=agents, config=config, memory=memory,  # memory: M2.3b
+                        now=lambda: now)  # the responder's now (M2.3c)
     start = time.perf_counter()
     try:
         reply = str(cli.run_turn(graph, [], turn["text"], False)[0].content)

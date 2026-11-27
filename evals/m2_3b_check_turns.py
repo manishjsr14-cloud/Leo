@@ -62,7 +62,8 @@ def memory_graph(bank, config, now: datetime, chat: TimedChat, data: dict, log: 
         "calendar": tagged(calendar_agent(chat, by_name(mock_calendar_tools(
             log, data["mock_calendar"])), steps, config.calendar, now=lambda: now),
             "calendar", runs)}
-    return build_graph(chat, agents=agents, config=config, memory=bank), runs
+    return build_graph(chat, agents=agents, config=config, memory=bank,
+                       now=lambda: now), runs  # the responder's now (M2.3c)
 
 
 # Every memory row, by id: (subject, text, active, replaced_by).
