@@ -102,11 +102,13 @@ def test_personal_question_gate(text, personal):
     assert is_personal_question(text) is personal
 
 
-# Known limit (M2.3b): the Hinglish "is" ("this") reads as the English question
-# word, so a statement that starts with it is never stored.
-def test_hinglish_is_reads_as_a_question():
-    assert is_question("Is saal main Goa ja raha hoon.")
-    assert not worth_remembering("Is saal main Goa ja raha hoon.")
+# M2.3b follow-up: "is" starts a question only when the message ends in "?".
+def test_is_needs_a_question_mark():
+    assert is_question("Is my dentist visit tomorrow?")
+    assert not is_question("Is saal se main yoga kar raha hoon.")
+    assert worth_remembering("Is saal se main yoga kar raha hoon.")
+    assert not is_question("Is hafte main Delhi mein hoon.")
+    assert worth_remembering("Is hafte main Delhi mein hoon.")
 
 
 # M2.3b fix round, rule A: small talk is not stored (none from the check sets).

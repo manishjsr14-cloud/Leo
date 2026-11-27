@@ -18,9 +18,10 @@ Personal-question gate (M2.3b): recall gives hints only for a question with a
 first-person word ("What's my ...", "Do I ...", "Mujhe kis ...", "Main ... ?").
 
 The word lists were fixed in the approved M2.3b proposal, after reading the
-check set (evals/scenarios/m2_3b_memory_set.yaml). Known limit: the question
-rule reads the Hinglish "is" ("this") as the English question word, so a
-statement that starts with it is treated as a question and never stored.
+check set (evals/scenarios/m2_3b_memory_set.yaml). M2.3b follow-up (the user's
+rule): "is" is also Hinglish for "this" ("Is saal se ..."), so it is not a
+question start; a message that starts with it is a question only when it ends
+in "?" ("Is my dentist visit tomorrow?").
 """
 
 import re
@@ -29,8 +30,9 @@ REMEMBER = re.compile(r"^\s*(yaad rakh lo|yaad rakhna|yaad rakho|remember that|r
                       r"[\s,:;.!-]*", re.IGNORECASE)
 REMEMBER_AT_END = re.compile(r"[\s,;-]*\b(yaad rakh lo|yaad rakhna|yaad rakho|remember that)"
                              r"\s*[.!]*\s*$", re.IGNORECASE)
+# "is" left out on purpose (M2.3b follow-up): see the module note.
 QUESTION_START = {"what", "when", "where", "who", "which", "how", "why", "do", "does", "did",
-                  "is", "am", "are", "can"}
+                  "am", "are", "can"}
 HINGLISH_QUESTION = {"kya", "kab", "kahan", "kaun", "kaunsa", "kaunsi", "kitna", "kitne", "kitni",
                      "kaise", "kyun", "kyon"}
 FIRST_PERSON = {"i", "i'm", "i've", "i'd", "i'll", "me", "my", "mine", "myself", "main", "maine",
@@ -58,7 +60,7 @@ def words_of(text: str) -> list[str]:
 
 
 # True when the message is a question: it ends in "?", starts with an English
-# question word, or holds a Hinglish question word ("kya", "kab", ...) anywhere.
+# question word (not "is", which needs the "?"), or holds a Hinglish question word ("kya", "kab", ...) anywhere.
 def is_question(text: str) -> bool:
     words = words_of(text)
     if text.strip().endswith("?") or not words:

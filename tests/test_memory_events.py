@@ -74,3 +74,9 @@ def test_override_wins_over_part_of_today():
     ("Kal mera interview hai.", "time parser"), ("I live in Nashik.", None)])
 def test_plan_reason(text, reason):
     assert plan_reason(text, NOW) == reason
+
+
+# M2.3b follow-up: an "Is ..." statement that is a plan is kept out by the plan rule.
+def test_is_week_statement_is_a_plan():
+    assert plan_reason("Is hafte main Delhi mein hoon.", NOW) == "coming period"
+    assert is_plan_or_event("Is hafte main Delhi mein hoon.", NOW)
