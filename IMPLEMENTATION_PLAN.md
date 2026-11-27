@@ -222,6 +222,12 @@ Fix round (the user's, one round, each a logged change; fresh set `evals/scenari
 - b. A request word directly after a first-person subject (i, main, maine, hum, we) does not make the message a request ("I set", "main delete"); in `turn_kind` only, memory's rule is unchanged.
 - Pass rule: the event statements get the offer (the date shown is the parser's date) or, for "Kal Rahul ke saath call.", the parser's "kal" question, with 0 tool calls; the "I + request word" statements make 0 tool calls; each request's write runs. Then the M2.3c check and the M1.10 regression are rerun. If it still misses, M2.3c closes with known limits.
 
+Fix-round result (laptop, plugged in, 659a6de): **every part met**; the t09 reply is left to the user's judgement.
+- Fix-round set (`m2_3c_fixround_check_2026-11-27.md`, NOT blind): event statements 5/5 got the code-written offer showing the parser's date (E01 "Sun 29 Nov — kya main ise calendar mein daal doon?", E02 "Mon 30 Nov, morning: should I add this to your calendar?", E03 "Sun 29 Nov, 4:00 pm — ...", E04 "Sat 28 Nov, 11:00 am: ...") or the parser's "kal" question (E05), 0 tool calls and 0 LLM calls each; "I + request word" statements 0 tool calls; requests 4/4 expected writes ran.
+- First set rerun (`m2_3c_statement_check_2026-11-27_fix.md`): statements 0 tool calls, questions 0 write calls, requests 4/4; t09 no agent, 0 tool calls, reply the parser's question "Kal matlab aane wala kal (tomorrow) ya beeta hua kal (yesterday)?"; O32 now no tool call.
+- M1.10 regression (`m2_3c_m1_10_regression_2026-11-27_fix.md`, against `m1.10_eval_2026-11-23_run1.json`): the only newly failing turn is t09 (excluded), under v1 and v2; t09's reply is the baseline's question word for word, but it fails its old `plan: [calendar]` / `stopped: ask` checks. L20 passes again ("...kaise ho aap?"), which supports reading its first-run v1 failure as noise. 14 known-failing turns pass.
+- Open limits: `docs/known_limits.md`, "Statements, questions and requests (M2.3c)".
+
 **Note for M2.7 and M3 (from M2.1):** when the reminder scheduler (M2.7) and the API (M3) start writing from other threads, all writes go through one shared writer with a lock.
 | M2.8 | **Phone push with ntfy.** Delayed messages for reminders within 3 days; generic-text privacy setting. | `leo/reminders/notify.py` | Reminder arrives on the iPhone with the laptop asleep |
 | M2.9 | **Birthdays.** `contacts` table; yearly event with day-before and morning reminders. | `leo/agents/calendar.py` | "Neha ka birthday 12 March hai" creates the yearly event |
