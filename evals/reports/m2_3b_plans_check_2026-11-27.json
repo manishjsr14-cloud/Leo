@@ -1,0 +1,765 @@
+{
+ "machine": "Machine: laptop (GPU: NVIDIA GeForce GTX 1650, 4096 MiB); power: plugged in (battery 100 %)",
+ "commit": "8834e9e",
+ "now": "2026-11-27T09:00:00+05:30",
+ "db": "C:/Users/dell/AppData/Local/Temp/leo_evals/m2_3b_plans_check_2026-11-27.db",
+ "records": {
+  "P12": {
+   "id": "P12",
+   "text": "I'm meeting Rohan this evening.",
+   "reply": "You're free on Fri 27 Nov: 6:00 am-11:00 pm.",
+   "turn_s": 9.844338700000662,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "calendar"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Add an evening meeting with Rohan to the calendar.\"}",
+     "prompt_tokens": 242,
+     "first_token_s": 3.8439999999827705,
+     "total_s": 4.4060000000172295
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"find_free_slots\": {\"range\": \"today\"}}",
+     "prompt_tokens": 369,
+     "first_token_s": 4.7810000000172295,
+     "total_s": 5.0310000000172295
+    }
+   ],
+   "group": "plans",
+   "kept_out_by": "plan rule (part of today or weekend)",
+   "plan_rule_alone": "plan rule (part of today or weekend)"
+  },
+  "P13": {
+   "id": "P13",
+   "text": "Tonight I'm watching the match at a friend's place.",
+   "reply": "Kis din aur kis time pe?",
+   "turn_s": 11.356624100008048,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "calendar"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Add an event for tonight at a friend's place for watching the match.\"}",
+     "prompt_tokens": 246,
+     "first_token_s": 2.4689999999827705,
+     "total_s": 3.062999999965541
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"create_event\": {\"title\": \"Watch Match at Friend's Place\"}}",
+     "prompt_tokens": 377,
+     "first_token_s": 2.98499999998603,
+     "total_s": 3.327999999979511
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Kis din aur kis time pe?",
+     "prompt_tokens": 347,
+     "first_token_s": 4.703000000037719,
+     "total_s": 4.922000000020489
+    }
+   ],
+   "group": "plans",
+   "kept_out_by": "plan rule (part of today or weekend)",
+   "plan_rule_alone": "plan rule (part of today or weekend)"
+  },
+  "P14": {
+   "id": "P14",
+   "text": "I'll call the plumber later today.",
+   "reply": "Kis time pe?",
+   "turn_s": 8.797552899981383,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "calendar"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a call to the plumber to today's schedule\"}",
+     "prompt_tokens": 242,
+     "first_token_s": 2.4209999999729916,
+     "total_s": 2.9209999999729916
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"create_event\": {\"title\": \"Call with Plumber\"}}",
+     "prompt_tokens": 350,
+     "first_token_s": 2.969000000040978,
+     "total_s": 3.2660000000032596
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Kis time pe?",
+     "prompt_tokens": 339,
+     "first_token_s": 2.4679999999934807,
+     "total_s": 2.5780000000377186
+    }
+   ],
+   "group": "plans",
+   "kept_out_by": "plan rule (part of today or weekend)",
+   "plan_rule_alone": "plan rule (part of today or weekend)"
+  },
+  "P15": {
+   "id": "P15",
+   "text": "This morning I have to submit the report.",
+   "reply": "Added 'submit report' to your tasks.",
+   "turn_s": 7.432298599975184,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "productivity"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Add submission of report to today's tasks\"}",
+     "prompt_tokens": 243,
+     "first_token_s": 2.3130000000237487,
+     "total_s": 2.7810000000172295
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"add_task\": {\"title\": \"submit report\"}}",
+     "prompt_tokens": 338,
+     "first_token_s": 4.3439999999827705,
+     "total_s": 4.60899999999674
+    }
+   ],
+   "group": "plans",
+   "kept_out_by": "plan rule (part of today or weekend)",
+   "plan_rule_alone": "plan rule (part of today or weekend)"
+  },
+  "P16": {
+   "id": "P16",
+   "text": "Aaj dopahar main bank jaunga.",
+   "reply": "Kis time pe?",
+   "turn_s": 9.088656300038565,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "calendar"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a bank visit at afternoon today\"}",
+     "prompt_tokens": 244,
+     "first_token_s": 2.4689999999827705,
+     "total_s": 2.9060000000172295
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"create_event\": {\"title\": \"Bank Visit\"}}",
+     "prompt_tokens": 373,
+     "first_token_s": 3.155999999959022,
+     "total_s": 3.4219999999622814
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Kis time pe?",
+     "prompt_tokens": 361,
+     "first_token_s": 2.625,
+     "total_s": 2.7339999999967404
+    }
+   ],
+   "group": "plans",
+   "kept_out_by": "plan rule (part of today or weekend)",
+   "plan_rule_alone": "plan rule (part of today or weekend)"
+  },
+  "P17": {
+   "id": "P17",
+   "text": "Is weekend hum Goa ja rahe hain.",
+   "reply": "Which day and time?",
+   "turn_s": 9.169879699999,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "calendar"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a weekend trip to Goa to the calendar.\"}",
+     "prompt_tokens": 244,
+     "first_token_s": 2.422000000020489,
+     "total_s": 2.922000000020489
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"create_event\": {\"title\": \"Weekend Trip to Goa\"}}",
+     "prompt_tokens": 370,
+     "first_token_s": 3.1869999999762513,
+     "total_s": 3.514999999955762
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Which day and time?",
+     "prompt_tokens": 345,
+     "first_token_s": 2.594000000040978,
+     "total_s": 2.7040000000270084
+    }
+   ],
+   "group": "plans",
+   "kept_out_by": "no first-person word",
+   "plan_rule_alone": "plan rule (part of today or weekend)"
+  },
+  "P18": {
+   "id": "P18",
+   "text": "This weekend I'm visiting my parents.",
+   "reply": "You're free on Fri 27 Nov: 6:00 am-11:00 pm.",
+   "turn_s": 6.117314999981318,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "calendar"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a visit to parents this weekend to the calendar.\"}",
+     "prompt_tokens": 242,
+     "first_token_s": 2.3439999999827705,
+     "total_s": 2.85999999998603
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"find_free_slots\": {\"range\": \"today\"}}",
+     "prompt_tokens": 369,
+     "first_token_s": 2.9689999999827705,
+     "total_s": 3.23499999998603
+    }
+   ],
+   "group": "plans",
+   "kept_out_by": "plan rule (part of today or weekend)",
+   "plan_rule_alone": "plan rule (part of today or weekend)"
+  },
+  "P19": {
+   "id": "P19",
+   "text": "Aaj raat dinner bahar hai.",
+   "reply": "Aaj raat dinner bahar hai. Kis time pe?",
+   "turn_s": 9.514079099986702,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "calendar"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a dinner event for tonight outside\"}",
+     "prompt_tokens": 243,
+     "first_token_s": 2.405999999959022,
+     "total_s": 2.8439999999827705
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"create_event\": {\"title\": \"Dinner outside\"}}",
+     "prompt_tokens": 380,
+     "first_token_s": 3.3119999999762513,
+     "total_s": 3.64000000001397
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Aaj raat dinner bahar hai. Kis time pe?",
+     "prompt_tokens": 360,
+     "first_token_s": 2.6869999999762513,
+     "total_s": 2.9839999999967404
+    }
+   ],
+   "group": "plans",
+   "kept_out_by": "no first-person word",
+   "plan_rule_alone": "plan rule (part of today or weekend)"
+  },
+  "F40": {
+   "id": "F40",
+   "text": "I usually go running in the evening.",
+   "reply": "Added 'evening running' to your tasks.",
+   "turn_s": 13.007621099997777,
+   "created": [
+    1
+   ],
+   "replaced": [],
+   "subjects": [
+    "evening_activity"
+   ],
+   "agents": [
+    "productivity"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Add a daily running habit for the evening to my productivity list.\"}",
+     "prompt_tokens": 242,
+     "first_token_s": 2.3589999999967404,
+     "total_s": 2.9689999999827705
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"add_task\": {\"title\": \"evening running\"}}",
+     "prompt_tokens": 341,
+     "first_token_s": 2.952999999979511,
+     "total_s": 3.25
+    },
+    {
+     "node": "memory",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"replaces\": 0, \"subject\": \"evening_activity\"}",
+     "prompt_tokens": 378,
+     "first_token_s": 4.73399999999674,
+     "total_s": 5.125
+    }
+   ],
+   "group": "facts",
+   "kept_out_by": null,
+   "plan_rule_alone": null
+  },
+  "F41": {
+   "id": "F41",
+   "text": "Main raat ko late sota hoon.",
+   "reply": "'raat ko late sota hoon' aapki tasks list mein daal diya.",
+   "turn_s": 11.605591900006402,
+   "created": [
+    2
+   ],
+   "replaced": [],
+   "subjects": [
+    "evening_activity"
+   ],
+   "agents": [
+    "productivity"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Add a late night task to my to-do list.\"}",
+     "prompt_tokens": 244,
+     "first_token_s": 2.3910000000032596,
+     "total_s": 2.9530000000377186
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"add_task\": {\"title\": \"raat ko late sota hoon\"}}",
+     "prompt_tokens": 341,
+     "first_token_s": 3.0160000000032596,
+     "total_s": 3.4219999999622814
+    },
+    {
+     "node": "memory",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"replaces\": 0, \"subject\": \"evening_activity\"}",
+     "prompt_tokens": 381,
+     "first_token_s": 4.75,
+     "total_s": 5.157000000006519
+    }
+   ],
+   "group": "facts",
+   "kept_out_by": null,
+   "plan_rule_alone": null
+  },
+  "F42": {
+   "id": "F42",
+   "text": "I prefer calls in the afternoon.",
+   "reply": "You're free on Fri 27 Nov: 6:00 am-11:00 pm.",
+   "turn_s": 9.376360800000839,
+   "created": [
+    3
+   ],
+   "replaced": [],
+   "subjects": [
+    "evening_activity"
+   ],
+   "agents": [
+    "calendar"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Set afternoon as preferred time for calls in the calendar.\"}",
+     "prompt_tokens": 241,
+     "first_token_s": 2.4380000000237487,
+     "total_s": 2.969000000040978
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"find_free_slots\": {\"range\": \"today\"}}",
+     "prompt_tokens": 368,
+     "first_token_s": 3.172000000020489,
+     "total_s": 3.4380000000237487
+    },
+    {
+     "node": "memory",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"replaces\": 0, \"subject\": \"evening_activity\"}",
+     "prompt_tokens": 378,
+     "first_token_s": 2.48499999998603,
+     "total_s": 2.8910000000032596
+    }
+   ],
+   "group": "facts",
+   "kept_out_by": null,
+   "plan_rule_alone": null
+  },
+  "F43": {
+   "id": "F43",
+   "text": "Mujhe subah ki chai bahut pasand hai.",
+   "reply": "Subah ki chai pasand hai! 😊 Chai ka time aapke liye kya hai?",
+   "turn_s": 9.07028539996827,
+   "created": [
+    4
+   ],
+   "replaced": [],
+   "subjects": [
+    "morning_chai_preference"
+   ],
+   "agents": [],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [], \"task\": \"Note that the user likes morning tea.\"}",
+     "prompt_tokens": 247,
+     "first_token_s": 2.4060000000172295,
+     "total_s": 2.797000000020489
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Subah ki chai pasand hai! 😊 Chai ka time aapke liye kya hai?",
+     "prompt_tokens": 331,
+     "first_token_s": 2.639999999955762,
+     "total_s": 3.1869999999762513
+    },
+    {
+     "node": "memory",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"replaces\": 0, \"subject\": \"morning_chai_preference\"}",
+     "prompt_tokens": 384,
+     "first_token_s": 2.5459999999729916,
+     "total_s": 2.9839999999967404
+    }
+   ],
+   "group": "facts",
+   "kept_out_by": null,
+   "plan_rule_alone": null
+  },
+  "F44": {
+   "id": "F44",
+   "text": "I always work best in the morning.",
+   "reply": "Saved the note.",
+   "turn_s": 11.727158299996518,
+   "created": [
+    5
+   ],
+   "replaced": [],
+   "subjects": [
+    "morning_chai_preference"
+   ],
+   "agents": [
+    "productivity"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Add a note to my daily routine to work in the morning.\"}",
+     "prompt_tokens": 242,
+     "first_token_s": 2.5,
+     "total_s": 3.094000000040978
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"add_note\": {\"text\": \"I always work best in the morning.\"}}",
+     "prompt_tokens": 341,
+     "first_token_s": 2.937999999965541,
+     "total_s": 3.327999999979511
+    },
+    {
+     "node": "memory",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"replaces\": 0, \"subject\": \"morning_chai_preference\"}",
+     "prompt_tokens": 384,
+     "first_token_s": 4.780999999959022,
+     "total_s": 5.2189999999827705
+    }
+   ],
+   "group": "facts",
+   "kept_out_by": null,
+   "plan_rule_alone": null
+  },
+  "F45": {
+   "id": "F45",
+   "text": "On weekends I play badminton.",
+   "reply": "Added 'badminton' to your tasks.",
+   "turn_s": 8.8232255000039,
+   "created": [
+    6
+   ],
+   "replaced": [],
+   "subjects": [
+    "sport"
+   ],
+   "agents": [
+    "productivity"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Add badminton to weekend routine\"}",
+     "prompt_tokens": 242,
+     "first_token_s": 2.4540000000270084,
+     "total_s": 2.8910000000032596
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"add_task\": {\"title\": \"badminton\"}}",
+     "prompt_tokens": 336,
+     "first_token_s": 2.75,
+     "total_s": 3.0320000000065193
+    },
+    {
+     "node": "memory",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"replaces\": 2, \"subject\": \"sport\"}",
+     "prompt_tokens": 384,
+     "first_token_s": 2.4380000000237487,
+     "total_s": 2.797000000020489
+    }
+   ],
+   "group": "facts",
+   "kept_out_by": null,
+   "plan_rule_alone": null
+  },
+  "P10": {
+   "id": "P10",
+   "text": "I'm going to the bank this afternoon.",
+   "reply": "Kis din aur kis time pe?",
+   "turn_s": 9.221301699988544,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "calendar"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a bank visit event for this afternoon to my calendar.\"}",
+     "prompt_tokens": 243,
+     "first_token_s": 2.405999999959022,
+     "total_s": 2.9689999999827705
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"create_event\": {\"title\": \"Bank Visit\"}}",
+     "prompt_tokens": 371,
+     "first_token_s": 2.9689999999827705,
+     "total_s": 3.2189999999827705
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Kis din aur kis time pe?",
+     "prompt_tokens": 344,
+     "first_token_s": 2.797000000020489,
+     "total_s": 3.0
+    }
+   ],
+   "group": "reported only",
+   "kept_out_by": "plan rule (part of today or weekend)",
+   "plan_rule_alone": "plan rule (part of today or weekend)"
+  },
+  "R1": {
+   "id": "R1",
+   "text": "Is saal se main Marathi classes le raha hoon.",
+   "reply": "'Marathi classes' aapki tasks list mein daal diya.",
+   "turn_s": 9.216555899998639,
+   "created": [
+    7
+   ],
+   "replaced": [],
+   "subjects": [
+    "language_class"
+   ],
+   "agents": [
+    "productivity"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Add Marathi classes to your task list for this year.\"}",
+     "prompt_tokens": 248,
+     "first_token_s": 2.5310000000172295,
+     "total_s": 3.0929999999934807
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"add_task\": {\"title\": \"Marathi classes\"}}",
+     "prompt_tokens": 346,
+     "first_token_s": 2.9060000000172295,
+     "total_s": 3.1869999999762513
+    },
+    {
+     "node": "memory",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"replaces\": 0, \"subject\": \"language_class\"}",
+     "prompt_tokens": 390,
+     "first_token_s": 2.5,
+     "total_s": 2.8589999999967404
+    }
+   ],
+   "group": "reported only",
+   "kept_out_by": null,
+   "plan_rule_alone": null
+  },
+  "P07": {
+   "id": "P07",
+   "text": "Is weekend main Lonavala ja raha hoon.",
+   "reply": "Which day and time?",
+   "turn_s": 9.13576049997937,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "calendar"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a weekend trip to Lonavala to the calendar.\"}",
+     "prompt_tokens": 246,
+     "first_token_s": 2.4369999999762513,
+     "total_s": 2.9839999999967404
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"create_event\": {\"title\": \"Weekend Trip to Lonavala\"}}",
+     "prompt_tokens": 374,
+     "first_token_s": 3.0310000000172295,
+     "total_s": 3.4060000000172295
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Which day and time?",
+     "prompt_tokens": 347,
+     "first_token_s": 2.5939999999827705,
+     "total_s": 2.7189999999827705
+    }
+   ],
+   "group": "reported only",
+   "kept_out_by": "plan rule (part of today or weekend)",
+   "plan_rule_alone": "plan rule (part of today or weekend)"
+  }
+ },
+ "parts": [
+  [
+   "plans stored: 0 of 8 (max 0; stored: none)",
+   true
+  ],
+  [
+   "facts stored: 6 of 6 (min 6; not stored: none)",
+   true
+  ]
+ ]
+}
