@@ -1,0 +1,906 @@
+{
+ "set": "first",
+ "machine": "Machine: laptop (GPU: NVIDIA GeForce GTX 1650, 4096 MiB); power: plugged in (battery 100 %)",
+ "commit": "659a6de",
+ "now": "2026-11-27T09:00:00+05:30",
+ "db": "C:/Users/dell/AppData/Local/Temp/leo_evals/m2_3c_statement_check_2026-11-27_fix.db",
+ "records": {
+  "S30": {
+   "id": "S30",
+   "text": "I have a lot of work this week.",
+   "reply": "I see you have a busy week. Let me know how I can help.",
+   "turn_s": 3.0313068000250496,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [],
+   "calls": [
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "I see you have a busy week. Let me know how I can help.",
+     "prompt_tokens": 341,
+     "first_token_s": 2.4679999999934807,
+     "total_s": 2.8429999999934807
+    }
+   ],
+   "tool_log": [],
+   "group": "statements",
+   "kind": "statement",
+   "note": null
+  },
+  "S31": {
+   "id": "S31",
+   "text": "Mera phone ka charger kharab ho gaya hai.",
+   "reply": "Mera phone ka charger kharab ho gaya hai. Kya aap kisi nayi charger ke baare mein madad chahate hain?",
+   "turn_s": 7.973523299966473,
+   "created": [
+    1
+   ],
+   "replaced": [],
+   "subjects": [
+    "phone_charger"
+   ],
+   "agents": [],
+   "calls": [
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Mera phone ka charger kharab ho gaya hai. Kya aap kisi nayi charger ke baare mein madad chahate hain?",
+     "prompt_tokens": 365,
+     "first_token_s": 2.5469999999622814,
+     "total_s": 3.375
+    },
+    {
+     "node": "memory",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"replaces\": 0, \"subject\": \"phone_charger\"}",
+     "prompt_tokens": 383,
+     "first_token_s": 2.39000000001397,
+     "total_s": 2.797000000020489
+    }
+   ],
+   "tool_log": [],
+   "group": "statements",
+   "kind": "statement",
+   "note": null
+  },
+  "S32": {
+   "id": "S32",
+   "text": "I'm thinking about learning French.",
+   "reply": "That's a great idea! Would you like help finding resources or a learning plan for French?",
+   "turn_s": 5.679845899983775,
+   "created": [
+    2
+   ],
+   "replaced": [],
+   "subjects": [
+    "language_learning"
+   ],
+   "agents": [],
+   "calls": [
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "That's a great idea! Would you like help finding resources or a learning plan for French?",
+     "prompt_tokens": 339,
+     "first_token_s": 2.452999999979511,
+     "total_s": 2.9060000000172295
+    },
+    {
+     "node": "memory",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"replaces\": 0, \"subject\": \"language_learning\"}",
+     "prompt_tokens": 379,
+     "first_token_s": 2.235000000044238,
+     "total_s": 2.7040000000270084
+    }
+   ],
+   "tool_log": [],
+   "group": "statements",
+   "kind": "statement",
+   "note": null
+  },
+  "S33": {
+   "id": "S33",
+   "text": "Kal Rahul ka call aaya tha.",
+   "reply": "Rahul ke call kal aaya tha.",
+   "turn_s": 2.8210001999977976,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [],
+   "calls": [
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Rahul ke call kal aaya tha.",
+     "prompt_tokens": 360,
+     "first_token_s": 2.5790000000270084,
+     "total_s": 2.8130000000237487
+    }
+   ],
+   "tool_log": [],
+   "group": "statements",
+   "kind": "statement",
+   "note": null
+  },
+  "S34": {
+   "id": "S34",
+   "text": "My mother likes gardening.",
+   "reply": "I see you like gardening, Mom! 🌿 Would you like help finding a garden spot or plant ideas?",
+   "turn_s": 5.67074730002787,
+   "created": [
+    3
+   ],
+   "replaced": [],
+   "subjects": [
+    "mother_hobby"
+   ],
+   "agents": [],
+   "calls": [
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "I see you like gardening, Mom! 🌿 Would you like help finding a garden spot or plant ideas?",
+     "prompt_tokens": 337,
+     "first_token_s": 2.39000000001397,
+     "total_s": 2.9369999999762513
+    },
+    {
+     "node": "memory",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"replaces\": 0, \"subject\": \"mother_hobby\"}",
+     "prompt_tokens": 380,
+     "first_token_s": 2.202999999979511,
+     "total_s": 2.6560000000172295
+    }
+   ],
+   "tool_log": [],
+   "group": "statements",
+   "kind": "statement",
+   "note": null
+  },
+  "S35": {
+   "id": "S35",
+   "text": "Aaj bahut garmi hai.",
+   "reply": "Aaj bahut garmi hai. (Weather source: Open-Meteo)",
+   "turn_s": 3.1288358999881893,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [],
+   "calls": [
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Aaj bahut garmi hai. (Weather source: Open-Meteo)",
+     "prompt_tokens": 361,
+     "first_token_s": 2.6880000000237487,
+     "total_s": 3.110000000044238
+    }
+   ],
+   "tool_log": [],
+   "group": "statements",
+   "kind": "statement",
+   "note": null
+  },
+  "S36": {
+   "id": "S36",
+   "text": "I need to buy groceries.",
+   "reply": "Sure! Let me know your preferred store or items, and I’ll help you plan.",
+   "turn_s": 5.658205599989742,
+   "created": [
+    4
+   ],
+   "replaced": [],
+   "subjects": [
+    "groceries"
+   ],
+   "agents": [],
+   "calls": [
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Sure! Let me know your preferred store or items, and I’ll help you plan.",
+     "prompt_tokens": 338,
+     "first_token_s": 2.4380000000237487,
+     "total_s": 2.8589999999967404
+    },
+    {
+     "node": "memory",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"replaces\": 0, \"subject\": \"groceries\"}",
+     "prompt_tokens": 385,
+     "first_token_s": 2.25,
+     "total_s": 2.7179999999934807
+    }
+   ],
+   "tool_log": [],
+   "group": "statements",
+   "kind": "statement",
+   "note": null
+  },
+  "S37": {
+   "id": "S37",
+   "text": "Mujhe dentist ke paas jaana hai.",
+   "reply": "Dentist jaa raha hai? Konsultation ka time kya hai?",
+   "turn_s": 5.838152899988927,
+   "created": [
+    5
+   ],
+   "replaced": [],
+   "subjects": [
+    "dentist_visit"
+   ],
+   "agents": [],
+   "calls": [
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Dentist jaa raha hai? Konsultation ka time kya hai?",
+     "prompt_tokens": 363,
+     "first_token_s": 2.60999999998603,
+     "total_s": 3.047000000020489
+    },
+    {
+     "node": "memory",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"replaces\": 0, \"subject\": \"dentist_visit\"}",
+     "prompt_tokens": 392,
+     "first_token_s": 2.1880000000237487,
+     "total_s": 2.719000000040978
+    }
+   ],
+   "tool_log": [],
+   "group": "statements",
+   "kind": "statement",
+   "note": null
+  },
+  "Q30": {
+   "id": "Q30",
+   "text": "Am I free tomorrow afternoon?",
+   "reply": "You're free on Sat 28 Nov: 12:00-4:00 pm.",
+   "turn_s": 6.91825670003891,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "calendar"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Check if the user is free tomorrow afternoon\"}",
+     "prompt_tokens": 240,
+     "first_token_s": 2.4839999999967404,
+     "total_s": 2.937000000034459
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"find_free_slots\": {\"range\": \"window\"}}",
+     "prompt_tokens": 351,
+     "first_token_s": 3.514999999955762,
+     "total_s": 3.764999999955762
+    }
+   ],
+   "tool_log": [
+    {
+     "tool": "find_free_slots",
+     "args": {
+      "start": "2026-11-28T12:00:00+05:30",
+      "end": "2026-11-28T16:00:00+05:30"
+     },
+     "result": [
+      {
+       "start": "2026-11-28T12:00:00+05:30",
+       "end": "2026-11-28T16:00:00+05:30"
+      }
+     ]
+    }
+   ],
+   "group": "questions",
+   "kind": "question",
+   "note": null
+  },
+  "Q31": {
+   "id": "Q31",
+   "text": "Kal ka weather kaisa hai?",
+   "reply": "Kal ka weather Nashik mein 70% rain ka chance tha, 6.2 mm rain (Open-Meteo).",
+   "turn_s": 11.052568800048903,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "research"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"research\"], \"task\": \"Check the weather for yesterday\"}",
+     "prompt_tokens": 242,
+     "first_token_s": 2.39000000001397,
+     "total_s": 2.76500000001397
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_weather\": {\"place\": \"Nashik\"}}",
+     "prompt_tokens": 253,
+     "first_token_s": 3.905999999959022,
+     "total_s": 4.2189999999827705
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Kal ka weather Nashik mein 70% rain ka chance tha, 6.2 mm rain (Open-Meteo).",
+     "prompt_tokens": 430,
+     "first_token_s": 3.375,
+     "total_s": 4.0310000000172295
+    }
+   ],
+   "tool_log": [
+    {
+     "tool": "get_weather",
+     "args": {
+      "place": "Nashik"
+     },
+     "result": {
+      "place": "Nashik, Maharashtra, India",
+      "days": [
+       {
+        "date": "2026-11-16",
+        "day": "today",
+        "rain_chance_pct": 10,
+        "rain_mm": 0.0
+       },
+       {
+        "date": "2026-11-17",
+        "day": "tomorrow",
+        "rain_chance_pct": 70,
+        "rain_mm": 6.2
+       },
+       {
+        "date": "2026-11-21",
+        "day": "Saturday",
+        "rain_chance_pct": 5,
+        "rain_mm": 0.0
+       }
+      ],
+      "source": "Open-Meteo",
+      "source_url": "https://open-meteo.com"
+     }
+    }
+   ],
+   "group": "questions",
+   "kind": "question",
+   "note": null
+  },
+  "Q32": {
+   "id": "Q32",
+   "text": "What's on my calendar on Friday?",
+   "reply": "Nothing was done on Friday. Kaunsa Friday: is hafte wala ya agle hafte wala?",
+   "turn_s": 4.023725199978799,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "calendar"
+   ],
+   "calls": [
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Nothing was done on Friday. Kaunsa Friday: is hafte wala ya agle hafte wala?",
+     "prompt_tokens": 430,
+     "first_token_s": 3.3429999999934807,
+     "total_s": 3.9839999999967404
+    }
+   ],
+   "tool_log": [],
+   "group": "questions",
+   "kind": "question",
+   "note": null
+  },
+  "Q33": {
+   "id": "Q33",
+   "text": "Mere kitne tasks pending hain?",
+   "reply": "Dua tasks hain: 'Buy milk' aur 'Pay electricity bill'.",
+   "turn_s": 13.003548400010914,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "productivity"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Check how many tasks are pending\"}",
+     "prompt_tokens": 243,
+     "first_token_s": 2.4689999999827705,
+     "total_s": 2.8910000000032596
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"list_tasks\": {\"include_done\": false}}",
+     "prompt_tokens": 252,
+     "first_token_s": 2.75,
+     "total_s": 3.0
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"done\": {\"summary\": \"Found 2 pending tasks: 'Buy milk' and 'Pay electricity bill'.\"}}",
+     "prompt_tokens": 314,
+     "first_token_s": 2.6869999999762513,
+     "total_s": 3.2810000000172295
+    },
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "Dua tasks hain: 'Buy milk' aur 'Pay electricity bill'.",
+     "prompt_tokens": 429,
+     "first_token_s": 3.3910000000032596,
+     "total_s": 3.7660000000032596
+    }
+   ],
+   "tool_log": [
+    {
+     "tool": "list_tasks",
+     "args": {
+      "include_done": false
+     },
+     "result": [
+      {
+       "id": 1,
+       "title": "Buy milk",
+       "done": false
+      },
+      {
+       "id": 2,
+       "title": "Pay electricity bill",
+       "done": false
+      }
+     ]
+    }
+   ],
+   "group": "questions",
+   "kind": "question",
+   "note": null
+  },
+  "W30": {
+   "id": "W30",
+   "text": "Add buy groceries to my tasks.",
+   "reply": "Added 'buy groceries' to your tasks.",
+   "turn_s": 6.015989999985322,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "productivity"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Add 'buy groceries' to my tasks.\"}",
+     "prompt_tokens": 241,
+     "first_token_s": 2.35999999998603,
+     "total_s": 2.85999999998603
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"add_task\": {\"title\": \"buy groceries\"}}",
+     "prompt_tokens": 336,
+     "first_token_s": 2.85999999998603,
+     "total_s": 3.10999999998603
+    }
+   ],
+   "tool_log": [
+    {
+     "tool": "add_task",
+     "args": {
+      "title": "buy groceries"
+     },
+     "result": {
+      "id": 3,
+      "title": "buy groceries",
+      "done": false
+     }
+    }
+   ],
+   "group": "requests",
+   "kind": "request",
+   "note": null
+  },
+  "W31": {
+   "id": "W31",
+   "text": "Kal subah 9 baje dentist appointment daal do.",
+   "reply": "Ho gaya! 'Dentist Appointment' Sat 28 Nov, 9:00-10:00 am calendar mein daal diya.",
+   "turn_s": 6.635354699974414,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "calendar"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Add a dentist appointment at 9 AM tomorrow morning to the calendar.\"}",
+     "prompt_tokens": 247,
+     "first_token_s": 2.3910000000032596,
+     "total_s": 3.0
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"create_event\": {\"title\": \"Dentist Appointment\"}}",
+     "prompt_tokens": 396,
+     "first_token_s": 3.297000000020489,
+     "total_s": 3.6089999999967404
+    }
+   ],
+   "tool_log": [
+    {
+     "tool": "create_event",
+     "args": {
+      "start": "2026-11-28T09:00:00+05:30",
+      "end": "2026-11-28T10:00:00+05:30",
+      "title": "Dentist Appointment"
+     },
+     "result": {
+      "id": "mock-evt-1",
+      "start": "2026-11-28T09:00:00+05:30",
+      "end": "2026-11-28T10:00:00+05:30",
+      "title": "Dentist Appointment"
+     }
+    }
+   ],
+   "group": "requests",
+   "kind": "request",
+   "note": null
+  },
+  "W32": {
+   "id": "W32",
+   "text": "Note kar lo: gas cylinder book karna hai.",
+   "reply": "Note save kar diya.",
+   "turn_s": 6.286485199991148,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "productivity"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Add note: gas cylinder book karna hai\"}",
+     "prompt_tokens": 245,
+     "first_token_s": 2.4679999999934807,
+     "total_s": 2.9679999999934807
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"add_note\": {\"text\": \"gas cylinder book karna hai\"}}",
+     "prompt_tokens": 341,
+     "first_token_s": 2.922000000020489,
+     "total_s": 3.2810000000172295
+    }
+   ],
+   "tool_log": [
+    {
+     "tool": "add_note",
+     "args": {
+      "text": "gas cylinder book karna hai"
+     },
+     "result": {
+      "id": 2,
+      "text": "gas cylinder book karna hai"
+     }
+    }
+   ],
+   "group": "requests",
+   "kind": "request",
+   "note": null
+  },
+  "W33": {
+   "id": "W33",
+   "text": "Start a 20 minute timer for tea.",
+   "reply": "Timer 'tea' set for 20 minutes.",
+   "turn_s": 6.308077699970454,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "productivity"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Start a 20 minute timer for tea.\"}",
+     "prompt_tokens": 244,
+     "first_token_s": 2.452999999979511,
+     "total_s": 2.9839999999967404
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"start_timer\": {\"minutes\": 20, \"label\": \"tea\"}}",
+     "prompt_tokens": 340,
+     "first_token_s": 2.905999999959022,
+     "total_s": 3.312999999965541
+    }
+   ],
+   "tool_log": [
+    {
+     "tool": "start_timer",
+     "args": {
+      "minutes": 20.0,
+      "label": "tea"
+     },
+     "result": {
+      "label": "tea",
+      "minutes": 20.0,
+      "ends_at": "2026-11-14T08:20:00+05:30"
+     }
+    }
+   ],
+   "group": "requests",
+   "kind": "request",
+   "note": null
+  },
+  "t09": {
+   "id": "t09",
+   "text": "Kal Rahul ke saath meeting",
+   "reply": "Kal matlab aane wala kal (tomorrow) ya beeta hua kal (yesterday)?",
+   "turn_s": 0.015606499975547194,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [],
+   "calls": [],
+   "tool_log": [],
+   "group": "behaviour_change",
+   "kind": "statement",
+   "note": null
+  },
+  "O30": {
+   "id": "O30",
+   "text": "Milk bhi chahiye list mein.",
+   "reply": "'milk' aapki tasks list mein daal diya.",
+   "turn_s": 5.907389100000728,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "productivity"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"productivity\"], \"task\": \"Add milk to the list\"}",
+     "prompt_tokens": 244,
+     "first_token_s": 2.3910000000032596,
+     "total_s": 2.8119999999762513
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"add_task\": {\"title\": \"milk\"}}",
+     "prompt_tokens": 336,
+     "first_token_s": 2.8290000000270084,
+     "total_s": 3.094000000040978
+    }
+   ],
+   "tool_log": [
+    {
+     "tool": "add_task",
+     "args": {
+      "title": "milk"
+     },
+     "result": {
+      "id": 3,
+      "title": "milk",
+      "done": false
+     }
+    }
+   ],
+   "group": "reported_only",
+   "kind": "request",
+   "note": "request without a listed word"
+  },
+  "O31": {
+   "id": "O31",
+   "text": "Dentist ka time fix karo.",
+   "reply": "Fri 27 Nov (whole day) mein aapke calendar mein kuch nahi hai.",
+   "turn_s": 6.499986300012097,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "calendar"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Fix the dentist appointment time in the calendar.\"}",
+     "prompt_tokens": 243,
+     "first_token_s": 2.3439999999827705,
+     "total_s": 2.8119999999762513
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"get_events\": {\"range\": \"today\"}}",
+     "prompt_tokens": 368,
+     "first_token_s": 3.422000000020489,
+     "total_s": 3.6560000000172295
+    }
+   ],
+   "tool_log": [
+    {
+     "tool": "get_events",
+     "args": {
+      "start": "2026-11-27T00:00:00+05:30",
+      "end": "2026-11-28T00:00:00+05:30"
+     },
+     "result": []
+    }
+   ],
+   "group": "reported_only",
+   "kind": "request",
+   "note": "request without a listed word"
+  },
+  "O32": {
+   "id": "O32",
+   "text": "I set my alarm early.",
+   "reply": "You set your alarm early. Nothing else was done.",
+   "turn_s": 3.0831928999978118,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [],
+   "calls": [
+    {
+     "node": "responder",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "You set your alarm early. Nothing else was done.",
+     "prompt_tokens": 338,
+     "first_token_s": 2.8119999999762513,
+     "total_s": 3.077999999979511
+    }
+   ],
+   "tool_log": [],
+   "group": "reported_only",
+   "kind": "statement",
+   "note": "statement containing \"set\""
+  },
+  "O33": {
+   "id": "O33",
+   "text": "Kya tum meeting daal sakte ho?",
+   "reply": "Fri 27 Nov ko aap free ho: 6:00 am-11:00 pm.",
+   "turn_s": 9.848183699999936,
+   "created": [],
+   "replaced": [],
+   "subjects": [],
+   "agents": [
+    "calendar"
+   ],
+   "calls": [
+    {
+     "node": "supervisor",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"agents\": [\"calendar\"], \"task\": \"Check if a meeting can be added to the calendar.\"}",
+     "prompt_tokens": 244,
+     "first_token_s": 2.375,
+     "total_s": 2.9060000000172295
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"find_free_slots\": {\"range\": \"today\"}}",
+     "prompt_tokens": 371,
+     "first_token_s": 2.969000000040978,
+     "total_s": 3.235000000044238
+    },
+    {
+     "node": "agent",
+     "provider": "ollama",
+     "fallback": null,
+     "text": "{\"done\": {\"summary\": \"Today is free from 6:00 AM to 11:59 PM. A meeting can be added during this time.\"}}",
+     "prompt_tokens": 459,
+     "first_token_s": 2.7969999999622814,
+     "total_s": 3.6719999999622814
+    }
+   ],
+   "tool_log": [
+    {
+     "tool": "find_free_slots",
+     "args": {
+      "start": "2026-11-27T06:00:00+05:30",
+      "end": "2026-11-27T23:00:00+05:30"
+     },
+     "result": [
+      {
+       "start": "2026-11-27T06:00:00+05:30",
+       "end": "2026-11-27T23:00:00+05:30"
+      }
+     ]
+    }
+   ],
+   "group": "reported_only",
+   "kind": "request",
+   "note": "question-shaped request"
+  }
+ },
+ "parts": [
+  [
+   "statements: 0 tool calls (max 0; by message: none)",
+   true
+  ],
+  [
+   "questions: 0 write calls (max 0; by message: none)",
+   true
+  ],
+  [
+   "requests: expected write call ran for 4 of 4 (missed: none)",
+   true
+  ],
+  [
+   "t09: agents none, 0 tool calls (expected no agent, 0 tool calls; the reply is the user's judgement)",
+   true
+  ]
+ ]
+}
