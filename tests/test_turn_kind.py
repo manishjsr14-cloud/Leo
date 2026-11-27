@@ -35,6 +35,13 @@ READS = {"get_events", "find_free_slots", "list_tasks", "list_notes", "calculate
     ("Alarm laga do 6 baje ka", "request"),
     ("Move the gym session to Monday", "request"),
     ("Remind me to pay the rent", "request"),
+    # fix round b: a request word directly after a first-person subject does not count
+    ("I list my expenses in a notebook.", "statement"),
+    ("Main remind karta hoon sabko.", "statement"),
+    ("Hum cancel kar dete hain aksar.", "statement"),
+    ("I always set two alarms, please add one more", "request"),  # "add" is not after "I"
+    ("Can I add milk?", "question"),                         # known limit
+    ("Can you add milk?", "request"),
 ])
 def test_turn_kind(text, kind):
     assert turn_kind(text) == kind
