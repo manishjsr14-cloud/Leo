@@ -1,0 +1,53 @@
+# M2.3b follow-up check set: the plan rule (2026-11-27). Written by the user
+# outside the code and committed before any change to the plan rule. Converted
+# to the project's format without changing any message or expected result.
+# Never edit this file to improve a result; a better set is a new file
+# (AGENTS.md). All people and facts are fictional.
+#
+# Follow-up to the M2.3b closure: the plan rule missed plans that name only a
+# part of today ("this afternoon", fix-round P10) and weekend plans (P07).
+#
+# Each message is a new conversation through Leo's real graph and the real
+# write path (local model, mock tools, a fresh temporary database), judged on
+# the laptop. "now" for every turn: 2026-11-27 09:00 IST (Friday), so "this
+# evening", "tonight" and "this weekend" are all still ahead.
+#
+# Pass rule (the user's words, fixed before any code): 0 of the 8 plans
+# stored; all 6 facts stored; judged on the laptop through the real write
+# path; for each plan the report says WHICH rule kept it out (so a plan kept
+# out only by the "Is" bug is visible). P10 is reported only (seen before).
+# Then both M2.3b sets are rerun as a regression: no part that was met may
+# become missed. If it misses, record it and stop; the user decides.
+#
+# Counted as for the earlier M2.3b sets: stored = the turn created a memory row.
+
+now: "2026-11-27T09:00:00+05:30"
+
+pass_rule:
+  plans_stored_max: 0     # of 8
+  facts_stored_min: 6     # of 6
+  reported_only: [P10]
+
+# --- Must NOT be stored: plans (8) -------------------------------------------
+plans:
+  - {id: P12, lang: en,       text: "I'm meeting Rohan this evening."}
+  - {id: P13, lang: en,       text: "Tonight I'm watching the match at a friend's place."}
+  - {id: P14, lang: en,       text: "I'll call the plumber later today."}
+  - {id: P15, lang: en,       text: "This morning I have to submit the report."}
+  - {id: P16, lang: hinglish, text: "Aaj dopahar main bank jaunga."}
+  - {id: P17, lang: hinglish, text: "Is weekend hum Goa ja rahe hain."}
+  - {id: P18, lang: en,       text: "This weekend I'm visiting my parents."}
+  - {id: P19, lang: hinglish, text: "Aaj raat dinner bahar hai."}
+
+# --- Must be stored: lasting facts (6) ---------------------------------------
+facts:
+  - {id: F40, lang: en,       text: "I usually go running in the evening."}
+  - {id: F41, lang: hinglish, text: "Main raat ko late sota hoon."}
+  - {id: F42, lang: en,       text: "I prefer calls in the afternoon."}
+  - {id: F43, lang: hinglish, text: "Mujhe subah ki chai bahut pasand hai."}
+  - {id: F44, lang: en,       text: "I always work best in the morning."}
+  - {id: F45, lang: en,       text: "On weekends I play badminton."}
+
+# --- Reported only (seen before) ---------------------------------------------
+reported_only:
+  - {id: P10, lang: en, text: "I'm going to the bank this afternoon.", note: "fix-round P10, seen before"}
