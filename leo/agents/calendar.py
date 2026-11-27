@@ -20,7 +20,7 @@ M1 exit check: a clear command is done by code first (calendar_clear.py);
 the model then only adds or moves an event if the message asks for that.
 An "agar"/"if" condition on adding an event is checked by code
 (calendar_condition.py): when it holds the event back, create_event is not
-offered and the outcome carries "held".
+offered and the outcome carries "held". M2.3c: a question gets reads only.
 """
 
 from collections.abc import Callable
@@ -51,6 +51,7 @@ from leo.language.time_parser import current_time
 from leo.language.time_spans import CalendarTimes, read_calendar_times
 from leo.llm.prompts import load_prompt
 from leo.tools.base import Tool
+from leo.tools.registry import tools_for_turn
 
 NAME = "calendar"
 PROMPT = load_prompt("calendar")  # prompts/calendar.yaml
@@ -118,7 +119,7 @@ def run_agent(state: LeoState, chat: Callable, tools: dict[str, Tool], max_steps
         return {"steps": [], "summary": ADD_OR_MOVE, "stopped": "ask"}
     minutes, ranges = config.default_event_minutes, named_ranges(times, now)
     free, seen = waking_ranges(ranges, config.waking_hours), {}  # seen: events listed
-    offered = offered_tools(tools, text, times)
+    offered = offered_tools(tools_for_turn(tools, state.get("turn_kind")), text, times)
     extra = {"assumed_ampm": times.assumed_ampm, "today": now.date().isoformat()}
     if "create_event" in offered and asks_to_create(text) and times.start is not None:
         held = create_hold(text, times.start, state.get("agent_results") or {},

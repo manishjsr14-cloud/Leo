@@ -25,6 +25,7 @@ class LeoState(TypedDict, total=False):
     language: str  # "en", "hinglish" or "hi" for the latest message (M1.8)
     memories: list[str]  # recalled long-term facts, hints for the reply (M2.3)
     personal_question: bool  # the recall gate opened for this message (M2.3b)
+    turn_kind: str  # "request", "question" or "statement" (M2.3c)
 
 
 # The text of the user's latest message ("" when there is none).

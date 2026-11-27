@@ -102,5 +102,6 @@ def mock_calendar_tools(log: list[ToolCall], events: list[dict] | None = None) -
         ("cancel_event", "Cancel a calendar event by its id.", Tier.CONFIRM,
          CancelEventArgs, cancel_event),
     ]
-    return [Tool(name=n, description=d, tier=t, args_model=a, fn=f)
+    reads = {"get_events", "find_free_slots"}  # read-only: offered on a question (M2.3c)
+    return [Tool(name=n, description=d, tier=t, args_model=a, fn=f, read_only=n in reads)
             for n, d, t, a, f in specs]

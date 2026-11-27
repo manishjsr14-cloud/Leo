@@ -50,7 +50,7 @@ def run_plan(plan: list[str], config=None):
     chat = FakeChat({"agents": plan, "task": "do it"}, "Reply.")
     agents = {"productivity": dummy("productivity", seen), "research": dummy("research", seen)}
     out = build_graph(chat, agents=agents, config=config).invoke(
-        {"messages": [HumanMessage("hi")], "hops": 0, "plan": []})
+        {"messages": [HumanMessage("please do it")], "hops": 0, "plan": []})
     return out, seen, chat.calls
 
 

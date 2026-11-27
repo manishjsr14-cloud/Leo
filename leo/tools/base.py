@@ -54,6 +54,9 @@ class Tool(BaseModel):
     tier: Tier
     args_model: type[ToolArgs]
     fn: Callable[[Any], Any]
+    # True only for tools that change nothing (lists, searches, sums). A question
+    # is offered only these (M2.3c); a tool not marked counts as a write.
+    read_only: bool = False
     # Optional extra check on the checked arguments, run by call_tool before the
     # approval check; it raises ToolError (or AskUser) to refuse the call.
     check: Callable[[Any], None] | None = None

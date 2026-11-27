@@ -43,6 +43,14 @@ def mock_tools(log: list[ToolCall]) -> dict[str, Tool]:
                    + mock_research_tools(log))
 
 
+# The tools an agent may use this turn (M2.3c): only the read-only ones for a
+# question, all of them otherwise (a statement runs no agent at all).
+def tools_for_turn(tools: dict[str, Tool], kind: str | None) -> dict[str, Tool]:
+    if kind != "question":
+        return tools
+    return {name: tool for name, tool in tools.items() if tool.read_only}
+
+
 # Run one tool. `args` is what the model sent; `approved` is set only by Leo's
 # own code (the human_approval step), never taken from `args`.
 # Raises UnknownToolError, pydantic.ValidationError or ApprovalRequiredError.

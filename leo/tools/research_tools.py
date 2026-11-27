@@ -25,12 +25,12 @@ SPECS = {
 }
 
 
-# Turn a name -> function dict into Tool objects, all 🟢 SAFE.
+# Turn a name -> function dict into Tool objects, all 🟢 SAFE and read-only (M2.3c).
 def make_tools(functions: dict) -> list[Tool]:
     if set(functions) != set(SPECS):
         raise ValueError(f"functions must be exactly {sorted(SPECS)}")
     return [
         Tool(name=name, description=description, tier=Tier.SAFE, args_model=args_model,
-             fn=functions[name])
+             fn=functions[name], read_only=True)
         for name, (description, args_model) in SPECS.items()
     ]

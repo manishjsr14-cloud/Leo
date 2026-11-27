@@ -9,6 +9,10 @@ graph.max_hops still caps how many agents run.
 M1 exit check (K07): a plain "what is on my calendar then?" question
 (leo/language/query_words.py) is planned to the calendar agent by code, with
 no LLM call, whenever the calendar agent is on offer.
+M2.3c (the user's rule): the message's kind is read by code first
+(leo/language/turn_kind.py) and kept in the state. A plain statement plans
+no agent and makes no LLM call, so no tool can run; a question's agents are
+offered only read tools (leo/tools/registry.tools_for_turn).
 """
 
 import logging
@@ -19,6 +23,7 @@ from pydantic import BaseModel, Field, create_model, field_validator
 
 from leo.graph.state import LeoState, chat_messages, latest_user_text
 from leo.language.query_words import is_calendar_query
+from leo.language.turn_kind import STATEMENT_KIND, turn_kind
 from leo.llm.prompts import load_prompt
 
 log = logging.getLogger("leo.graph")
@@ -62,28 +67,30 @@ def plan_model(agents: list[str]) -> type[SupervisorPlan]:
 
 
 # Plan the request. Returns the state update: agent_queue (the agents to run,
-# in order), the task added to plan, and hops reset to 0. With no agents
-# registered, or a reply that fails the schema, the queue is empty and the
-# responder answers directly.
+# in order), the task added to plan, hops reset to 0 and turn_kind (M2.3c).
+# With no agents registered, a plain statement, or a reply that fails the
+# schema, the queue is empty and the responder answers directly.
 def supervisor_node(
     state: LeoState,
     chat: Callable,
     agents: list[str],
     force_cloud: bool = False,
 ) -> dict:
-    if not agents:
-        return {"agent_queue": [], "hops": 0}
-    if "calendar" in agents and is_calendar_query(latest_user_text(state)):
+    text = latest_user_text(state)
+    kind = turn_kind(text)
+    if not agents or kind == STATEMENT_KIND:  # a statement runs no agent (M2.3c)
+        return {"agent_queue": [], "hops": 0, "turn_kind": kind}
+    if "calendar" in agents and is_calendar_query(text):
         log.info("supervisor: calendar query planned by code")
-        return {"agent_queue": ["calendar"], "hops": 0,
+        return {"agent_queue": ["calendar"], "hops": 0, "turn_kind": kind,
                 "plan": [*state.get("plan", []), CALENDAR_QUERY_TASK]}
     prompt = PROMPT.render(agents=describe_agents(agents))
     result = chat(chat_messages(prompt, state), plan_model(agents), force_cloud)
     if not result.valid:
         log.warning("supervisor plan invalid, answering directly: text=%r", result.text)
-        return {"agent_queue": [], "hops": 0}
+        return {"agent_queue": [], "hops": 0, "turn_kind": kind}
     plan = result.parsed
-    update = {"agent_queue": list(plan.agents), "hops": 0}
+    update = {"agent_queue": list(plan.agents), "hops": 0, "turn_kind": kind}
     if plan.agents:
         update["plan"] = [*state.get("plan", []), plan.task]
     return update

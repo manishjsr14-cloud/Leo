@@ -16,7 +16,8 @@ The reply language comes from the language tag in the state (M1.8), as the
 last line the model reads; today's date is written in by code. A
 Devanagari reply to a Roman-script message is asked for again once, in Roman
 letters. A single successful write gets a code-written reply instead, with no
-LLM call (leo/graph/quick_reply.py).
+LLM call (leo/graph/quick_reply.py). After a plain statement (M2.3c) the code
+adds STATEMENT_NOTE: nothing was added; the reply may offer, never claim.
 """
 
 import json
@@ -38,6 +39,9 @@ from leo.llm.prompts import load_prompt
 
 PROMPT = load_prompt("responder")
 NO_ACTION_NOTE = "nothing was done and no result is available"
+# M2.3c: after a plain statement no agent ran; the reply may offer, never claim.
+STATEMENT_NOTE = ("The user made a statement; nothing was added, saved or changed. "
+                  "You may offer to add it, but never say that it was done.")
 LANGUAGES = {
     "en": "English",
     "hinglish": "Hinglish (Hindi and English mixed, written only in Roman letters, never "
@@ -104,6 +108,8 @@ def responder_messages(state: LeoState) -> list[dict]:
     hints = memory_hints(state)
     if hints:
         messages.append(hints)
+    if state.get("turn_kind") == "statement":
+        messages.append({"role": "system", "content": STATEMENT_NOTE})
     language = LANGUAGES.get(state.get("language") or "", "the same language as the user")
     return [*messages, *convert_to_openai_messages(state.get("messages", [])),
             {"role": "system", "content": f"Reply in {language}."}]

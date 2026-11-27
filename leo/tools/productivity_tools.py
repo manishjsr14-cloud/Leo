@@ -1,5 +1,7 @@
 """Names, descriptions and tiers of the 7 productivity tools (section 9: all 🟢).
 
+list_tasks, list_notes and calculate change nothing: they are read-only (M2.3c).
+
 The real and mock versions use this one list, so they can never drift apart.
 """
 
@@ -32,6 +34,9 @@ SPECS = {
 }
 
 
+READ_ONLY = {"list_tasks", "list_notes", "calculate"}  # offered on a question (M2.3c)
+
+
 # Find the one open task whose title contains `title` (case-insensitive).
 # `tasks` are dicts with id, title and done. Errors (ToolError) list the
 # candidates with their ids so the agent can ask the user:
@@ -62,6 +67,6 @@ def make_tools(functions: dict) -> list[Tool]:
         raise ValueError(f"functions must be exactly {sorted(SPECS)}")
     return [
         Tool(name=name, description=description, tier=Tier.SAFE, args_model=args_model,
-             fn=functions[name])
+             fn=functions[name], read_only=name in READ_ONLY)
         for name, (description, args_model) in SPECS.items()
     ]

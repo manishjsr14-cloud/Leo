@@ -16,7 +16,8 @@ AGENTS = ["productivity", "research"]
 def test_valid_plan_sets_the_queue():
     chat = FakeChat({"agents": ["research"], "task": "get the weather"})
     update = supervisor_node(STATE, chat, AGENTS)
-    assert update == {"agent_queue": ["research"], "plan": ["get the weather"], "hops": 0}
+    assert update == {"agent_queue": ["research"], "plan": ["get the weather"], "hops": 0,
+                      "turn_kind": "question"}
 
 
 # The LLM request asks for the SupervisorPlan schema and lists the agents.
@@ -32,7 +33,8 @@ def test_request_uses_schema_and_lists_agents():
 # An empty plan (plain chat) leaves the queue empty and adds no task.
 def test_empty_plan_means_no_agents():
     chat = FakeChat({"agents": [], "task": ""})
-    assert supervisor_node(STATE, chat, AGENTS) == {"agent_queue": [], "hops": 0}
+    assert supervisor_node(STATE, chat, AGENTS) == {"agent_queue": [], "hops": 0,
+                                                  "turn_kind": "question"}
 
 
 # The schema allows only known names, no duplicates, and at most 2 agents.
@@ -49,13 +51,15 @@ def test_schema_limits_the_plan():
 # A reply that fails the schema means no agents: the responder answers.
 def test_invalid_reply_runs_no_agents():
     chat = FakeChat(None)
-    assert supervisor_node(STATE, chat, AGENTS) == {"agent_queue": [], "hops": 0}
+    assert supervisor_node(STATE, chat, AGENTS) == {"agent_queue": [], "hops": 0,
+                                                  "turn_kind": "question"}
 
 
 # With no agents registered the supervisor makes no LLM call.
 def test_no_agents_makes_no_llm_call():
     chat = FakeChat({"agents": ["research"], "task": "x"})
-    assert supervisor_node(STATE, chat, []) == {"agent_queue": [], "hops": 0}
+    assert supervisor_node(STATE, chat, []) == {"agent_queue": [], "hops": 0,
+                                                  "turn_kind": "question"}
     assert chat.calls == []
 
 

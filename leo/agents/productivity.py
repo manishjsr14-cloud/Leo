@@ -8,6 +8,7 @@ never end a run early: a list may be the first step of a change.
 M1 exit check (K05): an "X% of Y" question with nothing else asked is
 calculated by code (leo/agents/percent.py builds the expression), with no
 LLM call; the code reply then answers.
+M2.3c: on a question only the read-only tools are offered.
 """
 
 from collections.abc import Callable
@@ -28,6 +29,7 @@ from leo.graph.state import LeoState, latest_user_text
 from leo.language.normalize import has_joiner
 from leo.llm.prompts import load_prompt
 from leo.tools.base import Tool
+from leo.tools.registry import tools_for_turn
 
 NAME = "productivity"
 PROMPT = load_prompt("productivity")  # prompts/productivity.yaml
@@ -42,6 +44,7 @@ __all__ = ["NAME", "productivity_agent", "run_agent", "run_tool", "step_model"]
 def run_agent(state: LeoState, chat: Callable, tools: dict[str, Tool],
               max_steps: int, force_cloud: bool = False) -> dict:
     task, text = (state.get("plan") or [""])[-1], latest_user_text(state)
+    tools = tools_for_turn(tools, state.get("turn_kind"))  # a question: reads only (M2.3c)
     tools = guard_calculate(tools, text)  # numbers must come from the message (M1.8)
     expression = percent_expression(text)
     if expression is not None and "calculate" in tools and not has_joiner(text):

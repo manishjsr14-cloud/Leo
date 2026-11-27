@@ -17,6 +17,7 @@ from leo.agents.loop import agent_node, describe_tools, run_steps
 from leo.graph.state import LeoState, latest_user_text
 from leo.llm.prompts import load_prompt
 from leo.tools.base import Tool
+from leo.tools.registry import tools_for_turn
 
 NAME = "research"
 PROMPT = load_prompt("research")  # prompts/research.yaml
@@ -28,6 +29,7 @@ VERSION = PROMPT.tag              # tags this agent's spans
 def run_agent(state: LeoState, chat: Callable, tools: dict[str, Tool], max_steps: int,
               today: date, force_cloud: bool = False) -> dict:
     task = (state.get("plan") or [""])[-1]
+    tools = tools_for_turn(tools, state.get("turn_kind"))  # a question: reads only (M2.3c)
     prompt = PROMPT.render(tools=describe_tools(tools), task=task,
                            today=today.strftime("%A %d %B %Y"))
     finish = finish_rule(latest_user_text(state), set(), {"get_weather"}, asks_change=False)

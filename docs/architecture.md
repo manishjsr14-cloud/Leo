@@ -168,6 +168,7 @@ Each specialist is a LangGraph ReAct sub-graph (`create_react_agent`) with its o
 - `<agent> → supervisor` (loop until FINISH, max 8 hops); a directly routed agent goes `<agent> → responder`
 - **Decision (M1.4):** an agent that returned done is not re-chosen for the same request: it is left out of the supervisor's output schema (`completed_agents`), and with no agent left the supervisor finishes without an LLM call.
 - **Decision (M1.5):** the supervisor plans the agent list once per request (an ordered list of up to 2 agents, empty for plain chat) instead of choosing after each agent, because the 4B model kept choosing the remaining agent; the graph runs the list in order, then the responder, with `max_hops` kept as a safety limit.
+- **Decision (M2.3c, the user's rule):** before planning, code reads the message's kind (`leo/language/turn_kind.py`). A plain statement (no request word, not a question) plans no agent and makes no LLM call, so no tool runs; the reply may offer to add something, never claim it. A question's agents are offered only tools marked `read_only`. A request is unchanged.
 - Any agent proposing a 🔴 action → `human_approval → <agent>`
 - `supervisor → responder → output_guard → memory_write → END`
 
