@@ -29,7 +29,7 @@ from pydantic import ValidationError
 
 from leo.agents.finish import Finish
 from leo.agents.step_schema import loose_call, read_action, step_model
-from leo.graph.builder import cloud_requested
+from leo.graph.node_wiring import cloud_requested
 from leo.graph.result_words import result_in_words
 from leo.graph.state import LeoState, chat_messages
 from leo.ops import tracing

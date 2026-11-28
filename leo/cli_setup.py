@@ -57,4 +57,4 @@ def default_graph(output_fn: Callable[[str], None]):
         "productivity": productivity_agent(gateway.chat, tasks, steps),
         "research": research_agent(gateway.chat, web, steps),
         "calendar": calendar_agent(gateway.chat, calendar, steps, config.calendar)},
-        config=config, checkpointer=open_checkpointer(conn))
+        config=config, checkpointer=open_checkpointer(conn), conversation=config.conversation)

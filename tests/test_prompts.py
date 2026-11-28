@@ -15,7 +15,7 @@ AGENT_PROMPTS = {"calendar": ["tools", "today", "times", "task"],
 def test_every_prompt_file_loads_with_a_whole_number_version():
     names = sorted(p.stem for p in PROMPTS_DIR.glob("*.yaml"))
     assert names == ["calendar", "memory", "productivity", "replies", "research", "responder",
-                     "supervisor"]
+                     "summary", "supervisor"]
     for name in names:
         prompt = load_prompt(name)
         assert isinstance(prompt.version, int) and prompt.version >= 1

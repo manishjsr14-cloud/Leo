@@ -36,7 +36,7 @@ from leo.graph.memory_hints import memory_hints
 from leo.graph.offer_reply import offer_reply
 from leo.graph.quick_reply import quick_reply
 from leo.graph.result_words import refused_words, result_in_words, still_on_calendar
-from leo.graph.state import LeoState, latest_user_text
+from leo.graph.state import LeoState, latest_user_text, summary_message
 from leo.language.calendar_words import asks_to_cancel
 from leo.language.time_parser import current_time
 from leo.llm.prompts import load_prompt
@@ -98,14 +98,15 @@ def today_of(agent_results: dict) -> date:
     return current_time().date()
 
 
-# The messages for the LLM: prompt with today's date, facts (only if an agent
-# ran), recalled memories as hints (M2.3), the conversation, and last the reply
-# language (M1.8 fix round: a 4B model follows the last line best).
+# The messages for the LLM: prompt with today's date, the summary of older
+# turns (M2.4), facts (only if an agent ran), recalled memories as hints (M2.3),
+# the conversation, and last the reply language (M1.8 fix round: a 4B model
+# follows the last line best).
 def responder_messages(state: LeoState) -> list[dict]:
     results = state.get("agent_results") or {}
     today = today_of(results)
     system = f"{PROMPT.render()}\nToday is {today:%A} {today.day} {today:%b %Y}."
-    messages = [{"role": "system", "content": system}]
+    messages = [{"role": "system", "content": system}, *summary_message(state)]
     lines = fact_lines(results, asks_to_cancel(latest_user_text(state)))
     if lines:
         messages.append({"role": "system", "content": "Facts:\n" + "\n".join(lines)})

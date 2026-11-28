@@ -26,6 +26,7 @@ class LeoState(TypedDict, total=False):
     memories: list[str]  # recalled long-term facts, hints for the reply (M2.3)
     personal_question: bool  # the recall gate opened for this message (M2.3b)
     turn_kind: str  # "request", "question" or "statement" (M2.3c)
+    summary: str  # older turns of this thread, folded in by leo/graph/summary.py (M2.4)
 
 
 # The text of the user's latest message ("" when there is none).
@@ -50,10 +51,18 @@ def result_lines(results: dict) -> list[str]:
     return lines
 
 
+# The rolling summary as one system message (none while there is no summary, M2.4).
+def summary_message(state: LeoState) -> list[dict]:
+    text = state.get("summary")
+    if not text:
+        return []
+    return [{"role": "system", "content": f"Earlier in this conversation:\n{text}"}]
+
+
 # Turn the state into the plain message list the LLM gateway expects:
-# a system prompt, any agent results, then the conversation.
+# a system prompt, the summary of older turns, any agent results, then the conversation.
 def chat_messages(system_prompt: str, state: LeoState) -> list[dict]:
-    messages = [{"role": "system", "content": system_prompt}]
+    messages = [{"role": "system", "content": system_prompt}, *summary_message(state)]
     results = state.get("agent_results") or {}
     if results:
         lines = "\n".join(result_lines(results))

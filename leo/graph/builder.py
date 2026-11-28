@@ -15,74 +15,37 @@ The LLM call can be sent to Groq per request with
 config={"configurable": {"force_cloud": True}}.
 Every node runs inside a tracing span named after it (section 13.2).
 With a checkpointer (M2.4) the state is saved per thread_id after every step
-(config={"configurable": {"thread_id": ...}}).
+(config={"configurable": {"thread_id": ...}}); with a conversation config the
+graph ends with the rolling summary (leo/graph/summary.py):
+  ... -> responder [-> memory_write] -> summarize -> END
 """
 
-import inspect
 from collections.abc import Callable
 
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import END, START, StateGraph
 
-from leo.config import LeoConfig, load_config
-from leo.graph import memory_nodes as memory_module
+from leo.config import ConversationConfig, LeoConfig, load_config
 from leo.graph import responder as responder_module
 from leo.graph import supervisor as supervisor_module
-from leo.graph.memory_nodes import memory_recall_node, memory_write_node
+from leo.graph.node_wiring import (
+    add_memory_nodes,
+    add_summary_node,
+    cloud_requested,
+    traced,
+)
 from leo.graph.responder import responder_node
 from leo.graph.state import LeoState
 from leo.graph.supervisor import supervisor_node
 from leo.llm import gateway
 from leo.memory.memories import MemoryBank
-from leo.ops import tracing
-
-
-# Read the force_cloud flag from the run config (False when not set).
-def cloud_requested(config: RunnableConfig) -> bool:
-    return bool(config.get("configurable", {}).get("force_cloud", False))
-
-
-# Wrap a node in a span named after it. The span gets `metadata` and, for the
-# supervisor, the planned agent names (never text). Nodes that take only the
-# state (simple test agents) are called without the run config.
-def traced(name: str, kind: str, fn: Callable, metadata: dict | None = None) -> Callable:
-    takes_config = len(inspect.signature(fn).parameters) >= 2
-
-    # The node LangGraph calls.
-    def node(state: LeoState, config: RunnableConfig) -> dict:
-        with tracing.span(name, kind, metadata=metadata) as span:
-            update = fn(state, config) if takes_config else fn(state)
-            if "agent_queue" in update:
-                span.update(metadata={**(metadata or {}), "plan": update["agent_queue"]})
-            return update
-
-    return node
-
-
-# Add memory_recall before the supervisor and memory_write after the responder.
-def add_memory_nodes(graph: StateGraph, bank: MemoryBank, chat: Callable) -> None:
-    # Recall node with the memory bank filled in.
-    def recall(state: LeoState) -> dict:
-        return memory_recall_node(state, bank)
-
-    # Write node with the memory bank and the LLM filled in.
-    def write(state: LeoState, config: RunnableConfig) -> dict:
-        return memory_write_node(state, bank, chat, cloud_requested(config))
-
-    graph.add_node("memory_recall", traced("memory_recall", "chain", recall))
-    graph.add_node("memory_write", traced("memory_write", "chain", write, {
-        "prompt_version": memory_module.PROMPT.tag}))
-    graph.add_edge(START, "memory_recall")
-    graph.add_edge("memory_recall", "supervisor")
-    graph.add_edge("responder", "memory_write")
-    graph.add_edge("memory_write", END)
 
 
 # Build and compile the graph. chat defaults to the real LLM gateway;
 # agents maps an agent name to its node function; memory (M2.3) adds the
 # memory_recall and memory_write nodes, and without it the graph is as before;
 # now (M2.3c) gives the responder the current time (default: the real clock);
-# checkpointer (M2.4) saves the state per thread.
+# checkpointer (M2.4) saves the state per thread; conversation (M2.4) adds the summary.
 def build_graph(
     chat: Callable | None = None,
     agents: dict[str, Callable] | None = None,
@@ -90,6 +53,7 @@ def build_graph(
     memory: MemoryBank | None = None,
     now: Callable | None = None,
     checkpointer=None,
+    conversation: ConversationConfig | None = None,
 ):
     chat = chat or gateway.chat
     agents = agents or {}
@@ -127,11 +91,15 @@ def build_graph(
         graph.add_node(name, counted(traced(name, "agent", node)))
     for source in ["supervisor", *agents]:
         graph.add_conditional_edges(source, route, [*agents, "responder"])
+    last = END
+    if conversation is not None:
+        add_summary_node(graph, chat, conversation)
+        last = "summarize"
     if memory is None:
         graph.add_edge(START, "supervisor")
-        graph.add_edge("responder", END)
+        graph.add_edge("responder", last)
     else:
-        add_memory_nodes(graph, memory, chat)
+        add_memory_nodes(graph, memory, chat, last)
     # One step per agent plus supervisor and responder; leave room so max_hops,
     # not LangGraph's recursion limit, is what stops a run.
     return graph.compile(checkpointer=checkpointer).with_config(recursion_limit=2 * max_hops + 5)
