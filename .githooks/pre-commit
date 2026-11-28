@@ -1,0 +1,14 @@
+#!/bin/sh
+# Git pre-commit hook: refuses the commit unless `ruff check .` and `pytest`
+# pass (AGENTS.md). Install once per clone: git config core.hooksPath .githooks
+# Uses the project's virtual environment (.venv) on Windows or Linux.
+cd "$(git rev-parse --show-toplevel)" || exit 1
+if [ -x .venv/Scripts/python.exe ]; then
+    PY=.venv/Scripts/python.exe
+elif [ -x .venv/bin/python ]; then
+    PY=.venv/bin/python
+else
+    echo "pre-commit: no .venv found; commit refused." >&2
+    exit 1
+fi
+exec "$PY" .githooks/run_checks.py

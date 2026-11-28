@@ -30,6 +30,7 @@ Instructions for Claude Code (and any other coding agent) working in this reposi
 - Never edit tracked files while a real run is in progress.
 - Before a real run, the tree must be clean apart from `evals/reports/`.
 - Commit only if `ruff check .` and `pytest` both succeeded, checked in the same command (PowerShell: run them, check `$?` after each, stop on failure).
+- The pre-commit hook enforces this: install it once per clone with `git config core.hooksPath .githooks`; it runs `.githooks/run_checks.py` (ruff, then pytest) and refuses the commit if either fails. Never bypass it with `--no-verify`.
 
 ## Fixed design decisions
 
