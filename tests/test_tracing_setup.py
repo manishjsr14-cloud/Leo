@@ -6,6 +6,7 @@ import logging
 from contextlib import contextmanager
 
 import pytest
+from langgraph.checkpoint.memory import InMemorySaver
 
 from leo import cli
 from leo.config import Secrets, load_config
@@ -125,7 +126,8 @@ def test_cli_flushes_after_the_last_request():
         except StopIteration:
             raise EOFError from None
 
-    cli.main([], input_fn=typed, output_fn=lambda _t: None, graph=build_graph(FakeChat("hi")))
+    graph = build_graph(FakeChat("hi"), checkpointer=InMemorySaver())
+    cli.main([], input_fn=typed, output_fn=lambda _t: None, graph=graph)
     assert tracer.events.count("flush") == 1
     assert tracer.events[-1] == "flush"
     assert tracer.events.count("span:chat") == 2

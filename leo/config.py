@@ -17,6 +17,7 @@ from leo.config_base import Strict
 from leo.config_llm import DesktopLLM, FallbackLLM, LLMConfig, PrimaryLLM
 from leo.config_sections import (
     AgentConfig,
+    ConversationConfig,
     EmbedderConfig,
     GraphConfig,
     MemoryConfig,
@@ -33,6 +34,7 @@ __all__ = [
     "PROJECT_ROOT",
     "AgentConfig",
     "CalendarConfig",
+    "ConversationConfig",
     "DesktopLLM",
     "EmbedderConfig",
     "FallbackLLM",
@@ -63,6 +65,7 @@ class LeoConfig(Strict):
     ollama_env: dict[str, str]
     server: ServerConfig
     graph: GraphConfig
+    conversation: ConversationConfig
     storage: StorageConfig
     embedder: EmbedderConfig
     memory: MemoryConfig

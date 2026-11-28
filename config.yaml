@@ -45,6 +45,11 @@ server:
 graph:
   max_hops: 8                      # supervisor -> agent loops before forcing a reply (4.3)
 
+conversation:                      # checkpoints and rolling summary (M2.4, sections 4.6 and 6.6)
+  thread_id: laptop-cli            # the CLI's conversation; --thread picks another, --new starts a fresh one
+  summarize_after: 12              # more messages than this: the older ones are folded into the summary
+  keep_messages: 6                 # the last messages kept as they are (chosen, not measured)
+
 storage:
   db_path: leo_data/leo.db         # relative to the project folder; git-ignored (section 7)
 

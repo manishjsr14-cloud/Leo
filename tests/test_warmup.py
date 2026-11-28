@@ -2,6 +2,7 @@
 fake client: nothing here talks to Ollama."""
 
 import openai
+from langgraph.checkpoint.memory import InMemorySaver
 
 from leo import cli
 from leo.config import load_config
@@ -71,7 +72,8 @@ def run_cli(lines: list[str], argv: list[str]):
             raise EOFError from None
 
     chat = FakeChat("Hello!")
-    cli.main(argv, input_fn=fake_input, output_fn=printed.append, graph=build_graph(chat),
+    graph = build_graph(chat, checkpointer=InMemorySaver())
+    cli.main(argv, input_fn=fake_input, output_fn=printed.append, graph=graph,
              warm=lambda: warmed.append(1))
     return printed, warmed, chat
 

@@ -1,4 +1,4 @@
-"""Config sections for the server, graph, storage, embedder, agents and tracing.
+"""Config sections for the server, graph, conversation, storage, embedder, agents and tracing.
 
 Loaded by leo/config.py; relative paths start at the project folder.
 """
@@ -6,7 +6,7 @@ Loaded by leo/config.py; relative paths start at the project folder.
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, model_validator
 
 from leo.config_base import Strict
 from leo.paths import PROJECT_ROOT
@@ -24,6 +24,21 @@ class GraphConfig(Strict):
     """Limits for the LangGraph agent loop."""
 
     max_hops: int = Field(ge=1)
+
+
+class ConversationConfig(Strict):
+    """One conversation thread and its rolling summary (M2.4)."""
+
+    thread_id: str = Field(min_length=1)  # the CLI's default thread
+    summarize_after: int = Field(ge=2)    # more messages than this: summarize the older ones
+    keep_messages: int = Field(ge=2)      # the last messages kept as they are
+
+    # Keeping must leave something to summarize.
+    @model_validator(mode="after")
+    def keep_fewer_than_limit(self):
+        if self.keep_messages >= self.summarize_after:
+            raise ValueError("keep_messages must be smaller than summarize_after")
+        return self
 
 
 class StorageConfig(Strict):

@@ -14,6 +14,8 @@ Agent nodes are passed in as plain functions; tests use a dummy one.
 The LLM call can be sent to Groq per request with
 config={"configurable": {"force_cloud": True}}.
 Every node runs inside a tracing span named after it (section 13.2).
+With a checkpointer (M2.4) the state is saved per thread_id after every step
+(config={"configurable": {"thread_id": ...}}).
 """
 
 import inspect
@@ -79,13 +81,15 @@ def add_memory_nodes(graph: StateGraph, bank: MemoryBank, chat: Callable) -> Non
 # Build and compile the graph. chat defaults to the real LLM gateway;
 # agents maps an agent name to its node function; memory (M2.3) adds the
 # memory_recall and memory_write nodes, and without it the graph is as before;
-# now (M2.3c) gives the responder the current time (default: the real clock).
+# now (M2.3c) gives the responder the current time (default: the real clock);
+# checkpointer (M2.4) saves the state per thread.
 def build_graph(
     chat: Callable | None = None,
     agents: dict[str, Callable] | None = None,
     config: LeoConfig | None = None,
     memory: MemoryBank | None = None,
     now: Callable | None = None,
+    checkpointer=None,
 ):
     chat = chat or gateway.chat
     agents = agents or {}
@@ -130,4 +134,4 @@ def build_graph(
         add_memory_nodes(graph, memory, chat)
     # One step per agent plus supervisor and responder; leave room so max_hops,
     # not LangGraph's recursion limit, is what stops a run.
-    return graph.compile().with_config(recursion_limit=2 * max_hops + 5)
+    return graph.compile(checkpointer=checkpointer).with_config(recursion_limit=2 * max_hops + 5)
