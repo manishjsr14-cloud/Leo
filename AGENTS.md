@@ -4,7 +4,7 @@ Instructions for Claude Code (and any other coding agent) working in this reposi
 
 ## Current task
 
-- Work only on: **M2.3c (plain statements never cause a write)** (update this line before every session, e.g. `M1.2`).
+- Work only on: **M2.4 (checkpointing and rolling summary)** (update this line before every session, e.g. `M1.2`).
 - Task details are in `IMPLEMENTATION_PLAN.md`. Design details are in `docs/architecture.md`; requirements are in `docs/problem_statement.md`.
 - If the plan and the architecture disagree, stop and ask. Do not pick one silently.
 
