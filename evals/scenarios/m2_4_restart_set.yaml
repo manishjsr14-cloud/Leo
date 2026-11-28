@@ -1,0 +1,76 @@
+# M2.4 restart check set: one long conversation, a hard kill, then facts
+# referred back to (2026-11-28). Written by the user outside the code and
+# committed by itself before any M2.4 code. Converted to the project's format
+# without changing any message or expected key. Never edit this file to
+# improve a result; a better set is a new file (AGENTS.md). All people,
+# places and numbers are fictional.
+#
+# One conversation on one thread. Turns P01-P20 run in the first process,
+# which is then hard-killed. Turns R1-R6 run in a new process on the same
+# database and thread. Memory is OFF in the scored run (the user's decision),
+# so answers after the restart can only come from the checkpoint or the
+# rolling summary. MOCK tools, real LLM gateway, a fresh temporary database
+# (never leo_data/), run on the laptop, plugged in.
+#
+# With summarize_after: 12 and keep_messages: 6, the facts in P01-P15 are
+# expected to be folded into the summary before the kill; P18-P20 should
+# still be recent messages.
+# "now" for every turn: 2026-11-28 10:00 IST (Saturday).
+#
+# Conversion change (the user's decision, 2026-11-28, before any code): the
+# after-restart turns are asked in the order R5, R6, R1, R2, R3, R4 (written
+# R1-R4 then R5-R6). Asked after R1-R3, the summary would run again after R3
+# and fold P18 and P20 into it, so R5 and R6 would no longer be recent when
+# asked. No message, id or expected key was changed.
+#
+# Pass rule (the user's words, fixed before any run):
+# - R5 and R6 (recent) both answered.
+# - At least 3 of R1-R4 (summarized) answered.
+# - After the restart, the thread's state has a summary and the same last
+#   messages as just before the kill.
+# A turn is "answered" when its reply contains one of its expect_any_of keys
+# (checked by code). Prompt tokens with and without the summary are reported
+# only. If it misses: one fix round with a fresh set, then close with known
+# limits; anything not covered here is the user's decision.
+
+now: "2026-11-28T10:00:00+05:30"
+
+pass_rule:
+  recent_answered: [R5, R6]        # both must be answered
+  summarized: [R1, R2, R3, R4]
+  summarized_answered_min: 3       # at least 3 of these 4
+  state_after_restart: "has a summary and the same last messages as just before the kill"
+
+before_kill:
+  - {id: P01, lang: hinglish, text: "Hi Leo, aaj main ek trip plan kar raha hoon."}
+  - {id: P02, lang: en,       text: "We're going to Jaipur, and the train number is 12956.", fact: train_number}
+  - {id: P03, lang: hinglish, text: "Hotel ka booking ID HX4471 hai.", fact: booking_id}
+  - {id: P04, lang: en,       text: "My cousin Tanvi is coming with us."}
+  - {id: P05, lang: en,       text: "Add pack the charger to my tasks."}
+  - {id: P06, lang: en,       text: "Will it rain in Jaipur tomorrow?"}
+  - {id: P07, lang: hinglish, text: "Hum log teen din rukenge."}
+  - {id: P08, lang: en,       text: "The cab driver's name is Govind.", fact: driver_name}
+  - {id: P09, lang: en,       text: "What is 18% of 6400?"}
+  - {id: P10, lang: hinglish, text: "Tanvi ko spicy food pasand nahi hai."}
+  - {id: P11, lang: hinglish, text: "Note kar lo: Amber Fort tickets online lene hain."}
+  - {id: P12, lang: en,       text: "Our budget for the whole trip is 25000 rupees.", fact: budget}
+  - {id: P13, lang: hinglish, text: "Kal Pune mein weather kaisa hoga?"}
+  - {id: P14, lang: en,       text: "I also need to buy a power bank."}
+  - {id: P15, lang: en,       text: "The restaurant we picked is called Laxmi Mishthan Bhandar."}
+  - {id: P16, lang: en,       text: "Start a 15 minute timer for packing."}
+  - {id: P17, lang: hinglish, text: "Thanks Leo, abhi ke liye itna hi."}
+  - {id: P18, lang: en,       text: "Hotel check-in time is 1:30 pm.", fact: checkin_time}
+  - {id: P19, lang: hinglish, text: "Accha, ek aur baat."}
+  - {id: P20, lang: en,       text: "Our seats are 41 and 42 in coach B3.", fact: coach}
+
+# --- process is hard-killed here, then restarted on the same thread ---------
+
+after_restart:
+  # Facts expected to still be RECENT messages (asked first, see above):
+  - {id: R5, lang: en,       text: "Which coach are our seats in?",               from: P20, where: recent,  expect_any_of: ["B3"]}
+  - {id: R6, lang: hinglish, text: "Check-in kitne baje hai?",                    from: P18, where: recent,  expect_any_of: ["1:30", "1.30", "dedh"]}
+  # Facts expected to be in the SUMMARY by now (from early turns):
+  - {id: R1, lang: hinglish, text: "Train number kya tha?",                       from: P02, where: summary, expect_any_of: ["12956"]}
+  - {id: R2, lang: en,       text: "What was the hotel booking ID?",              from: P03, where: summary, expect_any_of: ["HX4471"]}
+  - {id: R3, lang: hinglish, text: "Cab driver ka naam kya bataya tha maine?",    from: P08, where: summary, expect_any_of: ["Govind"]}
+  - {id: R4, lang: en,       text: "What's our budget for the trip?",             from: P12, where: summary, expect_any_of: ["25000", "25,000", "25 hazaar", "25k", "25 thousand"]}
